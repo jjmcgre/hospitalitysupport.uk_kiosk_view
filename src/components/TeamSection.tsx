@@ -55,8 +55,10 @@ export default function TeamSection() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 tracking-tight">Meet your pocket team</h2>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              A full hospitality operations team — without payroll, politics, or turnover<br />
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-4">
+              A full hospitality operations team — without payroll, politics, or turnover
+            </p>
+            <p className="text-sm sm:text-base md:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
               It's not humans responding — it's a system built from real hospitality expertise, designed to behave like a reliable operations team.
             </p>
           </div>
