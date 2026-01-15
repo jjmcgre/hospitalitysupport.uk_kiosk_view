@@ -1,0 +1,1 @@
+hospitalitysupport.uk_kiosk_view
