@@ -4,6 +4,7 @@ import {
   Music2, Volume2, VolumeX, Play, Pause,
 } from 'lucide-react';
 import type { Slide } from './reelData';
+import { createVoiceover } from './voiceover';
 
 interface ReelPlayerProps {
   username: string;
@@ -17,7 +18,11 @@ interface ReelPlayerProps {
   bgImage: string;
 }
 
-const SLIDE_MS = 3200;
+function slideToText(slide: Slide): string {
+  return [slide.tag, slide.statLabel, slide.heading, slide.body, slide.stat]
+    .filter(Boolean)
+    .join('. ');
+}
 
 function useAmbientAudio(muted: boolean, playing: boolean) {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -37,7 +42,7 @@ function useAmbientAudio(muted: boolean, playing: boolean) {
 
     const master = ctx.createGain();
     master.gain.setValueAtTime(0, ctx.currentTime);
-    master.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 1.5);
+    master.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 1.5);
     master.connect(ctx.destination);
 
     const chords = [220, 277.18, 329.63, 369.99];
@@ -45,14 +50,11 @@ function useAmbientAudio(muted: boolean, playing: boolean) {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
       osc.frequency.value = freq;
-
       const g = ctx.createGain();
       g.gain.value = 0.25 - i * 0.04;
-
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.value = 800;
-
       osc.connect(filter);
       filter.connect(g);
       g.connect(master);
@@ -67,12 +69,10 @@ function useAmbientAudio(muted: boolean, playing: boolean) {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
     noise.loop = true;
-
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
     noiseFilter.frequency.value = 400;
     noiseFilter.Q.value = 0.5;
-
     noise.connect(noiseFilter);
     noiseFilter.connect(master);
     noise.start();
@@ -80,38 +80,10 @@ function useAmbientAudio(muted: boolean, playing: boolean) {
   }, [stop]);
 
   useEffect(() => {
-    if (playing && !muted) {
-      start();
-    } else {
-      stop();
-    }
+    if (playing && !muted) start();
+    else stop();
     return stop;
   }, [playing, muted, start, stop]);
-}
-
-function speakUK(text: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'en-GB';
-  utter.rate = 0.92;
-  utter.pitch = 1.0;
-  utter.volume = 1.0;
-
-  const voices = window.speechSynthesis.getVoices();
-  const ukVoice = voices.find(
-    (v) =>
-      (v.lang === 'en-GB' || v.lang.startsWith('en-GB')) &&
-      !v.name.toLowerCase().includes('google')
-  ) ?? voices.find((v) => v.lang === 'en-GB' || v.lang.startsWith('en-GB'));
-
-  if (ukVoice) utter.voice = ukVoice;
-  window.speechSynthesis.speak(utter);
-}
-
-function stopSpeech() {
-  if (window.speechSynthesis) window.speechSynthesis.cancel();
 }
 
 export default function ReelPlayer({
@@ -131,12 +103,12 @@ export default function ReelPlayer({
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [heartAnim, setHeartAnim] = useState(false);
-  const [segProgress, setSegProgress] = useState(0);
   const [ended, setEnded] = useState(false);
   const [key, setKey] = useState(0);
 
-  const slideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const segTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const voRef = useRef(createVoiceover());
+  const muteRef = useRef(muted);
+  muteRef.current = muted;
 
   useAmbientAudio(muted, playing);
 
@@ -146,64 +118,64 @@ export default function ReelPlayer({
     }
   }, []);
 
-  useEffect(() => {
-    if (!playing || muted || ended) {
-      stopSpeech();
-      return;
-    }
-    const slide = slides[current];
-    const text = [slide.statLabel, slide.heading, slide.body, slide.stat, slide.tag]
-      .filter(Boolean)
-      .join('. ');
-    speakUK(text);
-  }, [playing, muted, ended, current, slides]);
+  useEffect(() => () => voRef.current.stop(), []);
 
-  useEffect(() => {
-    if (!playing || ended) stopSpeech();
-  }, [playing, ended]);
-
-  const clearTimers = () => {
-    if (slideTimer.current) clearInterval(slideTimer.current);
-    if (segTimer.current) clearInterval(segTimer.current);
-  };
-
-  useEffect(() => {
-    clearTimers();
-    setSegProgress(0);
-
-    if (!playing || ended) return;
-
-    const increment = 100 / (SLIDE_MS / 50);
-
-    segTimer.current = setInterval(() => {
-      setSegProgress((p) => Math.min(p + increment, 100));
-    }, 50);
-
-    slideTimer.current = setInterval(() => {
-      setCurrent((c) => {
-        const next = c + 1;
-        if (next >= slides.length) {
-          setPlaying(false);
-          setEnded(true);
-          return c;
-        }
-        setSegProgress(0);
-        return next;
-      });
-    }, SLIDE_MS);
-
-    return clearTimers;
-  }, [playing, current, ended, slides.length]);
+  const startVoiceover = useCallback((startIdx: number) => {
+    const texts = slides.map(slideToText);
+    const sliced = texts.slice(startIdx);
+    voRef.current.play(
+      sliced,
+      (relIdx) => setCurrent(startIdx + relIdx),
+      () => {
+        setPlaying(false);
+        setEnded(true);
+      }
+    );
+  }, [slides]);
 
   const handlePlay = () => {
     if (ended) {
       setCurrent(0);
-      setSegProgress(0);
       setEnded(false);
       setKey((k) => k + 1);
-      setTimeout(() => setPlaying(true), 50);
+      setPlaying(true);
+      if (!muteRef.current) {
+        setTimeout(() => startVoiceover(0), 80);
+      }
+    } else if (playing) {
+      setPlaying(false);
+      voRef.current.pause();
     } else {
-      setPlaying((p) => !p);
+      setPlaying(true);
+      if (!muteRef.current) {
+        voRef.current.resume();
+      }
+    }
+  };
+
+  const handleMuteToggle = () => {
+    const newMuted = !muted;
+    setMuted(newMuted);
+    if (newMuted) {
+      voRef.current.stop();
+    } else if (playing) {
+      startVoiceover(current);
+    }
+  };
+
+  useEffect(() => {
+    if (playing && !muted) {
+      startVoiceover(current);
+    }
+  }, []);
+
+  const handleTapSlide = () => {
+    if (!playing && !ended) {
+      setPlaying(true);
+      if (!muteRef.current) startVoiceover(current);
+    } else if (playing) {
+      setPlaying(false);
+      voRef.current.pause();
     }
   };
 
@@ -213,23 +185,16 @@ export default function ReelPlayer({
     setTimeout(() => setHeartAnim(false), 800);
   };
 
-  const handleTapSlide = () => {
-    if (!playing && !ended) {
-      setPlaying(true);
-    } else if (playing) {
-      setPlaying(false);
-    }
-  };
-
   const goTo = (idx: number) => {
+    voRef.current.stop();
     setCurrent(idx);
-    setSegProgress(0);
     setEnded(false);
     setKey((k) => k + 1);
     if (!playing) setPlaying(true);
+    if (!muteRef.current) {
+      setTimeout(() => startVoiceover(idx), 80);
+    }
   };
-
-  useEffect(() => () => stopSpeech(), []);
 
   const slide = slides[current];
 
@@ -239,7 +204,6 @@ export default function ReelPlayer({
         className="relative overflow-hidden shadow-2xl select-none"
         style={{ width: 300, height: 534, borderRadius: 40, background: '#0a0a0a' }}
       >
-        {/* Background photo — blurred + dark overlay */}
         <div
           className="absolute inset-0 transition-opacity duration-700"
           style={{
@@ -250,29 +214,19 @@ export default function ReelPlayer({
             transform: 'scale(1.06)',
           }}
         />
-
-        {/* Accent colour gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
             background: `linear-gradient(160deg, ${accentColor}22 0%, transparent 50%, #00000080 100%)`,
           }}
         />
-
-        {/* Bottom vignette for text legibility */}
         <div
           className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 45%)',
-          }}
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 45%)' }}
         />
-
-        {/* Top vignette for controls legibility */}
         <div
           className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 28%)',
-          }}
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 28%)' }}
         />
 
         {/* Segmented progress bar */}
@@ -284,10 +238,10 @@ export default function ReelPlayer({
               className="flex-1 h-0.5 rounded-full overflow-hidden bg-white/25 cursor-pointer"
             >
               <div
-                className="h-full rounded-full"
+                className="h-full rounded-full transition-none"
                 style={{
                   background: 'white',
-                  width: i < current ? '100%' : i === current ? `${segProgress}%` : '0%',
+                  width: i < current ? '100%' : i === current && (playing || current > 0) ? '50%' : '0%',
                 }}
               />
             </button>
@@ -320,8 +274,7 @@ export default function ReelPlayer({
           onDoubleClick={handleDoubleTap}
           onClick={handleTapSlide}
         >
-          {/* Pre-play state */}
-          {!playing && !ended && current === 0 && segProgress === 0 && (
+          {!playing && !ended && current === 0 && (
             <div className="flex flex-col items-center gap-5 text-center px-2">
               <div className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center">
                 <Play size={24} className="text-white ml-1" fill="white" />
@@ -335,8 +288,7 @@ export default function ReelPlayer({
             </div>
           )}
 
-          {/* Slide content */}
-          {(playing || current > 0 || segProgress > 0) && !ended && (
+          {(playing || current > 0) && !ended && (
             <div key={`${key}-${current}`} className="w-full text-center animate-fade-in">
               {slide.isBig ? (
                 <div className="space-y-1">
@@ -392,7 +344,6 @@ export default function ReelPlayer({
             </div>
           )}
 
-          {/* End card */}
           {ended && (
             <div key="end" className="flex flex-col items-center gap-4 text-center animate-fade-in">
               <div
@@ -414,7 +365,6 @@ export default function ReelPlayer({
           )}
         </div>
 
-        {/* Double-tap heart */}
         {heartAnim && (
           <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
             <Heart size={80} className="text-red-500 fill-red-500 animate-ping-once" />
@@ -442,7 +392,7 @@ export default function ReelPlayer({
           <button onClick={(e) => { e.stopPropagation(); setSaved((s) => !s); }}>
             <Bookmark size={22} className={saved ? 'text-yellow-400 fill-yellow-400' : 'text-white drop-shadow-lg'} />
           </button>
-          <button onClick={(e) => { e.stopPropagation(); setMuted((m) => !m); }}>
+          <button onClick={(e) => { e.stopPropagation(); handleMuteToggle(); }}>
             {muted
               ? <VolumeX size={20} className="text-white/70 drop-shadow-lg" />
               : <Volume2 size={20} className="text-white drop-shadow-lg" />}
@@ -456,18 +406,17 @@ export default function ReelPlayer({
           <div className="flex items-center gap-1.5 mt-1.5">
             <Music2 size={10} className="text-white/50" />
             <p className="text-white/50 text-[9px]">
-              {muted ? 'Enable sound for UK voiceover' : 'UK voiceover · ' + handle}
+              {muted ? 'Enable sound for voiceover' : 'Male UK voiceover · ' + handle}
             </p>
           </div>
         </div>
 
-        {/* Invisible pause-on-click overlay */}
         {playing && (
-          <div className="absolute inset-0 z-10 cursor-pointer" onClick={() => setPlaying(false)} />
+          <div className="absolute inset-0 z-10 cursor-pointer" onClick={() => { setPlaying(false); voRef.current.pause(); }} />
         )}
       </div>
 
-      {/* Controls below phone */}
+      {/* Controls */}
       <div className="flex items-center gap-3">
         <button
           onClick={handlePlay}
@@ -481,7 +430,7 @@ export default function ReelPlayer({
             : <><Play size={14} fill="white" /> Play Ad</>}
         </button>
         <button
-          onClick={() => setMuted((m) => !m)}
+          onClick={handleMuteToggle}
           className="flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold border transition-all hover:opacity-80"
           style={{
             background: muted ? '#1e293b' : accentColor + '20',
