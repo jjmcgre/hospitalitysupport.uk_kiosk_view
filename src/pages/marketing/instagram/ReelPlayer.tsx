@@ -37,7 +37,7 @@ function useAmbientAudio(muted: boolean, playing: boolean) {
 
     const master = ctx.createGain();
     master.gain.setValueAtTime(0, ctx.currentTime);
-    master.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 1.5);
+    master.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 1.5);
     master.connect(ctx.destination);
 
     const chords = [220, 277.18, 329.63, 369.99];
@@ -89,6 +89,31 @@ function useAmbientAudio(muted: boolean, playing: boolean) {
   }, [playing, muted, start, stop]);
 }
 
+function speakUK(text: string) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-GB';
+  utter.rate = 0.92;
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
+  const voices = window.speechSynthesis.getVoices();
+  const ukVoice = voices.find(
+    (v) =>
+      (v.lang === 'en-GB' || v.lang.startsWith('en-GB')) &&
+      !v.name.toLowerCase().includes('google')
+  ) ?? voices.find((v) => v.lang === 'en-GB' || v.lang.startsWith('en-GB'));
+
+  if (ukVoice) utter.voice = ukVoice;
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeech() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
 export default function ReelPlayer({
   username,
   handle,
@@ -114,6 +139,28 @@ export default function ReelPlayer({
   const segTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useAmbientAudio(muted, playing);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!playing || muted || ended) {
+      stopSpeech();
+      return;
+    }
+    const slide = slides[current];
+    const text = [slide.statLabel, slide.heading, slide.body, slide.stat, slide.tag]
+      .filter(Boolean)
+      .join('. ');
+    speakUK(text);
+  }, [playing, muted, ended, current, slides]);
+
+  useEffect(() => {
+    if (!playing || ended) stopSpeech();
+  }, [playing, ended]);
 
   const clearTimers = () => {
     if (slideTimer.current) clearInterval(slideTimer.current);
@@ -181,6 +228,8 @@ export default function ReelPlayer({
     setKey((k) => k + 1);
     if (!playing) setPlaying(true);
   };
+
+  useEffect(() => () => stopSpeech(), []);
 
   const slide = slides[current];
 
@@ -407,7 +456,7 @@ export default function ReelPlayer({
           <div className="flex items-center gap-1.5 mt-1.5">
             <Music2 size={10} className="text-white/50" />
             <p className="text-white/50 text-[9px]">
-              {muted ? 'Tap sound icon to hear audio' : 'Now playing · ' + handle}
+              {muted ? 'Enable sound for UK voiceover' : 'UK voiceover · ' + handle}
             </p>
           </div>
         </div>
