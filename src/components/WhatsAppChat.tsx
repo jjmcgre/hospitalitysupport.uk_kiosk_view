@@ -108,7 +108,7 @@ export default function WhatsAppChat() {
             onClick={() => setActiveConversation(idx)}
             className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all text-sm sm:text-base ${
               activeConversation === idx
-                ? 'bg-emerald-600 text-white shadow-lg'
+                ? 'bg-teal-600 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -118,13 +118,13 @@ export default function WhatsAppChat() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div className="bg-emerald-600 text-white p-3 sm:p-4 flex items-center gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center text-emerald-600 font-bold text-sm sm:text-base">
+        <div className="bg-teal-600 text-white p-3 sm:p-4 flex items-center gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center text-teal-600 font-bold text-sm sm:text-base">
             HS
           </div>
           <div>
             <div className="font-semibold text-sm sm:text-base">HospitalitySupport.uk</div>
-            <div className="text-xs text-emerald-100">Your operations team</div>
+            <div className="text-xs text-teal-100">Your operations team</div>
           </div>
         </div>
 
@@ -137,14 +137,14 @@ export default function WhatsAppChat() {
               <div
                 className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
                   message.sender === 'user'
-                    ? 'bg-emerald-600 text-white rounded-br-sm'
+                    ? 'bg-teal-600 text-white rounded-br-sm'
                     : 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
                 }`}
               >
                 <div className="text-xs sm:text-sm whitespace-pre-line">{message.text}</div>
                 <div
                   className={`flex items-center gap-1 justify-end mt-1 text-xs ${
-                    message.sender === 'user' ? 'text-emerald-100' : 'text-gray-500'
+                    message.sender === 'user' ? 'text-teal-100' : 'text-gray-500'
                   }`}
                 >
                   <span>{message.timestamp}</span>

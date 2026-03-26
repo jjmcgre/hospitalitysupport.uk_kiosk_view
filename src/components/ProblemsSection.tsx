@@ -58,14 +58,14 @@ export default function ProblemsSection() {
             {problems.map((problem, idx) => (
               <div
                 key={idx}
-                className="bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 shadow-lg hover:border-emerald-500 hover:shadow-xl transition-all duration-300"
+                className="bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 shadow-lg hover:border-teal-500 hover:shadow-xl transition-all duration-300"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-6 md:mb-8">
-                  <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                     <problem.icon size={24} className="text-white md:w-7 md:h-7" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm md:text-base font-semibold text-emerald-600 uppercase tracking-wider mb-1">{problem.subtitle}</p>
+                    <p className="text-sm md:text-base font-semibold text-teal-600 uppercase tracking-wider mb-1">{problem.subtitle}</p>
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900">{problem.title}</h3>
                   </div>
                 </div>
@@ -79,7 +79,7 @@ export default function ProblemsSection() {
                   <ul className="space-y-2 md:space-y-3">
                     {problem.points.map((point, pointIdx) => (
                       <li key={pointIdx} className="flex items-start gap-3 md:gap-4">
-                        <span className="text-emerald-600 text-xl md:text-2xl">•</span>
+                        <span className="text-teal-600 text-xl md:text-2xl">•</span>
                         <span className="text-gray-700 text-base md:text-lg pt-1">{point}</span>
                       </li>
                     ))}

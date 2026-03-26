@@ -18,15 +18,15 @@ export default function WhatsAppSection() {
 
           <div className="mt-12 md:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             <div className="text-center bg-white rounded-2xl p-6 shadow-md">
-              <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">2 min</div>
+              <div className="text-3xl md:text-4xl font-bold text-teal-600 mb-2">2 min</div>
               <p className="text-gray-700 text-sm md:text-base">Average response time</p>
             </div>
             <div className="text-center bg-white rounded-2xl p-6 shadow-md">
-              <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">24/7</div>
+              <div className="text-3xl md:text-4xl font-bold text-teal-600 mb-2">24/7</div>
               <p className="text-gray-700 text-sm md:text-base">Always available</p>
             </div>
             <div className="text-center bg-white rounded-2xl p-6 shadow-md">
-              <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">0</div>
+              <div className="text-3xl md:text-4xl font-bold text-teal-600 mb-2">0</div>
               <p className="text-gray-700 text-sm md:text-base">Training required</p>
             </div>
           </div>

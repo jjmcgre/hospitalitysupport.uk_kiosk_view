@@ -135,10 +135,10 @@ export default function TeamSection() {
   };
 
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white relative overflow-hidden px-4">
+    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 text-white relative overflow-hidden px-4">
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-40 left-40 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-40 right-40 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-40 left-40 w-96 h-96 bg-teal-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-40 right-40 w-96 h-96 bg-teal-500 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto relative z-10">
@@ -153,8 +153,8 @@ export default function TeamSection() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-r from-emerald-500/10 to-emerald-500/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-10 mb-12 md:mb-16">
-            <p className="text-xl sm:text-2xl md:text-3xl text-center text-emerald-400 font-bold">
+          <div className="bg-gradient-to-r from-teal-500/10 to-teal-500/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-10 mb-12 md:mb-16">
+            <p className="text-xl sm:text-2xl md:text-3xl text-center text-teal-400 font-bold">
               You're not buying software. You're gaining capability.
             </p>
           </div>
@@ -165,14 +165,14 @@ export default function TeamSection() {
                 key={idx}
                 className={`group bg-white/5 backdrop-blur-xl border-2 rounded-2xl p-6 md:p-8 transition-all duration-300 cursor-pointer ${
                   expandedIndex === idx
-                    ? 'bg-white/10 border-emerald-400/60 shadow-2xl md:col-span-2'
-                    : 'border-white/10 hover:bg-white/10 hover:border-emerald-400/40 hover:shadow-xl'
+                    ? 'bg-white/10 border-teal-400/60 shadow-2xl md:col-span-2'
+                    : 'border-white/10 hover:bg-white/10 hover:border-teal-400/40 hover:shadow-xl'
                 }`}
                 onClick={() => toggleExpand(idx)}
               >
                 <div className="flex items-start gap-4 md:gap-6">
                   <div className="flex-shrink-0">
-                    <div className={`w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 ${
+                    <div className={`w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 ${
                       expandedIndex === idx ? 'scale-110' : 'group-hover:scale-110'
                     }`}>
                       <member.icon size={24} className="text-white md:w-7 md:h-7" />
@@ -182,15 +182,15 @@ export default function TeamSection() {
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className={`text-lg md:text-xl font-bold mb-2 md:mb-3 transition-colors ${
-                          expandedIndex === idx ? 'text-emerald-400' : 'group-hover:text-emerald-400'
+                          expandedIndex === idx ? 'text-teal-400' : 'group-hover:text-teal-400'
                         }`}>{member.title}</h3>
                         <p className="text-sm md:text-base text-gray-300 leading-relaxed">{member.description}</p>
                       </div>
                       <div className="ml-4 flex-shrink-0">
                         {expandedIndex === idx ? (
-                          <ChevronUp className="w-5 h-5 md:w-6 md:h-6 text-emerald-400" />
+                          <ChevronUp className="w-5 h-5 md:w-6 md:h-6 text-teal-400" />
                         ) : (
-                          <ChevronDown className="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-emerald-400 transition-colors" />
+                          <ChevronDown className="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-teal-400 transition-colors" />
                         )}
                       </div>
                     </div>
@@ -198,7 +198,7 @@ export default function TeamSection() {
                     {expandedIndex === idx && (
                       <div className="mt-6 pt-6 border-t border-white/20 space-y-4 animate-fadeIn">
                         {member.details.headline && (
-                          <p className="text-base md:text-lg font-semibold text-emerald-300">{member.details.headline}</p>
+                          <p className="text-base md:text-lg font-semibold text-teal-300">{member.details.headline}</p>
                         )}
                         {member.details.subheadline && (
                           <p className="text-sm md:text-base text-gray-300">{member.details.subheadline}</p>
@@ -209,7 +209,7 @@ export default function TeamSection() {
                             <p className="text-sm md:text-base font-semibold text-white mb-2">Every dish includes:</p>
                             <ul className="space-y-1 ml-4">
                               {member.details.includes.map((item, i) => (
-                                <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-emerald-400">{item}</li>
+                                <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-teal-400">{item}</li>
                               ))}
                             </ul>
                           </div>
@@ -220,7 +220,7 @@ export default function TeamSection() {
                             <p className="text-sm md:text-base font-semibold text-white mb-2">Designed around:</p>
                             <ul className="space-y-1 ml-4">
                               {member.details.designedAround.map((item, i) => (
-                                <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-emerald-400">{item}</li>
+                                <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-teal-400">{item}</li>
                               ))}
                             </ul>
                           </div>
@@ -229,7 +229,7 @@ export default function TeamSection() {
                         {member.details.points && (
                           <ul className="space-y-2">
                             {member.details.points.map((point, i) => (
-                              <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-emerald-400">{point}</li>
+                              <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-teal-400">{point}</li>
                             ))}
                           </ul>
                         )}
@@ -239,7 +239,7 @@ export default function TeamSection() {
                             <p className="text-sm md:text-base font-semibold text-white mb-2">Recommends fixes:</p>
                             <ul className="space-y-1 ml-4">
                               {member.details.recommends.map((item, i) => (
-                                <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-emerald-400">{item}</li>
+                                <li key={i} className="text-sm md:text-base text-gray-300 before:content-['•'] before:mr-2 before:text-teal-400">{item}</li>
                               ))}
                             </ul>
                           </div>
@@ -252,7 +252,7 @@ export default function TeamSection() {
                         {member.details.replaces && (
                           <div className="mt-4 pt-4 border-t border-white/10">
                             <p className="text-sm md:text-base text-gray-400">
-                              <span className="font-semibold text-emerald-400">Replaces:</span> {member.details.replaces}
+                              <span className="font-semibold text-teal-400">Replaces:</span> {member.details.replaces}
                             </p>
                           </div>
                         )}
@@ -267,7 +267,7 @@ export default function TeamSection() {
           <div className="mt-12 md:mt-16 text-center">
             <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
               All of them work from the same live reality.<br />
-              <span className="text-emerald-400 font-bold text-xl sm:text-2xl md:text-3xl">Nothing duplicated. Nothing forgotten.</span>
+              <span className="text-teal-400 font-bold text-xl sm:text-2xl md:text-3xl">Nothing duplicated. Nothing forgotten.</span>
             </p>
           </div>
         </div>

@@ -37,7 +37,7 @@ export default function DifferenceSection() {
               <p className="text-gray-300 italic mt-6 md:mt-8 text-base md:text-lg border-l-4 border-white/30 pl-4 md:pl-6">That's not the reality of hospitality.</p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-3xl p-6 md:p-10 shadow-2xl">
+            <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white rounded-3xl p-6 md:p-10 shadow-2xl">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-6 md:mb-8">
                 <div className="w-14 h-14 md:w-16 md:h-16 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Users size={24} className="text-white md:w-7 md:h-7" />
@@ -45,22 +45,22 @@ export default function DifferenceSection() {
                 <h3 className="text-xl md:text-2xl font-bold">HospitalitySupport.uk behaves like a team member</h3>
               </div>
 
-              <p className="text-emerald-100 mb-6 md:mb-8 text-base md:text-lg font-semibold">Not a tool.</p>
+              <p className="text-teal-100 mb-6 md:mb-8 text-base md:text-lg font-semibold">Not a tool.</p>
 
               <div className="space-y-4 md:space-y-5">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
                   <p className="font-bold mb-2 text-base md:text-lg">You don't build your business around it.</p>
-                  <p className="text-emerald-100 text-sm md:text-base">It builds itself around you.</p>
+                  <p className="text-teal-100 text-sm md:text-base">It builds itself around you.</p>
                 </div>
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
                   <p className="font-bold mb-2 text-base md:text-lg">You don't configure it.</p>
-                  <p className="text-emerald-100 text-sm md:text-base">You just tell it what you need.</p>
+                  <p className="text-teal-100 text-sm md:text-base">You just tell it what you need.</p>
                 </div>
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
                   <p className="font-bold mb-2 text-base md:text-lg">You don't manage it.</p>
-                  <p className="text-emerald-100 text-sm md:text-base">It manages the work for you.</p>
+                  <p className="text-teal-100 text-sm md:text-base">It manages the work for you.</p>
                 </div>
               </div>
             </div>

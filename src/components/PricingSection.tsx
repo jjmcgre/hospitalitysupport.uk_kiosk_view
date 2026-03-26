@@ -1,6 +1,6 @@
 export default function PricingSection() {
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 px-4">
+    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 px-4">
       <div className="container mx-auto">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 md:mb-16 lg:mb-20">
@@ -13,7 +13,7 @@ export default function PricingSection() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-emerald-900/50 transition-all duration-300">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-teal-900/50 transition-all duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
                 <h3 className="text-xl md:text-2xl font-bold">Standard Venue</h3>
@@ -41,29 +41,29 @@ export default function PricingSection() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-emerald-900/50 transition-all duration-300">
+            <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-teal-900/50 transition-all duration-300">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-emerald-300 rounded-sm"></div>
-                <h3 className="text-xl md:text-2xl font-bold">High-Intensity Kitchen</h3>
+                <div className="w-3 h-3 bg-teal-300 rounded-sm"></div>
+                <h3 className="text-xl md:text-2xl font-bold">High-Intensity Kitchen (Dark Kitchens)</h3>
               </div>
 
               <div className="mb-6">
-                <div className="text-4xl md:text-5xl font-bold mb-2">£180</div>
-                <div className="text-lg text-emerald-100">per month</div>
+                <div className="text-4xl md:text-5xl font-bold mb-2">£250</div>
+                <div className="text-lg text-teal-100">per month</div>
               </div>
 
-              <p className="text-emerald-100 mb-6 text-sm md:text-base border-l-4 border-emerald-300/50 pl-4">
+              <p className="text-teal-100 mb-6 text-sm md:text-base border-l-4 border-teal-300/50 pl-4">
                 For dark kitchens, production kitchens, high-churn operations.
               </p>
 
               <div className="space-y-3 mb-6 bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-white/20">
-                <p className="text-emerald-50 text-sm md:text-base">Everything in Standard Venue</p>
-                <p className="text-emerald-50 text-sm md:text-base">Larger teams & higher turnover supported</p>
-                <p className="text-emerald-50 text-sm md:text-base">Multiple menus / brands per kitchen</p>
-                <p className="text-emerald-50 text-sm md:text-base">Higher training & compliance throughput</p>
+                <p className="text-teal-50 text-sm md:text-base">Everything in Standard Venue</p>
+                <p className="text-teal-50 text-sm md:text-base">Larger teams & higher turnover supported</p>
+                <p className="text-teal-50 text-sm md:text-base">Multiple menus / brands per kitchen</p>
+                <p className="text-teal-50 text-sm md:text-base">Higher training & compliance throughput</p>
               </div>
 
-              <p className="text-sm md:text-base text-emerald-200 italic">
+              <p className="text-sm md:text-base text-teal-200 italic">
                 Priced for operational load — not headcount.
               </p>
             </div>
