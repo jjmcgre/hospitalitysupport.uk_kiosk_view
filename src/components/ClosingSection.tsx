@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function ClosingSection() {
   return (
     <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 text-white relative overflow-hidden px-4">
@@ -23,6 +25,15 @@ export default function ClosingSection() {
               It's a team of experts in your pocket —<br className="hidden sm:block" />
               working the way you already do.
             </p>
+          </div>
+
+          <div className="mt-12 md:mt-16">
+            <Link
+              to="/marketing"
+              className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white font-semibold px-8 py-4 rounded-xl transition-colors text-base"
+            >
+              View Campaign Book
+            </Link>
           </div>
         </div>
       </div>
