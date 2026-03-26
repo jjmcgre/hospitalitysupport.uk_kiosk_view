@@ -21,6 +21,7 @@ export interface ReelCampaign {
   accentColor: string;
   likes: string;
   comments: string;
+  bgImage: string;
 }
 
 export const reels: ReelCampaign[] = [
@@ -39,6 +40,7 @@ export const reels: ReelCampaign[] = [
     accentColor: '#0d9488',
     likes: '1.4k',
     comments: '118',
+    bgImage: 'https://images.pexels.com/photos/2290070/pexels-photo-2290070.jpeg?auto=compress&cs=tinysrgb&w=800',
     slides: [
       {
         heading: 'You\'re running a hospitality business.',
@@ -119,6 +121,7 @@ export const reels: ReelCampaign[] = [
     accentColor: '#0284c7',
     likes: '987',
     comments: '74',
+    bgImage: 'https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800',
     slides: [
       {
         heading: 'Sunday morning.',
@@ -133,7 +136,7 @@ export const reels: ReelCampaign[] = [
       {
         heading: 'You send one message.',
         body: '"Lamb just went up 8% — what\'s the GP impact on the Sunday roast and what are my options?"',
-        tag: 'WhatsApp',
+        tag: 'Live chat',
       },
       {
         heading: 'Cost & GP Controller responds.',
@@ -184,6 +187,7 @@ export const reels: ReelCampaign[] = [
     accentColor: '#b45309',
     likes: '2.3k',
     comments: '191',
+    bgImage: 'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800',
     slides: [
       {
         heading: 'Monday morning.',
@@ -198,7 +202,7 @@ export const reels: ReelCampaign[] = [
       {
         heading: 'One message.',
         body: '"I have two new KPs starting Monday — one moving to chef in 4 weeks. Build me an onboarding plan for both."',
-        tag: 'WhatsApp',
+        tag: 'Live chat',
       },
       {
         heading: 'Training Manager responds.',

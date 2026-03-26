@@ -95,6 +95,7 @@ export default function InstagramPage() {
                 accentColor={reel.accentColor}
                 likes={reel.likes}
                 comments={reel.comments}
+                bgImage={reel.bgImage}
               />
             </div>
 
