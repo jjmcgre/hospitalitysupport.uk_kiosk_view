@@ -28,13 +28,6 @@ export default function LandingPage() {
         <span className="text-white font-bold text-sm tracking-tight">
           HospitalitySupport<span className="text-teal-400">.uk</span>
         </span>
-        <Link
-          to="/marketing"
-          className="flex items-center gap-2 text-sm font-semibold text-white bg-teal-500 hover:bg-teal-400 px-4 py-2 rounded-lg transition-colors"
-        >
-          Campaign Book
-          <ArrowRight size={14} />
-        </Link>
       </nav>
 
       <HeroSection />
