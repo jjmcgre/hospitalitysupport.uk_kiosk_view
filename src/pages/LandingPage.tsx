@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, ArrowRight } from 'lucide-react';
 import HeroSection from '../components/HeroSection';
+import DishJourneySection from '../components/DishJourneySection';
+import BusinessAreasSection from '../components/BusinessAreasSection';
 import ProblemsSection from '../components/ProblemsSection';
 import WhatsAppSection from '../components/WhatsAppSection';
 import TeamSection from '../components/TeamSection';
@@ -31,6 +33,8 @@ export default function LandingPage() {
       </nav>
 
       <HeroSection />
+      <DishJourneySection />
+      <BusinessAreasSection />
       <ProblemsSection />
       <TeamSection />
       <DifferenceSection />
