@@ -10,6 +10,8 @@ import EmailPage from './pages/marketing/EmailPage';
 import SalesPage from './pages/marketing/SalesPage';
 import BrandPage from './pages/marketing/BrandPage';
 import BrochurePage from './pages/marketing/BrochurePage';
+import Print1Page from './pages/marketing/Print1Page';
+import Print5Page from './pages/marketing/Print5Page';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route path="sales" element={<SalesPage />} />
           <Route path="brand" element={<BrandPage />} />
           <Route path="brochure" element={<BrochurePage />} />
+          <Route path="print-1" element={<Print1Page />} />
+          <Route path="print-5" element={<Print5Page />} />
         </Route>
       </Routes>
     </BrowserRouter>

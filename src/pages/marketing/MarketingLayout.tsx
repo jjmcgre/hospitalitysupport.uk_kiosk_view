@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { ArrowLeft, Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen } from 'lucide-react';
+import { ArrowLeft, Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files } from 'lucide-react';
 
 const navItems = [
   { to: '/marketing', label: 'Overview', icon: LayoutDashboard, end: true },
@@ -12,6 +12,8 @@ const navItems = [
   { to: '/marketing/sales', label: 'Sales & Talking Points', icon: MessageSquare },
   { to: '/marketing/brand', label: 'Brand & Positioning', icon: Palette },
   { to: '/marketing/brochure', label: 'Brochure / Sales Deck', icon: BookOpen },
+  { to: '/marketing/print-1', label: '1-Pager (Print)', icon: FileText },
+  { to: '/marketing/print-5', label: '5-Pager (Print)', icon: Files },
 ];
 
 export default function MarketingLayout() {
