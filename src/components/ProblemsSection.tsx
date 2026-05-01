@@ -1,86 +1,173 @@
-import { Brain, Zap, Truck, TrendingUp, ShieldCheck, Building2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
 
-const pillars = [
-  {
-    icon: Brain,
-    number: '01',
-    title: 'The Brain — Built by Operators',
-    description: 'Months of development by people who have run kitchens and managed supply chains. It understands "60g flat fish fillet skin-off" differently from "frozen fish block." It learns your preferences and gets smarter every day.',
-    tag: 'Proprietary Intelligence',
-  },
-  {
-    icon: Zap,
-    number: '02',
-    title: 'Live From Day One',
-    description: 'Onboard in 5 minutes. Upload your existing recipes, supplier lists, and staff data. Legacy data ingested, structured, and activated within minutes — not a 6-week implementation project.',
-    tag: 'Speed to Value',
-  },
-  {
-    icon: Truck,
-    number: '03',
-    title: 'Suppliers Manage Themselves',
-    description: 'Suppliers get their own portal. They update their own pricing, upload their own compliance docs, manage their own promotions. You stay in control without doing their admin.',
-    tag: 'Supplier Ecosystem',
-  },
-  {
-    icon: TrendingUp,
-    number: '04',
-    title: 'Live Recipe Costing',
-    description: 'When ingredient prices change, every dish recalculates instantly. No stale margins. No surprises. You always know your true food cost — in real time, every time.',
-    tag: 'Financial Intelligence',
-  },
-  {
-    icon: ShieldCheck,
-    number: '05',
-    title: 'Compliance Without Clipboards',
-    description: 'Allergen briefings, HACCP, training, task evidence — all timestamped, signed, and audit-ready. One-click reports for inspections. Natasha\'s Law handled automatically.',
-    tag: 'Compliance',
-  },
-  {
-    icon: Building2,
-    number: '06',
-    title: 'Multi-Site Command Centre',
-    description: 'One dashboard for every location. Centralised buying power with local control. See who is compliant, who is wasting money, and who needs attention — instantly.',
-    tag: 'Multi-Site',
-  },
+const dishes = [
+  { name: 'Pan-Seared Salmon', gp: 71, cost: '£4.20', sell: '£14.50', trend: 'up', delta: '+0.30' },
+  { name: 'Beef Burger & Fries', gp: 68, cost: '£3.85', sell: '£12.00', trend: 'stable', delta: '—' },
+  { name: 'Mushroom Risotto', gp: 74, cost: '£2.95', sell: '£11.50', trend: 'down', delta: '-0.15' },
+  { name: 'Caesar Salad', gp: 76, cost: '£2.40', sell: '£10.00', trend: 'stable', delta: '—' },
 ];
+
+const tasks = [
+  { before: 'Phone your fish supplier for today\'s price', after: 'Price updates automatically overnight' },
+  { before: 'Open a spreadsheet to recost the salmon dish', after: 'Every dish recosted the moment a price changes' },
+  { before: 'Manually recalculate your GP', after: 'Live GP on every dish, always current' },
+  { before: 'Email allergen info to front of house', after: 'Allergen matrix generated from ingredients' },
+  { before: 'Print new menus after a price change', after: 'Digital menus reflect changes instantly' },
+  { before: 'Chase a supplier for their latest catalogue', after: 'Supplier updates their own portal — you just see it' },
+];
+
+function GpBar({ gp, trend }: { gp: number; trend: string }) {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => setWidth(gp), 200);
+    return () => clearTimeout(t);
+  }, [gp]);
+
+  const colour = gp >= 70 ? '#2dd4bf' : gp >= 60 ? '#f59e0b' : '#ef4444';
+  return (
+    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden w-full">
+      <div
+        className="h-full rounded-full transition-all duration-1000 ease-out"
+        style={{ width: `${width}%`, background: colour }}
+      />
+    </div>
+  );
+}
 
 export default function ProblemsSection() {
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-white px-4">
-      <div className="container mx-auto">
-        <div className="max-w-6xl mx-auto">
+    <>
+      {/* SECTION 1 — Live price dashboard visual */}
+      <section className="py-20 md:py-28 bg-[#080f1a] px-4 border-t border-white/5">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+
+            {/* Left — copy */}
+            <div>
+              <div className="inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-6">
+                Live Price Intelligence
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-black leading-tight tracking-tight mb-6 text-white">
+                Your suppliers change prices.<br />
+                <span className="text-teal-400">Your dishes recost themselves.</span>
+              </h2>
+              <p className="text-slate-400 text-lg leading-relaxed mb-8">
+                We connect directly with your existing suppliers. The moment a price moves — chicken up 8p, salmon down 12p — every linked dish recalculates instantly. Your GP is always live. No spreadsheets. No surprises.
+              </p>
+              <div className="space-y-4">
+                {[
+                  'Connect existing suppliers in one click',
+                  'Sub-second price propagation across all recipes',
+                  'Margin alerts before it hits your invoice',
+                  'Supplier manages their own pricing — you just see the result',
+                ].map((pt) => (
+                  <div key={pt} className="flex items-center gap-3">
+                    <span className="w-5 h-5 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center flex-shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                    </span>
+                    <span className="text-slate-300 text-sm">{pt}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right — mock live dashboard */}
+            <div className="bg-slate-900/80 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+              {/* Dashboard header */}
+              <div className="bg-slate-950/80 px-5 py-3.5 flex items-center justify-between border-b border-white/8">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
+                </div>
+                <span className="text-slate-500 text-xs font-mono">live recipe costing</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                  <span className="text-teal-400 text-xs font-semibold">LIVE</span>
+                </div>
+              </div>
+
+              {/* Column headers */}
+              <div className="px-5 pt-4 pb-2 grid grid-cols-4 gap-2">
+                {['Dish', 'Cost', 'GP %', 'Movement'].map((h) => (
+                  <div key={h} className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">{h}</div>
+                ))}
+              </div>
+
+              {/* Rows */}
+              <div className="px-5 pb-5 space-y-3">
+                {dishes.map((d) => (
+                  <div key={d.name} className="bg-white/4 border border-white/6 rounded-2xl p-3.5">
+                    <div className="grid grid-cols-4 gap-2 items-center mb-2.5">
+                      <div className="text-xs font-semibold text-white leading-tight col-span-1 truncate">{d.name}</div>
+                      <div className="text-xs text-slate-400 font-mono">{d.cost}</div>
+                      <div className="text-xs font-black" style={{ color: d.gp >= 70 ? '#2dd4bf' : '#f59e0b' }}>{d.gp}%</div>
+                      <div className={`flex items-center gap-1 text-xs font-semibold ${
+                        d.trend === 'up' ? 'text-red-400' : d.trend === 'down' ? 'text-teal-400' : 'text-slate-500'
+                      }`}>
+                        {d.trend === 'up' && <TrendingUp size={11} />}
+                        {d.trend === 'down' && <TrendingDown size={11} />}
+                        {d.trend === 'stable' && <Minus size={11} />}
+                        <span>{d.delta}</span>
+                      </div>
+                    </div>
+                    <GpBar gp={d.gp} trend={d.trend} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer note */}
+              <div className="border-t border-white/5 px-5 py-3 flex items-center justify-between">
+                <span className="text-slate-600 text-[10px]">Prices last synced: just now</span>
+                <span className="text-teal-500 text-[10px] font-semibold">4 suppliers connected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2 — Before / After task list */}
+      <section className="py-20 md:py-28 bg-slate-950 px-4 border-t border-white/5">
+        <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-14">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 tracking-tight mb-4">
-              One platform.<br className="hidden sm:block" /> Six ways it changes everything.
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+              The work it takes<br />
+              <span className="text-red-400">off your plate.</span>
             </h2>
-            <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              Every feature built by operators who lived the problem before they solved it.
+            <p className="text-slate-400 text-lg max-w-xl mx-auto">
+              Every row below is something you used to do manually. You don't any more.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {pillars.map((p) => (
+          <div className="space-y-2">
+            {/* Header row */}
+            <div className="grid grid-cols-2 gap-4 px-5 pb-2">
+              <div className="text-xs font-bold text-red-400/70 uppercase tracking-widest">Before</div>
+              <div className="text-xs font-bold text-teal-400/70 uppercase tracking-widest">Now</div>
+            </div>
+            {tasks.map((t, i) => (
               <div
-                key={p.number}
-                className="bg-gray-50 border border-gray-200 rounded-3xl p-7 hover:border-teal-400 hover:shadow-lg transition-all duration-300 group"
+                key={i}
+                className="grid grid-cols-2 gap-4 bg-white/3 border border-white/6 rounded-2xl p-4 sm:p-5 group hover:border-teal-500/20 transition-colors"
               >
-                <div className="flex items-start justify-between mb-5">
-                  <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center shadow-md group-hover:bg-teal-600 transition-colors">
-                    <p.icon size={22} className="text-white" />
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
                   </div>
-                  <span className="text-xs font-black text-teal-600 bg-teal-50 border border-teal-100 rounded-full px-2.5 py-1 uppercase tracking-wide">
-                    {p.tag}
-                  </span>
+                  <span className="text-slate-400 text-sm leading-snug line-through decoration-red-400/50">{t.before}</span>
                 </div>
-                <div className="text-[11px] font-black text-slate-400 mb-1 tracking-widest uppercase">{p.number}</div>
-                <h3 className="text-lg font-black text-gray-900 mb-3 leading-tight">{p.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{p.description}</p>
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                  </div>
+                  <span className="text-white text-sm leading-snug font-medium">{t.after}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -1,57 +1,88 @@
-import { Check } from 'lucide-react';
-
-const benefits = [
-  "Chefs cook instead of managing spreadsheets",
-  "Owners see problems before they cost money",
-  "Juniors deliver consistency without constant supervision",
-  "Businesses stop relying on one exhausted 'hero'"
-];
-
-const capabilities = [
-  "Protect GP without daily attention",
-  "Maintain standards in lower-skill environments",
-  "Scale without losing control",
-  "Reduce burnout and turnover"
-];
-
 export default function BenefitsSection() {
+  const frees = [
+    {
+      hours: '6 hrs',
+      label: 'saved per week',
+      task: 'Not chasing supplier prices',
+      colour: 'from-teal-600 to-teal-500',
+    },
+    {
+      hours: '0',
+      label: 'allergen errors',
+      task: 'Auto-generated from ingredients',
+      colour: 'from-sky-600 to-sky-500',
+    },
+    {
+      hours: 'Always',
+      label: 'live GP',
+      task: 'No more end-of-month surprises',
+      colour: 'from-emerald-600 to-emerald-500',
+    },
+    {
+      hours: '5 min',
+      label: 'to go live',
+      task: 'Upload. Connect. Done.',
+      colour: 'from-teal-700 to-teal-500',
+    },
+  ];
+
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-black px-4">
-      <div className="container mx-auto">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-center mb-6 md:mb-8 text-white tracking-tight">
-            Why would I use it?
+    <section className="py-20 md:py-28 bg-slate-950 px-4 border-t border-white/5">
+      <div className="container mx-auto max-w-5xl">
+
+        {/* Big payoff line */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight mb-6">
+            <span className="text-slate-400">It does the heavy lifting.</span><br />
+            <span className="text-white">So you can cook.</span>
           </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-center text-gray-300 mb-12 md:mb-16 lg:mb-20 max-w-3xl mx-auto leading-relaxed">
-            Because it removes work you shouldn't be doing.
+          <p className="text-slate-400 text-lg max-w-lg mx-auto">
+            Every hour you spend on admin is an hour not spent on food, guests, and growing your business.
           </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-16 lg:mb-20">
-            <div className="bg-gradient-to-br from-teal-900/50 via-teal-800/30 to-slate-900/50 border-2 border-teal-700/50 rounded-3xl p-6 md:p-10 shadow-xl hover:shadow-2xl transition-shadow duration-300">
-              <h3 className="text-2xl sm:text-3xl font-bold mb-6 md:mb-8 text-white">What changes</h3>
-              <ul className="space-y-4 md:space-y-5">
-                {benefits.map((benefit, idx) => (
-                  <li key={idx} className="flex items-start gap-3 md:gap-4">
-                    <Check size={24} className="text-teal-400 flex-shrink-0 mt-1 md:w-7 md:h-7" />
-                    <span className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-gradient-to-br from-teal-900/50 via-teal-800/30 to-slate-900/50 border-2 border-teal-700/50 rounded-3xl p-6 md:p-10 shadow-xl hover:shadow-2xl transition-shadow duration-300">
-              <h3 className="text-2xl sm:text-3xl font-bold mb-6 md:mb-8 text-white">It allows you to</h3>
-              <ul className="space-y-4 md:space-y-5">
-                {capabilities.map((capability, idx) => (
-                  <li key={idx} className="flex items-start gap-3 md:gap-4">
-                    <Check size={24} className="text-teal-400 flex-shrink-0 mt-1 md:w-7 md:h-7" />
-                    <span className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed">{capability}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </div>
+
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+          {frees.map((f) => (
+            <div key={f.label} className={`bg-gradient-to-br ${f.colour} rounded-3xl p-6 text-center`}>
+              <div className="text-3xl sm:text-4xl font-black text-white mb-1 leading-none">{f.hours}</div>
+              <div className="text-white/70 text-xs font-bold uppercase tracking-wider mb-3">{f.label}</div>
+              <div className="text-white/60 text-xs leading-snug">{f.task}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* The three role outcomes */}
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            {
+              role: 'Head Chef',
+              icon: '👨‍🍳',
+              old: 'Rebuilding costings every time a price changes',
+              now: 'Every dish recosted automatically. You just cook.',
+            },
+            {
+              role: 'Owner / Operator',
+              icon: '📊',
+              old: 'End-of-month surprises when margins have eroded',
+              now: 'Live GP on every dish. You see problems before they cost you.',
+            },
+            {
+              role: 'Multi-site Group',
+              icon: '🏢',
+              old: 'Calling each site to check compliance and spend',
+              now: 'One dashboard shows every site\'s status in real time.',
+            },
+          ].map((r) => (
+            <div key={r.role} className="bg-white/4 border border-white/8 rounded-3xl p-6 hover:border-teal-500/25 transition-colors">
+              <div className="text-3xl mb-3">{r.icon}</div>
+              <div className="text-teal-400 text-xs font-bold uppercase tracking-widest mb-4">{r.role}</div>
+              <div className="text-slate-500 text-xs line-through decoration-red-400/50 mb-3 leading-snug">{r.old}</div>
+              <div className="text-white text-sm font-semibold leading-snug">{r.now}</div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );

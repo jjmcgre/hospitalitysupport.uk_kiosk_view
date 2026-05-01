@@ -1,70 +1,71 @@
-import { Wrench, Users } from 'lucide-react';
-
 export default function DifferenceSection() {
+  const pillars = [
+    {
+      icon: '🧠',
+      title: 'The Brain',
+      sub: 'Understands food, not just data',
+      body: '"60g flat fish fillet skin-off" is not the same as "frozen fish block." It knows the difference — and prices them correctly.',
+    },
+    {
+      icon: '⚡',
+      title: 'Live in 5 minutes',
+      sub: 'Your data, not ours',
+      body: 'Upload your existing recipes, supplier lists, staff records. Ingested and live in minutes. No 6-week implementation. No consultants.',
+    },
+    {
+      icon: '🔗',
+      title: 'Supplier-connected',
+      sub: 'They update. You benefit.',
+      body: 'Suppliers get their own portal. They manage their own pricing and catalogues. You always have live, accurate data without lifting a finger.',
+    },
+    {
+      icon: '📋',
+      title: 'Compliance on autopilot',
+      sub: 'Audit-ready every day',
+      body: 'Allergen matrices, HACCP, training logs, and pre-service briefings — all timestamped and signed. One click for inspection reports.',
+    },
+    {
+      icon: '📍',
+      title: 'Multi-site command',
+      sub: 'One view, every location',
+      body: 'See which sites are compliant, which are overspending, and who needs attention — across your entire estate, in one dashboard.',
+    },
+    {
+      icon: '🛡️',
+      title: 'Built by operators',
+      sub: 'Not a boardroom product',
+      body: 'Every feature was built by people who ran kitchens and managed supply chains. If it didn\'t solve a real problem, it didn\'t get built.',
+    },
+  ];
+
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-white px-4">
-      <div className="container mx-auto">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-center mb-12 md:mb-16 lg:mb-20 text-gray-900 tracking-tight">
-            Why is it different from everything else?
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-3xl p-6 md:p-10 shadow-2xl">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-6 md:mb-8">
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Wrench size={24} className="text-white md:w-7 md:h-7" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold">Most hospitality systems are tools</h3>
-              </div>
-
-              <p className="text-gray-200 mb-4 md:mb-6 text-base md:text-lg">They assume:</p>
-              <div className="space-y-4 md:space-y-5">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold text-base md:text-lg">Trained users</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold text-base md:text-lg">Discipline</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold text-base md:text-lg">Structure</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold text-base md:text-lg">Someone remembering to keep things updated</p>
-                </div>
-              </div>
-
-              <p className="text-gray-300 italic mt-6 md:mt-8 text-base md:text-lg border-l-4 border-white/30 pl-4 md:pl-6">That's not the reality of hospitality.</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white rounded-3xl p-6 md:p-10 shadow-2xl">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-6 md:mb-8">
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Users size={24} className="text-white md:w-7 md:h-7" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold">HospitalitySupport.uk behaves like a team member</h3>
-              </div>
-
-              <p className="text-teal-100 mb-6 md:mb-8 text-base md:text-lg font-semibold">Not a tool.</p>
-
-              <div className="space-y-4 md:space-y-5">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold mb-2 text-base md:text-lg">You don't build your business around it.</p>
-                  <p className="text-teal-100 text-sm md:text-base">It builds itself around you.</p>
-                </div>
-
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold mb-2 text-base md:text-lg">You don't configure it.</p>
-                  <p className="text-teal-100 text-sm md:text-base">You just tell it what you need.</p>
-                </div>
-
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
-                  <p className="font-bold mb-2 text-base md:text-lg">You don't manage it.</p>
-                  <p className="text-teal-100 text-sm md:text-base">It manages the work for you.</p>
-                </div>
-              </div>
-            </div>
+    <section className="py-20 md:py-28 bg-[#080f1a] px-4 border-t border-white/5">
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center mb-14">
+          <div className="inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-5">
+            Why it's different
           </div>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+            Built to do the work.<br />
+            <span className="text-teal-400">Not to be managed.</span>
+          </h2>
+          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+            Most platforms need you to keep them updated. This one keeps itself updated — and keeps you protected.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pillars.map((p) => (
+            <div
+              key={p.title}
+              className="group bg-slate-900/60 border border-white/8 rounded-3xl p-7 hover:border-teal-500/30 hover:bg-slate-900 transition-all duration-300 hover:shadow-xl hover:shadow-teal-900/20"
+            >
+              <div className="text-3xl mb-4">{p.icon}</div>
+              <div className="text-white font-black text-lg mb-1 leading-tight">{p.title}</div>
+              <div className="text-teal-400 text-xs font-bold uppercase tracking-wider mb-3">{p.sub}</div>
+              <p className="text-slate-400 text-sm leading-relaxed">{p.body}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
