@@ -54,139 +54,186 @@ function MockWindow({ title, live, children }: { title: string; live?: boolean; 
    Centre: Menu Development → branches to every capability area
 ─────────────────────────────────────────────────────────────────────────── */
 
-// SVG mind map — fixed coordinates calculated for A4 width ~595px content area
-// Centre node at (297, 200). 8 branches radiate outward with sub-nodes.
+// SVG mind map
+// Viewbox 760 × 560 — gives plenty of breathing room for 8 branches + sub-pills
+// Centre node at (380, 280). Branches at 130px radius, sub-pills at 90px beyond that.
 function MindMap() {
-  const cx = 297;
-  const cy = 198;
+  const cx = 380;
+  const cy = 278;
+  const branchR = 130;   // core → branch node centre
+  const subDist = 95;    // branch node centre → sub-pill centre
+  const nodeR = 34;      // branch circle radius
+  const coreR = 52;      // core circle radius
 
-  // Branch definitions: angle in degrees, colour, label, sub-items
   const branches = [
     {
-      angle: -90, colour: '#0d9488', label: 'Recipe & Spec',
-      subs: ['Full recipe', 'Portions & method', 'Mise en place', 'Batch notes'],
+      angle: -90,
+      colour: '#0d9488',
+      label: ['Recipe', '& Spec'],
+      subs: [
+        { text: 'Full recipe & method', w: 82 },
+        { text: 'Portions & mise en place', w: 96 },
+        { text: 'Batch & scaling notes', w: 84 },
+      ],
     },
     {
-      angle: -45, colour: '#0284c7', label: 'Cost & GP',
-      subs: ['Live ingredient costs', 'GP calculation', 'Sell price guidance', 'Margin alerts'],
+      angle: -38,
+      colour: '#0284c7',
+      label: ['Cost', '& GP'],
+      subs: [
+        { text: 'Live ingredient costs', w: 78 },
+        { text: 'GP calculation', w: 62 },
+        { text: 'Sell-price guidance', w: 76 },
+      ],
     },
     {
-      angle: 0, colour: '#7c3aed', label: 'Supplier Pricing',
-      subs: ['Live price tracking', 'Auto-recost on change', 'Invoice scanning', 'B2B messaging'],
+      angle: 14,
+      colour: '#7c3aed',
+      label: ['Supplier', 'Pricing'],
+      subs: [
+        { text: 'Auto-recost on change', w: 86 },
+        { text: 'Invoice scanning', w: 68 },
+        { text: 'Supplier messaging', w: 74 },
+      ],
     },
     {
-      angle: 45, colour: '#dc2626', label: 'Allergens',
-      subs: ['14 allergens auto-generated', 'Natasha\'s Law', 'Matrix per dish', 'Auto-updates'],
+      angle: 65,
+      colour: '#dc2626',
+      label: ['Allergens', '& Nutrition'],
+      subs: [
+        { text: '14 allergens auto-gen.', w: 84 },
+        { text: "Natasha's Law compliant", w: 92 },
+        { text: 'Nutrition per portion', w: 80 },
+      ],
     },
     {
-      angle: 90, colour: '#d97706', label: 'HACCP & Safety',
-      subs: ['CCPs per dish', 'Critical limits', 'Corrective actions', 'Inspection reports'],
+      angle: 115,
+      colour: '#d97706',
+      label: ['HACCP', '& Safety'],
+      subs: [
+        { text: 'CCPs per dish', w: 60 },
+        { text: 'Critical limits', w: 62 },
+        { text: 'Corrective actions', w: 72 },
+      ],
     },
     {
-      angle: 135, colour: '#059669', label: 'Training',
-      subs: ['Generated from your ops', 'Cert tracking', 'Auto-updates on change', 'Onboarding'],
+      angle: 166,
+      colour: '#059669',
+      label: ['Training'],
+      subs: [
+        { text: 'Generated from your ops', w: 90 },
+        { text: 'Cert expiry tracking', w: 76 },
+        { text: 'Auto-updates on change', w: 88 },
+      ],
     },
     {
-      angle: 180, colour: '#0891b2', label: 'Front of House',
-      subs: ['Live menu knowledge', 'Allergen answers', 'Dish descriptions', 'Wine pairings'],
+      angle: -167,
+      colour: '#0891b2',
+      label: ['Front of', 'House'],
+      subs: [
+        { text: 'Live menu knowledge', w: 78 },
+        { text: 'Allergen answers FOH', w: 82 },
+        { text: 'Dish descriptions & pairings', w: 104 },
+      ],
     },
     {
-      angle: -135, colour: '#9333ea', label: 'Compliance',
-      subs: ['Evidence as it happens', 'Signed briefings', 'Temp logs', 'One-click reports'],
+      angle: -141,
+      colour: '#9333ea',
+      label: ['Compliance'],
+      subs: [
+        { text: 'Evidence as it happens', w: 86 },
+        { text: 'Signed briefings', w: 68 },
+        { text: 'One-click FSA reports', w: 82 },
+      ],
     },
   ];
 
   const toRad = (deg: number) => (deg * Math.PI) / 180;
-
-  // Branch node centre distance from core
-  const branchR = 92;
-  // Sub-node distance beyond branch node
-  const subR = 52;
+  const PH = 16; // pill half-height
 
   return (
-    <svg
-      viewBox="0 0 594 430"
-      style={{ width: '100%', display: 'block' }}
-    >
+    <svg viewBox="0 0 760 556" style={{ width: '100%', display: 'block' }}>
       <defs>
         <radialGradient id="core-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.35" />
+          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.25" />
           <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* Background glow */}
-      <ellipse cx={cx} cy={cy} rx={110} ry={110} fill="url(#core-glow)" />
+      <ellipse cx={cx} cy={cy} rx={145} ry={145} fill="url(#core-glow)" />
 
       {branches.map((b) => {
         const rad = toRad(b.angle);
         const bx = cx + branchR * Math.cos(rad);
         const by = cy + branchR * Math.sin(rad);
 
-        // midpoint for curve control
-        const mpx = (cx + bx) / 2;
-        const mpy = (cy + by) / 2;
-
         return (
-          <g key={b.label}>
-            {/* Main branch line */}
-            <path
-              d={`M ${cx} ${cy} Q ${mpx} ${mpy} ${bx} ${by}`}
-              stroke={b.colour}
-              strokeWidth="1.8"
-              fill="none"
-              strokeOpacity="0.7"
+          <g key={b.label.join('')}>
+            {/* Connector line */}
+            <line
+              x1={cx + coreR * Math.cos(rad)}
+              y1={cy + coreR * Math.sin(rad)}
+              x2={bx - nodeR * Math.cos(rad)}
+              y2={by - nodeR * Math.sin(rad)}
+              stroke={b.colour} strokeWidth="1.8" strokeOpacity="0.55"
             />
 
-            {/* Branch node circle */}
-            <circle cx={bx} cy={by} r={28} fill={DARK} stroke={b.colour} strokeWidth="1.5" />
-            <circle cx={bx} cy={by} r={26} fill={MID} />
+            {/* Branch circle */}
+            <circle cx={bx} cy={by} r={nodeR + 2} fill={DARK} stroke={b.colour} strokeWidth="1.6" />
+            <circle cx={bx} cy={by} r={nodeR} fill={MID} />
 
-            {/* Branch label — split to 2 lines max */}
-            {b.label.split(' ').length <= 2 ? (
-              <>
-                <text x={bx} y={by - 3} textAnchor="middle" fill={b.colour} fontSize="7.5" fontWeight="800" fontFamily="Inter, system-ui, sans-serif">{b.label.split(' ')[0]}</text>
-                <text x={bx} y={by + 7} textAnchor="middle" fill={b.colour} fontSize="7.5" fontWeight="800" fontFamily="Inter, system-ui, sans-serif">{b.label.split(' ').slice(1).join(' ')}</text>
-              </>
-            ) : (
-              <text x={bx} y={by + 3} textAnchor="middle" fill={b.colour} fontSize="7.5" fontWeight="800" fontFamily="Inter, system-ui, sans-serif">{b.label}</text>
-            )}
+            {/* Branch label */}
+            {b.label.map((line, li) => (
+              <text
+                key={li}
+                x={bx} y={by + (b.label.length === 1 ? 3.5 : li === 0 ? -3.5 : 7.5)}
+                textAnchor="middle"
+                fill={b.colour}
+                fontSize="8.5"
+                fontWeight="800"
+                fontFamily="Inter, system-ui, sans-serif"
+              >
+                {line}
+              </text>
+            ))}
 
-            {/* Sub-nodes */}
+            {/* Sub-pills — spread in a tight fan along the branch direction */}
             {b.subs.map((sub, si) => {
-              // spread sub-nodes in a fan around the branch direction
-              const fanSpread = 36;
-              const fanStart = b.angle - (fanSpread * (b.subs.length - 1)) / 2;
-              const subAngle = fanStart + si * fanSpread;
+              const count = b.subs.length;
+              const fanTotal = 30; // degrees total spread for all subs
+              const fanStep = count > 1 ? fanTotal / (count - 1) : 0;
+              const subAngle = b.angle - fanTotal / 2 + si * fanStep;
               const subRad = toRad(subAngle);
-              const sx = bx + subR * Math.cos(subRad);
-              const sy = by + subR * Math.sin(subRad);
+              const sx = bx + subDist * Math.cos(subRad);
+              const sy = by + subDist * Math.sin(subRad);
+              const hw = sub.w / 2;
 
               return (
-                <g key={sub}>
+                <g key={sub.text}>
                   <line
-                    x1={bx} y1={by} x2={sx} y2={sy}
-                    stroke={b.colour} strokeWidth="1" strokeOpacity="0.35"
-                    strokeDasharray="2,2"
+                    x1={bx + (nodeR + 2) * Math.cos(subRad)}
+                    y1={by + (nodeR + 2) * Math.sin(subRad)}
+                    x2={sx} y2={sy}
+                    stroke={b.colour} strokeWidth="1" strokeOpacity="0.3"
+                    strokeDasharray="3,2"
                   />
-                  {/* Sub pill */}
                   <rect
-                    x={sx - 28} y={sy - 7}
-                    width={56} height={14}
-                    rx={7}
+                    x={sx - hw} y={sy - PH}
+                    width={sub.w} height={PH * 2}
+                    rx={PH}
                     fill={DARK}
                     stroke={b.colour}
-                    strokeWidth="0.8"
-                    strokeOpacity="0.4"
+                    strokeWidth="0.9"
+                    strokeOpacity="0.45"
                   />
                   <text
-                    x={sx} y={sy + 3.5}
+                    x={sx} y={sy + 4}
                     textAnchor="middle"
                     fill="#94a3b8"
-                    fontSize="5.8"
+                    fontSize="6.8"
                     fontFamily="Inter, system-ui, sans-serif"
                   >
-                    {sub}
+                    {sub.text}
                   </text>
                 </g>
               );
@@ -195,12 +242,12 @@ function MindMap() {
         );
       })}
 
-      {/* Core node — on top of everything */}
-      <circle cx={cx} cy={cy} r={42} fill={DARK} stroke={T} strokeWidth="2.5" />
-      <circle cx={cx} cy={cy} r={39} fill={MID} />
-      <text x={cx} y={cy - 9} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Menu</text>
-      <text x={cx} y={cy + 2} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Development</text>
-      <text x={cx} y={cy + 13} textAnchor="middle" fill="#2dd4bf" fontSize="7" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">· everything starts here ·</text>
+      {/* Core node — rendered last so it sits on top */}
+      <circle cx={cx} cy={cy} r={coreR + 3} fill={DARK} stroke={T} strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r={coreR} fill={MID} />
+      <text x={cx} y={cy - 10} textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Menu</text>
+      <text x={cx} y={cy + 4}  textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Development</text>
+      <text x={cx} y={cy + 17} textAnchor="middle" fill="#2dd4bf" fontSize="7.5" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">· everything starts here ·</text>
     </svg>
   );
 }
@@ -208,60 +255,60 @@ function MindMap() {
 function Page1() {
   return (
     <Page n={1}>
-      <div style={{ background: MID, flex: 1, padding: '16px 28px 14px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -60, right: -60, width: 300, height: 300, background: 'radial-gradient(circle, rgba(13,148,136,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ background: MID, flex: 1, padding: '12px 24px 10px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 300, height: 300, background: 'radial-gradient(circle, rgba(13,148,136,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-          <div>
+        {/* Compact header row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, gap: 16 }}>
+          <div style={{ flex: 1 }}>
             <Badge text="The operating platform for modern hospitality" />
-            <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '0 0 6px', maxWidth: 340 }}>
-              Every area of your operation.<br />
+            <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '2px 0 4px' }}>
+              Every area of your operation.{' '}
               <span style={{ color: '#2dd4bf' }}>All connected. Always live.</span>
             </h1>
-            <p style={{ color: '#64748b', fontSize: 10, lineHeight: 1.55, maxWidth: 340, margin: 0 }}>
-              It starts with menu development — and branches into every part of your business. One platform, built around how hospitality actually works.
+            <p style={{ color: '#64748b', fontSize: 9.5, lineHeight: 1.5, margin: 0, maxWidth: 480 }}>
+              It starts with menu development — and branches into every part of your business. One platform. No spreadsheets. No separate systems.
             </p>
           </div>
-
-          {/* Three problems — right side */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 5, width: 155, flexShrink: 0 }}>
-            <div style={{ fontSize: 7.5, fontWeight: 800, color: '#475569', textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 1 }}>The three root problems</div>
-            {[
-              { prob: 'People', col: '#f87171', desc: 'Skills eroding. Turnover constant.' },
-              { prob: 'Process', col: '#fbbf24', desc: 'Compliance reactive. Evidence missing.' },
-              { prob: 'Profit', col: '#34d399', desc: 'Margins bleeding. Caught too late.' },
-            ].map(p => (
-              <div key={p.prob} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${p.col}30`, borderRadius: 7, padding: '6px 9px', display: 'flex', gap: 7, alignItems: 'flex-start' }}>
-                <div style={{ color: p.col, fontSize: 8.5, fontWeight: 900, width: 42, flexShrink: 0 }}>{p.prob}</div>
-                <div style={{ color: '#64748b', fontSize: 8, lineHeight: 1.4 }}>{p.desc}</div>
-              </div>
-            ))}
+          {/* Price badge */}
+          <div style={{ background: T, borderRadius: 9, padding: '9px 14px', textAlign: 'center' as const, flexShrink: 0 }}>
+            <div style={{ color: '#fff', fontSize: 18, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 8, marginTop: 2 }}>per kitchen / day</div>
           </div>
         </div>
 
-        {/* Mind map */}
-        <div style={{ flex: 1, position: 'relative', margin: '0 -4px' }}>
+        {/* Three problems — tight horizontal strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 6 }}>
+          {[
+            { prob: 'People', col: '#f87171', desc: 'Skills eroding. Turnover constant. Standards rely on one or two people.' },
+            { prob: 'Process', col: '#fbbf24', desc: 'Compliance reactive. Evidence missing until you need it.' },
+            { prob: 'Profit', col: '#34d399', desc: 'Margins bleeding slowly. Supplier prices creep. Caught too late.' },
+          ].map(p => (
+            <div key={p.prob} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${p.col}28`, borderRadius: 7, padding: '6px 10px', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+              <div style={{ color: p.col, fontSize: 9, fontWeight: 900, flexShrink: 0, marginTop: 1 }}>{p.prob}</div>
+              <div style={{ color: '#475569', fontSize: 8, lineHeight: 1.4 }}>{p.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mind map — takes all remaining space */}
+        <div style={{ flex: 1, minHeight: 0 }}>
           <MindMap />
         </div>
 
-        {/* Footer stats + price */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr) auto', gap: 6, marginTop: 6 }}>
+        {/* Stats strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5, marginTop: 4 }}>
           {[
             { val: '3 min', label: 'Concept → live dish' },
             { val: '14', label: 'Allergens tracked' },
             { val: '5 min', label: 'Overall go-live' },
             { val: '0', label: 'Spreadsheets needed' },
           ].map(s => (
-            <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '7px 6px', textAlign: 'center' as const }}>
-              <div style={{ color: '#2dd4bf', fontSize: 14, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+            <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6, padding: '5px 6px', textAlign: 'center' as const }}>
+              <div style={{ color: '#2dd4bf', fontSize: 13, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
               <div style={{ color: '#475569', fontSize: 7, marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
-          <div style={{ background: T, borderRadius: 7, padding: '7px 12px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center', textAlign: 'center' as const }}>
-            <div style={{ color: '#fff', fontSize: 16, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 7.5, marginTop: 2 }}>per day</div>
-          </div>
         </div>
       </div>
     </Page>
