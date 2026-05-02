@@ -23,20 +23,21 @@ const CAL_LINK = 'james-mcgregor-6cvfzq/30mins';
 
 type Step = 'details' | 'cal' | 'confirmed';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const Cal: any;
+
 export default function BookingModal() {
   const { isOpen, closeBooking } = useBooking();
   const [form, setForm] = useState<FormData>(EMPTY);
   const [step, setStep] = useState<Step>('details');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [calLoaded, setCalLoaded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
       setForm(EMPTY);
       setStep('details');
       setError('');
-      setCalLoaded(false);
     }
   }, [isOpen]);
 
@@ -49,35 +50,94 @@ export default function BookingModal() {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Listen for Cal.com booking success posted from the iframe
+  // Inject Cal.com script and init inline embed when on the cal step
   useEffect(() => {
-    function handleMessage(e: MessageEvent) {
-      if (typeof e.data !== 'object' || !e.data) return;
-      const action = e.data?.type ?? e.data?.action;
-      if (action === 'bookingSuccessful' || action === '__bookingSuccessful') {
-        saveBooking();
-      }
+    if (step !== 'cal') return;
+
+    function initCal() {
+      Cal('init', { origin: 'https://cal.com' });
+      Cal('inline', {
+        elementOrSelector: '#cal-inline-embed',
+        calLink: CAL_LINK,
+        config: {
+          name: form.name,
+          email: form.email,
+          notes: [
+            form.phone && `Phone: ${form.phone}`,
+            `Business: ${form.business_name}`,
+            `Sites: ${form.num_sites}`,
+            form.message && `Message: ${form.message}`,
+          ].filter(Boolean).join('\n'),
+        },
+      });
+      Cal('ui', {
+        styles: { branding: { brandColor: '#14b8a6' } },
+        hideEventTypeDetails: false,
+        layout: 'month_view',
+      });
+      Cal('on', {
+        action: 'bookingSuccessful',
+        callback: () => saveBooking(),
+      });
     }
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+
+    // If already loaded from a previous open, just init
+    if (typeof Cal !== 'undefined') {
+      initCal();
+      return;
+    }
+
+    // Bootstrap snippet from cal.com docs
+    (function (C: Window & typeof globalThis, A: string, L: string) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const w = C as any;
+      const p = function (a: IArguments | unknown[], ar: IArguments | unknown[]) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (a as any).q.push(ar);
+      };
+      const d = document;
+      w.Cal =
+        w.Cal ||
+        function () {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const cal = w.Cal as any;
+          const ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {};
+            cal.q = cal.q || [];
+            const s = d.createElement('script');
+            s.src = A;
+            s.async = true;
+            s.onload = initCal;
+            d.head.appendChild(s);
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            return;
+          }
+          p(cal, ar);
+        };
+    })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+    // Trigger the script load
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).Cal('init', { origin: 'https://cal.com' });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
+  }, [step]);
 
   async function saveBooking() {
     setSubmitting(true);
-    const { error: dbError } = await supabase
-      .from('demo_bookings')
-      .insert([{
-        id: crypto.randomUUID(),
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        business_name: form.business_name.trim(),
-        num_sites: form.num_sites,
-        message: form.message.trim(),
-      }]);
+    await supabase.from('demo_bookings').insert([{
+      id: crypto.randomUUID(),
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      business_name: form.business_name.trim(),
+      num_sites: form.num_sites,
+      message: form.message.trim(),
+    }]);
     setSubmitting(false);
-    if (!dbError) setStep('confirmed');
+    setStep('confirmed');
   }
 
   if (!isOpen) return null;
@@ -237,7 +297,7 @@ export default function BookingModal() {
           </form>
         )}
 
-        {/* ── Step 2: Cal.com iframe ── */}
+        {/* ── Step 2: Cal.com inline embed ── */}
         {step === 'cal' && (
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-4 pt-3 pb-1 flex-shrink-0">
@@ -258,28 +318,16 @@ export default function BookingModal() {
               </div>
             )}
 
-            <div className="relative flex-1 min-h-0">
-              {!calLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
-                  <div className="flex flex-col items-center gap-3 text-slate-500">
-                    <Loader2 size={24} className="animate-spin text-teal-400" />
-                    <span className="text-sm">Loading scheduler…</span>
-                  </div>
-                </div>
-              )}
-              <iframe
-                src={`https://cal.com/${CAL_LINK}?embed=true&theme=dark&name=${encodeURIComponent(form.name)}&email=${encodeURIComponent(form.email)}`}
-                className="w-full h-full border-0"
-                style={{ minHeight: '520px' }}
-                onLoad={() => setCalLoaded(true)}
-                title="Book a demo"
-                allow="camera; microphone"
-              />
-            </div>
+            {/* Cal.com mounts the iframe into this div */}
+            <div
+              id="cal-inline-embed"
+              className="flex-1 overflow-y-auto"
+              style={{ minHeight: '520px' }}
+            />
 
             <div className="px-7 py-3 border-t border-white/5 flex-shrink-0">
               <button
-                onClick={() => { setStep('details'); setCalLoaded(false); }}
+                onClick={() => setStep('details')}
                 className="w-full bg-transparent text-slate-500 hover:text-slate-300 text-sm py-1.5 transition-colors"
               >
                 ← Back to your details
