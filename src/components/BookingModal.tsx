@@ -74,14 +74,10 @@ export default function BookingModal() {
       setError('Something went wrong. Please try again or email james@servicesupportgroup.uk');
       return;
     }
+    const params = new URLSearchParams({ name: form.name, email: form.email, a1: form.business_name });
+    window.open(`${CALENDLY_URL}?${params.toString()}`, '_blank', 'noopener,noreferrer');
     setStep('calendar');
   }
-
-  const calendlyParams = new URLSearchParams({
-    name: form.name,
-    email: form.email,
-    a1: form.business_name,
-  });
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -98,12 +94,10 @@ export default function BookingModal() {
         <div className="flex items-center justify-between px-7 py-5 border-b border-white/8 flex-shrink-0">
           <div>
             <div className="text-white font-black text-lg leading-tight">
-              {step === 'form' ? 'Book your 30-minute demo' : 'Pick a time that works'}
+              {step === 'form' ? 'Book your 30-minute demo' : 'Demo requested'}
             </div>
             <div className="text-slate-500 text-xs mt-0.5">
-              {step === 'form'
-                ? 'Your operation. Live. No slides, no sales pitch.'
-                : 'Choose a slot and we\'ll confirm via email.'}
+              {step === 'form' ? 'Live. No slides, no sales pitch.' : 'Check the new tab to pick your slot.'}
             </div>
           </div>
           <button
@@ -268,31 +262,36 @@ export default function BookingModal() {
             </div>
           </form>
         ) : (
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Success banner */}
-            <div className="flex items-center gap-3 px-7 py-4 bg-teal-500/10 border-b border-teal-500/20 flex-shrink-0">
-              <CheckCircle size={18} className="text-teal-400 flex-shrink-0" />
-              <div>
-                <div className="text-teal-300 text-sm font-bold">Details saved — pick your slot below</div>
-                <div className="text-slate-500 text-xs">A confirmation will be sent to {form.email}</div>
+          <div className="flex-1 flex flex-col px-7 py-8 text-center items-center justify-center gap-5">
+            <div className="w-16 h-16 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
+              <CheckCircle size={32} className="text-teal-400" />
+            </div>
+            <div>
+              <div className="text-white font-black text-xl mb-2">You're all set, {form.name.split(' ')[0]}!</div>
+              <div className="text-slate-400 text-sm leading-relaxed max-w-xs mx-auto">
+                Your details have been saved. A booking tab has opened in your browser — pick a slot and you'll get a confirmation straight to <span className="text-teal-400">{form.email}</span>.
               </div>
             </div>
-
-            {/* Calendly embed */}
-            <div className="flex-1 overflow-hidden">
-              <iframe
-                src={`${CALENDLY_URL}?${calendlyParams.toString()}&hide_gdpr_banner=1&background_color=0f172a&text_color=f1f5f9&primary_color=14b8a6`}
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                title="Book a demo"
-                style={{ minHeight: 520 }}
-              />
+            <div className="w-full space-y-2">
+              <button
+                onClick={() => {
+                  const params = new URLSearchParams({ name: form.name, email: form.email, a1: form.business_name });
+                  window.open(`${CALENDLY_URL}?${params.toString()}`, '_blank', 'noopener,noreferrer');
+                }}
+                className="w-full bg-teal-500 hover:bg-teal-400 transition-colors text-white font-black rounded-2xl py-3.5 flex items-center justify-center gap-2"
+              >
+                <Calendar size={16} /> Open booking page again
+              </button>
+              <button
+                onClick={closeBooking}
+                className="w-full bg-white/5 hover:bg-white/10 transition-colors text-slate-400 font-bold rounded-2xl py-3 text-sm"
+              >
+                Close
+              </button>
             </div>
-
-            <div className="px-7 py-4 border-t border-white/5 flex-shrink-0 text-center">
-              <span className="text-slate-600 text-xs">Prefer to talk first? Email </span>
-              <a href="mailto:james@servicesupportgroup.uk" className="text-teal-500 hover:text-teal-400 text-xs transition-colors">
+            <div className="text-slate-600 text-xs">
+              Prefer email?{' '}
+              <a href="mailto:james@servicesupportgroup.uk" className="text-teal-500 hover:text-teal-400 transition-colors">
                 james@servicesupportgroup.uk
               </a>
             </div>
