@@ -48,69 +48,72 @@ export default function BookingModal() {
   }, [isOpen]);
 
   // Inject Cal.com script and init inline embed when on the cal step
+  // Uses setTimeout(0) to ensure the #cal-inline-embed div is in the DOM before Cal tries to find it
   useEffect(() => {
     if (step !== 'cal') return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
 
-    function runEmbed() {
-      // Matches the official snippet exactly, using the "30mins" namespace
-      w.Cal('init', '30mins', { origin: 'https://app.cal.com' });
-      w.Cal.ns['30mins']('inline', {
-        elementOrSelector: '#cal-inline-embed',
-        config: { layout: 'month_view', useSlotsViewOnSmallScreen: 'true' },
-        calLink: CAL_LINK,
-      });
-      w.Cal.ns['30mins']('ui', { hideEventTypeDetails: false, layout: 'month_view' });
-      w.Cal.ns['30mins']('on', {
-        action: 'bookingSuccessful',
-        callback: () => saveBooking(),
-      });
-    }
+    const timer = setTimeout(() => {
+      function runEmbed() {
+        w.Cal('init', '30mins', { origin: 'https://app.cal.com' });
+        w.Cal.ns['30mins']('inline', {
+          elementOrSelector: '#cal-inline-embed',
+          config: { layout: 'month_view', useSlotsViewOnSmallScreen: 'true' },
+          calLink: CAL_LINK,
+        });
+        w.Cal.ns['30mins']('ui', { hideEventTypeDetails: false, layout: 'month_view' });
+        w.Cal.ns['30mins']('on', {
+          action: 'bookingSuccessful',
+          callback: () => saveBooking(),
+        });
+      }
 
-    if (w.Cal && w.Cal.loaded) {
-      runEmbed();
-      return;
-    }
+      if (w.Cal && w.Cal.loaded) {
+        runEmbed();
+        return;
+      }
 
-    // Official Cal.com bootstrap IIFE
-    (function (C: Window & typeof globalThis, A: string, L: string) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ww = C as any;
-      const p = (a: any, ar: any) => a.q.push(ar);
-      const d = C.document;
-      ww.Cal = ww.Cal || function (...args: any[]) {
-        const cal = ww.Cal;
-        if (!cal.loaded) {
-          cal.ns = {};
-          cal.q = cal.q || [];
-          const s = d.createElement('script');
-          s.src = A;
-          s.async = true;
-          s.onload = runEmbed;
-          d.head.appendChild(s);
-          cal.loaded = true;
-        }
-        if (args[0] === L) {
-          const api = (...a: any[]) => p(api, a);
-          const ns = args[1];
-          (api as any).q = (api as any).q || [];
-          if (typeof ns === 'string') {
-            cal.ns[ns] = cal.ns[ns] || api;
-            p(cal.ns[ns], args);
-            p(cal, ['initNamespace', ns]);
-          } else {
-            p(cal, args);
+      // Official Cal.com bootstrap IIFE
+      (function (C: Window & typeof globalThis, A: string, L: string) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ww = C as any;
+        const p = (a: any, ar: any) => a.q.push(ar);
+        const d = C.document;
+        ww.Cal = ww.Cal || function (...args: any[]) {
+          const cal = ww.Cal;
+          if (!cal.loaded) {
+            cal.ns = {};
+            cal.q = cal.q || [];
+            const s = d.createElement('script');
+            s.src = A;
+            s.async = true;
+            s.onload = runEmbed;
+            d.head.appendChild(s);
+            cal.loaded = true;
           }
-          return;
-        }
-        p(cal, args);
-      };
-    })(window, 'https://app.cal.com/embed/embed.js', 'init');
+          if (args[0] === L) {
+            const api = (...a: any[]) => p(api, a);
+            const ns = args[1];
+            (api as any).q = (api as any).q || [];
+            if (typeof ns === 'string') {
+              cal.ns[ns] = cal.ns[ns] || api;
+              p(cal.ns[ns], args);
+              p(cal, ['initNamespace', ns]);
+            } else {
+              p(cal, args);
+            }
+            return;
+          }
+          p(cal, args);
+        };
+      })(window, 'https://app.cal.com/embed/embed.js', 'init');
 
-    // Kick off the script load
-    w.Cal('init', '30mins', { origin: 'https://app.cal.com' });
+      w.Cal('init', '30mins', { origin: 'https://app.cal.com' });
+    }, 0);
+
+    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
