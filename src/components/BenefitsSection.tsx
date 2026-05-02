@@ -1,7 +1,7 @@
 import { ChefHat, User, BarChart3, ArrowRight } from 'lucide-react';
 
 const stats = [
-  { val: 'Weeks', label: 'of admin saved every month', sub: 'Menus, costings, compliance, training — automated' },
+  { val: 'Weeks', label: 'of admin saved every year', sub: 'Menus, costings, compliance, training — automated' },
   { val: '£000s', label: 'in margin protected', sub: 'Price creep caught before it hits your P&L' },
   { val: 'Zero', label: 'allergen errors', sub: 'Auto-generated from ingredients, always current' },
   { val: '5 min', label: 'to go live', sub: 'Upload your data. You\'re operational immediately.' },

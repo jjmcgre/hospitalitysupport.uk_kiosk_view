@@ -62,7 +62,7 @@ export default function DifferenceSection() {
             return (
               <div
                 key={p.title}
-                className="group bg-slate-900/60 border border-white/8 rounded-3xl p-7 hover:border-teal-500/30 hover:bg-slate-900 transition-all duration-300 hover:shadow-xl hover:shadow-teal-900/20"
+                className="bg-slate-900/60 border border-white/8 rounded-3xl p-7"
               >
                 <div className="w-10 h-10 bg-teal-500/15 border border-teal-500/25 rounded-xl flex items-center justify-center mb-5">
                   <Icon size={18} className="text-teal-400" />

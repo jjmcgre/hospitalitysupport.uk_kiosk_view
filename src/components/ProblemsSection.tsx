@@ -141,7 +141,7 @@ export default function ProblemsSection() {
             {tasks.map((t, i) => (
               <div
                 key={i}
-                className="grid grid-cols-2 gap-4 bg-white/3 border border-white/6 rounded-2xl p-4 sm:p-5 group hover:border-teal-500/20 transition-colors"
+                className="grid grid-cols-2 gap-4 bg-white/3 border border-white/6 rounded-2xl p-4 sm:p-5"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-5 h-5 rounded-full bg-slate-700/60 border border-slate-600/50 flex items-center justify-center flex-shrink-0 mt-0.5">

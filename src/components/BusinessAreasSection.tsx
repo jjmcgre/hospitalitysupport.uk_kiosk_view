@@ -87,7 +87,7 @@ export default function BusinessAreasSection() {
             return (
               <div
                 key={a.area}
-                className="group bg-slate-900/60 border border-white/8 rounded-3xl p-6 hover:border-teal-500/30 hover:bg-slate-900 transition-all duration-300"
+                className="bg-slate-900/60 border border-white/8 rounded-3xl p-6"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-teal-500/15 border border-teal-500/25 rounded-xl flex items-center justify-center flex-shrink-0">
