@@ -59,7 +59,7 @@ export default function BenefitsSection() {
           {roles.map((r) => {
             const Icon = r.icon;
             return (
-              <div key={r.role} className="bg-white/4 border border-white/8 rounded-3xl p-6 hover:border-teal-500/25 transition-colors">
+              <div key={r.role} className="bg-white/4 border border-white/8 rounded-3xl p-6">
                 <div className="w-10 h-10 bg-teal-500/15 border border-teal-500/25 rounded-xl flex items-center justify-center mb-4">
                   <Icon size={18} className="text-teal-400" />
                 </div>

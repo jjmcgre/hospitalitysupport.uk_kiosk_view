@@ -101,15 +101,18 @@ export default function WhatsAppChat() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
+      <p className="text-xs font-bold tracking-widest uppercase text-teal-500/60 mb-3 text-center">
+        Select a scenario to see it in action
+      </p>
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
         {conversations.map((conv, idx) => (
           <button
             key={idx}
             onClick={() => setActiveConversation(idx)}
-            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all text-sm sm:text-base ${
+            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold transition-all text-sm cursor-pointer ${
               activeConversation === idx
-                ? 'bg-teal-600 text-white shadow-lg'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+                ? 'bg-teal-500/20 border border-teal-500/50 text-teal-300'
+                : 'bg-white/4 border border-white/8 text-slate-400 hover:text-slate-200 hover:border-white/20'
             }`}
           >
             {conv.title}
@@ -117,7 +120,7 @@ export default function WhatsAppChat() {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-white/8">
         <div className="bg-teal-600 text-white p-3 sm:p-4 flex items-center gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center text-teal-600 font-bold text-sm sm:text-base">
             HS
@@ -128,7 +131,7 @@ export default function WhatsAppChat() {
           </div>
         </div>
 
-        <div className="h-[400px] sm:h-[500px] overflow-y-auto bg-gray-50 p-3 sm:p-4 space-y-3">
+        <div className="h-[400px] sm:h-[500px] overflow-y-auto bg-slate-950 p-3 sm:p-4 space-y-3">
           {displayedMessages.map((message) => (
             <div
               key={message.id}
@@ -138,13 +141,13 @@ export default function WhatsAppChat() {
                 className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
                   message.sender === 'user'
                     ? 'bg-teal-600 text-white rounded-br-sm'
-                    : 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
+                    : 'bg-slate-800 text-slate-100 rounded-bl-sm border border-white/8'
                 }`}
               >
                 <div className="text-xs sm:text-sm whitespace-pre-line">{message.text}</div>
                 <div
                   className={`flex items-center gap-1 justify-end mt-1 text-xs ${
-                    message.sender === 'user' ? 'text-teal-100' : 'text-gray-500'
+                    message.sender === 'user' ? 'text-teal-100' : 'text-slate-500'
                   }`}
                 >
                   <span>{message.timestamp}</span>
@@ -158,11 +161,11 @@ export default function WhatsAppChat() {
 
           {isTyping && (
             <div className="flex justify-start animate-fadeIn">
-              <div className="bg-white text-gray-800 rounded-2xl rounded-bl-sm shadow-sm px-3 sm:px-4 py-2 sm:py-3">
+              <div className="bg-slate-800 text-slate-100 rounded-2xl rounded-bl-sm border border-white/8 px-3 sm:px-4 py-2 sm:py-3">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
               </div>
             </div>

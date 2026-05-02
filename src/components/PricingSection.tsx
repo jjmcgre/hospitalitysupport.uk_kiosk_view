@@ -65,6 +65,19 @@ export default function PricingSection() {
           </p>
         </div>
 
+        {/* Disruption callout */}
+        <div className="mb-10 bg-slate-900/60 border border-white/10 rounded-3xl p-8 max-w-3xl mx-auto text-center">
+          <p className="text-white font-black text-xl mb-3">
+            "That seems cheap. Is it actually any good?"
+          </p>
+          <p className="text-slate-400 text-base leading-relaxed mb-4">
+            We hear this a lot. The platforms you're paying thousands for right now aren't better — they just got there first, locked you in, and charged accordingly. We built this from scratch, for how kitchens actually work, and we've priced it so cost is never the reason you don't try it.
+          </p>
+          <p className="text-teal-400 font-bold text-base">
+            Don't take our word for it. Book a 30-minute demo and see your own operation running on it live.
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-5">
           {tiers.map((t) => (
             <div

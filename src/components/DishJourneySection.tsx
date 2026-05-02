@@ -242,6 +242,9 @@ export default function DishJourneySection() {
         </div>
 
         {/* Step tabs */}
+        <p className="text-center text-xs font-bold tracking-widest uppercase text-teal-500/60 mb-3">
+          Select a step to explore
+        </p>
         <div className="flex overflow-x-auto gap-2 mb-8 pb-2 scrollbar-hide justify-center flex-wrap">
           {steps.map((s, i) => (
             <button
