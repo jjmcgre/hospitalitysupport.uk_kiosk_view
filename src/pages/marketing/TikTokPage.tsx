@@ -1,51 +1,327 @@
+import { useState, useRef } from 'react';
+import { Copy, Check, Download, Loader2, FileText, Hash, Clapperboard, ChevronDown, ChevronUp } from 'lucide-react';
 import PageHeader from './components/PageHeader';
-import ScriptCard from './components/ScriptCard';
+import TikTokPlayer from './tiktok/TikTokPlayer';
+import { tiktokVideos, type TikTokVideo } from './tiktok/tiktokData';
 
-const campaigns = [
-  {
-    title: 'POV: Your kitchen just ran itself',
-    hook: "POV: You're a chef-owner and your phone just sorted your GP before you even got to work.",
-    scene: 'First person. Morning. Walking into kitchen. Phone in hand showing notification from HospitalitySupport.uk saying margin drift caught overnight.',
-    script: `"POV: 6:45am. You're not even in yet.\n\nYour operations team already flagged that your chicken dish dropped 4 GP points overnight.\n\nThey already recommended a portion adjustment.\n\nThey already updated the spec.\n\nYou walk in. Everything's sorted.\n\nThat's HospitalitySupport.uk.\n\n£3.30 a day. Always on."`,
-    cta: 'Link in bio.',
-  },
-  {
-    title: "Things chefs know vs. things owners need to know",
-    hook: "There are two very different problems in every hospitality business. One kitchen. Two perspectives.",
-    scene: 'Split screen format. Chef side vs owner side. Both solved by same tool.',
-    script: `"Chef knows:\n→ The lamb's underportioned\n→ New starter's not ready\n→ The allergen sheet is wrong\n\nOwner needs to know:\n→ GP is dropping\n→ Compliance is drifting\n→ The menu hasn't been updated in 6 weeks\n\nHospitalitySupport.uk bridges both.\n\nOne system. Both sides. £3.30 a day."`,
-    cta: 'See it work. Link in bio.',
-  },
-  {
-    title: 'Hospitality math nobody does',
-    hook: "The maths that's quietly costing hospitality businesses thousands every month.",
-    scene: 'Text-on-screen style. Fast cuts. Hook-heavy. Very TikTok native.',
-    script: `"One dish drops 5 GP points.\nSells 40 covers a week.\nThat's £600 a month. Gone quietly.\n\nOne new hire gets it wrong on allergens.\nOne complaint. One inspection.\nThat's not a fine. That's a closure.\n\nOne chef leaves.\nMenu knowledge leaves with them.\nRetraining. Mistakes. Lost covers.\n\nHospitalitySupport.uk stops all three.\n\nEvery day.\nFor £3.30."`,
-    cta: 'HospitalitySupport.uk — link in bio.',
-  },
-];
+const EL_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY as string | undefined;
+const EL_VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID as string | undefined;
 
 export default function TikTokPage() {
+  const [activeId, setActiveId] = useState(tiktokVideos[0].id);
+  const video = tiktokVideos.find((v) => v.id === activeId)!;
+
   return (
     <div className="min-h-full">
       <PageHeader
         title="TikTok"
-        subtitle="Three video campaign briefs for TikTok. Native format, hook-first, text-on-screen friendly."
-        badge="Social Video"
+        subtitle="Animated preview · script & captions · voiceover download — three campaigns ready to drop into CapCut."
+        badge="Video"
       />
-      <div className="p-8 space-y-4">
-        {campaigns.map((c) => (
-          <ScriptCard
-            key={c.title}
-            title={c.title}
-            hook={c.hook}
-            scene={c.scene}
-            script={c.script}
-            cta={c.cta}
-            label="TikTok Campaign"
-          />
+
+      {/* Video selector */}
+      <div className="px-8 pt-6 pb-2 flex gap-3 flex-wrap">
+        {tiktokVideos.map((v) => (
+          <button
+            key={v.id}
+            onClick={() => setActiveId(v.id)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all"
+            style={{
+              background: activeId === v.id ? v.accentColor : 'rgba(255,255,255,0.04)',
+              color: activeId === v.id ? '#fff' : 'rgba(255,255,255,0.5)',
+              border: `1px solid ${activeId === v.id ? v.accentColor : 'rgba(255,255,255,0.1)'}`,
+              boxShadow: activeId === v.id ? `0 4px 20px ${v.accentColor}40` : 'none',
+            }}
+          >
+            <span className="text-[10px] font-black opacity-60">{v.number}</span>
+            {v.title}
+          </button>
         ))}
       </div>
+
+      {/* Main layout */}
+      <div className="p-8 grid grid-cols-1 xl:grid-cols-[auto_1fr] gap-10 items-start">
+        {/* Left: phone preview */}
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-center mb-1">
+            <p className="text-white/30 text-xs uppercase tracking-widest font-bold">Animated Preview</p>
+          </div>
+          <TikTokPlayer video={video} />
+        </div>
+
+        {/* Right: panels */}
+        <div className="flex flex-col gap-5 min-w-0">
+          <VoiceoverPanel video={video} />
+          <CaptionPanel video={video} />
+          <CapCutPanel video={video} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Voiceover Download Panel ──────────────────────────────────────── */
+
+type DlState = 'idle' | 'loading' | 'done' | 'error';
+
+function VoiceoverPanel({ video }: { video: TikTokVideo }) {
+  const [dlState, setDlState] = useState<DlState>('idle');
+  const [errMsg, setErrMsg] = useState('');
+  const [copied, setCopied] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const hasEL = !!(EL_API_KEY && EL_VOICE_ID);
+
+  const downloadAudio = async () => {
+    if (!hasEL) return;
+    setDlState('loading');
+    setErrMsg('');
+    try {
+      const res = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${EL_VOICE_ID}`,
+        {
+          method: 'POST',
+          headers: {
+            'xi-api-key': EL_API_KEY!,
+            'Content-Type': 'application/json',
+            Accept: 'audio/mpeg',
+          },
+          body: JSON.stringify({
+            text: video.voiceScript,
+            model_id: 'eleven_turbo_v2_5',
+            voice_settings: { stability: 0.45, similarity_boost: 0.82, style: 0.28, use_speaker_boost: true },
+          }),
+        }
+      );
+      if (!res.ok) throw new Error(`ElevenLabs ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tiktok-voiceover-${video.id}.mp3`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setDlState('done');
+      setTimeout(() => setDlState('idle'), 3000);
+    } catch (e) {
+      setErrMsg(e instanceof Error ? e.message : 'Download failed');
+      setDlState('error');
+    }
+  };
+
+  const copyScript = () => {
+    navigator.clipboard.writeText(video.voiceScript);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Panel
+      icon={<Download size={16} />}
+      title="Voiceover"
+      accent={video.accentColor}
+      badge={hasEL ? 'ElevenLabs AI' : 'Script only'}
+    >
+      <p className="text-white/50 text-sm leading-relaxed mb-4">{video.voiceScript}</p>
+
+      <div className="flex gap-3 flex-wrap">
+        {hasEL ? (
+          <button
+            onClick={downloadAudio}
+            disabled={dlState === 'loading'}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+            style={{ background: video.accentColor, boxShadow: `0 4px 16px ${video.accentColor}40` }}
+          >
+            {dlState === 'loading' ? <><Loader2 size={14} className="animate-spin" />Generating…</> :
+              dlState === 'done' ? <><Check size={14} />Downloaded!</> :
+                <><Download size={14} />Download MP3</>}
+          </button>
+        ) : (
+          <div className="text-xs text-white/30 px-3 py-2 rounded-lg border border-white/10 bg-white/5">
+            Add VITE_ELEVENLABS_API_KEY + VITE_ELEVENLABS_VOICE_ID to .env to enable MP3 download
+          </div>
+        )}
+
+        <button
+          onClick={copyScript}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border transition-all hover:bg-white/5 active:scale-95"
+          style={{ borderColor: 'rgba(255,255,255,0.12)', color: copied ? video.accentColor : 'rgba(255,255,255,0.6)' }}
+        >
+          {copied ? <><Check size={13} />Copied!</> : <><Copy size={13} />Copy script</>}
+        </button>
+      </div>
+
+      {dlState === 'error' && (
+        <p className="text-red-400 text-xs mt-3">{errMsg}</p>
+      )}
+
+      <audio ref={audioRef} className="hidden" />
+    </Panel>
+  );
+}
+
+/* ─── Caption Panel ─────────────────────────────────────────────────── */
+
+function CaptionPanel({ video }: { video: TikTokVideo }) {
+  const [captionCopied, setCaptionCopied] = useState(false);
+  const [hashCopied, setHashCopied] = useState(false);
+  const [open, setOpen] = useState(true);
+
+  const captionText = video.captionLines.join('\n');
+
+  const copyCaption = () => {
+    navigator.clipboard.writeText(captionText);
+    setCaptionCopied(true);
+    setTimeout(() => setCaptionCopied(false), 2000);
+  };
+
+  const copyHashtags = () => {
+    navigator.clipboard.writeText(video.hashtags);
+    setHashCopied(true);
+    setTimeout(() => setHashCopied(false), 2000);
+  };
+
+  return (
+    <Panel
+      icon={<FileText size={16} />}
+      title="Caption & Hashtags"
+      accent={video.accentColor}
+      badge="CapCut / TikTok"
+      collapsible
+      open={open}
+      onToggle={() => setOpen((o) => !o)}
+    >
+      {open && (
+        <>
+          {/* Caption */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-white/40 text-xs uppercase tracking-widest font-bold">Caption</p>
+              <button
+                onClick={copyCaption}
+                className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border transition-all hover:bg-white/5"
+                style={{ borderColor: 'rgba(255,255,255,0.1)', color: captionCopied ? video.accentColor : 'rgba(255,255,255,0.45)' }}
+              >
+                {captionCopied ? <><Check size={11} />Copied</> : <><Copy size={11} />Copy</>}
+              </button>
+            </div>
+            <div
+              className="rounded-xl p-4 text-sm leading-relaxed whitespace-pre-wrap font-mono"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.65)' }}
+            >
+              {captionText}
+            </div>
+          </div>
+
+          {/* Hashtags */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-white/40 text-xs uppercase tracking-widest font-bold flex items-center gap-1.5">
+                <Hash size={11} />Hashtags
+              </p>
+              <button
+                onClick={copyHashtags}
+                className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border transition-all hover:bg-white/5"
+                style={{ borderColor: 'rgba(255,255,255,0.1)', color: hashCopied ? video.accentColor : 'rgba(255,255,255,0.45)' }}
+              >
+                {hashCopied ? <><Check size={11} />Copied</> : <><Copy size={11} />Copy</>}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {video.hashtags.split(' ').map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2.5 py-1 rounded-full font-bold cursor-pointer transition-colors hover:opacity-80"
+                  style={{ background: video.accentColor + '20', color: video.accentColor, border: `1px solid ${video.accentColor}35` }}
+                  onClick={() => { navigator.clipboard.writeText(tag); }}
+                >{tag}</span>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </Panel>
+  );
+}
+
+/* ─── CapCut Tips Panel ─────────────────────────────────────────────── */
+
+function CapCutPanel({ video }: { video: TikTokVideo }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Panel
+      icon={<Clapperboard size={16} />}
+      title="CapCut / Editing Tips"
+      accent={video.accentColor}
+      badge="Production notes"
+      collapsible
+      open={open}
+      onToggle={() => setOpen((o) => !o)}
+    >
+      {open && (
+        <ol className="space-y-2.5">
+          {video.capCutTips.map((tip, i) => (
+            <li key={i} className="flex gap-3 items-start">
+              <span
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5"
+                style={{ background: video.accentColor + '25', color: video.accentColor }}
+              >{i + 1}</span>
+              <span className="text-white/60 text-sm leading-relaxed">{tip}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </Panel>
+  );
+}
+
+/* ─── Shared Panel wrapper ──────────────────────────────────────────── */
+
+function Panel({
+  icon, title, accent, badge, children, collapsible, open, onToggle,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  accent: string;
+  badge?: string;
+  children: React.ReactNode;
+  collapsible?: boolean;
+  open?: boolean;
+  onToggle?: () => void;
+}) {
+  return (
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+    >
+      <div
+        className={`flex items-center justify-between px-5 py-4 ${collapsible ? 'cursor-pointer select-none' : ''}`}
+        style={{ borderBottom: open !== false ? '1px solid rgba(255,255,255,0.06)' : 'none' }}
+        onClick={collapsible ? onToggle : undefined}
+      >
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: accent + '25', color: accent }}
+          >{icon}</div>
+          <span className="text-white font-bold text-sm">{title}</span>
+          {badge && (
+            <span
+              className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide"
+              style={{ background: accent + '20', color: accent }}
+            >{badge}</span>
+          )}
+        </div>
+        {collapsible && (
+          open
+            ? <ChevronUp size={16} className="text-white/30" />
+            : <ChevronDown size={16} className="text-white/30" />
+        )}
+      </div>
+      {open !== false && (
+        <div className="p-5">{children}</div>
+      )}
     </div>
   );
 }
