@@ -1,424 +1,522 @@
 import React from 'react';
 
-/* ── Design tokens ───────────────────────────────────────────────────────── */
-const T     = '#0d9488';
-const TL    = '#2dd4bf';
-const INK   = '#0f172a';
-const SLATE = '#1e293b';
-const MID   = '#334155';
-const MUTED = '#64748b';
-const FAINT = '#94a3b8';
-const RULE  = '#e2e8f0';
-const SNOW  = '#f8fafc';
-const WHITE = '#ffffff';
-const DARK  = '#080f1a';
-const F     = "'Inter', system-ui, sans-serif";
-
 /*
-  300×300mm at 96dpi = 1134 × 1134px exactly.
-  Landscape square format — all pages are the same size.
+  300×300mm at 96dpi = 1134 × 1134px.
+  Brand: dark navy #080f1a, teal #14b8a6 / #2dd4bf, white text.
+  Matches the HospitalitySupport.uk landing page visual language exactly.
 */
-const PW    = 1134;  // 300mm @ 96dpi
-const PH    = 1134;  // 300mm @ 96dpi
-const PAD_X = 64;
-const PAD_Y = 40;
+const PW  = 1134;
+const PH  = 1134;
+const NAV = '#080f1a';
+const T   = '#14b8a6';
+const TL  = '#2dd4bf';
+const T3  = '#99f6e4';  // teal-300
+const W   = '#ffffff';
+const S9  = '#0f172a';  // slate-900
+const S8  = '#1e293b';  // slate-800
+const S4  = '#94a3b8';  // slate-400
+const S5  = '#64748b';  // slate-500
+const F   = "'Inter', system-ui, sans-serif";
 
-function DocPage({ children, bg = WHITE }: { children: React.ReactNode; bg?: string }) {
+/* ── Reusable primitives ─────────────────────────────────────────────── */
+
+function Page({ children, bg = NAV }: { children: React.ReactNode; bg?: string }) {
   return (
     <div
-      className="print-page shadow-2xl"
+      className="print-page"
       style={{
-        width: PW, height: PH, margin: '0 auto',
-        fontFamily: F, display: 'flex', flexDirection: 'column',
-        background: bg, position: 'relative', overflow: 'hidden',
-        flexShrink: 0,
+        width: PW, height: PH, flexShrink: 0,
+        fontFamily: F, background: bg,
+        display: 'flex', flexDirection: 'column',
+        position: 'relative', overflow: 'hidden',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
       }}
     >
+      {/* Subtle grid overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+        backgroundSize: '48px 48px', opacity: 0.025,
+      }} />
       {children}
     </div>
   );
 }
 
-function Header({ dark }: { dark?: boolean }) {
+function PageHeader({ n, total = 8 }: { n: number; total?: number }) {
   return (
     <div style={{
-      padding: '10px 64px', display: 'flex', justifyContent: 'space-between',
-      alignItems: 'center', flexShrink: 0,
-      borderBottom: dark ? '1px solid rgba(255,255,255,0.08)' : `1px solid ${RULE}`,
+      padding: '14px 56px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, position: 'relative', zIndex: 1,
     }}>
-      <span style={{ color: dark ? WHITE : INK, fontWeight: 900, fontSize: 13, letterSpacing: '-0.01em' }}>
+      <span style={{ color: W, fontWeight: 900, fontSize: 13, letterSpacing: '-0.02em', fontFamily: F }}>
         HospitalitySupport<span style={{ color: TL }}>.uk</span>
       </span>
-      <span style={{ color: dark ? '#334155' : FAINT, fontSize: 9 }}>Confidential · Not for distribution</span>
+      <span style={{ color: S5, fontSize: 9.5, fontFamily: F }}>{n} / {total}</span>
     </div>
   );
 }
 
-function Footer({ n, dark }: { n: number; dark?: boolean }) {
+function PageFooter({ text }: { text?: string }) {
   return (
     <div style={{
-      padding: '8px 64px', display: 'flex', justifyContent: 'space-between',
-      alignItems: 'center', flexShrink: 0,
-      borderTop: dark ? '1px solid rgba(255,255,255,0.07)' : `1px solid ${RULE}`,
+      padding: '12px 56px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      borderTop: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, position: 'relative', zIndex: 1,
     }}>
-      <span style={{ color: dark ? '#1e293b' : FAINT, fontSize: 9 }}>hospitalitysupport.uk</span>
-      <span style={{ color: dark ? '#1e293b' : FAINT, fontSize: 9 }}>{n} / 8</span>
+      <span style={{ color: '#1e3a4a', fontSize: 9, fontFamily: F }}>{text ?? 'hospitalitysupport.uk'}</span>
+      <span style={{ color: '#1e3a4a', fontSize: 9, fontFamily: F }}>Confidential · Not for distribution</span>
     </div>
   );
 }
 
-function Label({ text }: { text: string }) {
+// Teal pill badge — matches `inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 ... rounded-full`
+function Badge({ text }: { text: string }) {
   return (
-    <p style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' as const, margin: '0 0 10px', color: T }}>
+    <div style={{
+      display: 'inline-block',
+      background: 'rgba(20,184,166,0.10)', border: '1px solid rgba(20,184,166,0.25)',
+      color: T3, fontSize: 9, fontWeight: 800, letterSpacing: '0.15em',
+      textTransform: 'uppercase' as const, borderRadius: 999, padding: '5px 14px',
+      marginBottom: 16, fontFamily: F,
+    }}>
       {text}
-    </p>
+    </div>
   );
 }
 
-function Divider({ dark, slim }: { dark?: boolean; slim?: boolean }) {
-  return <hr style={{ border: 'none', borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : RULE}`, margin: slim ? '14px 0' : '20px 0' }} />;
+// Section heading — matches font-black tracking-tight
+function H1({ children }: { children: React.ReactNode }) {
+  return (
+    <h1 style={{ color: W, fontWeight: 900, fontSize: 58, lineHeight: 0.95, letterSpacing: '-0.04em', margin: '0 0 16px', fontFamily: F }}>
+      {children}
+    </h1>
+  );
 }
 
-function H2({ children, dark }: { children: React.ReactNode; dark?: boolean }) {
+function H2({ children }: { children: React.ReactNode }) {
   return (
-    <h2 style={{ fontSize: 26, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.025em', margin: '0 0 14px', color: dark ? WHITE : INK }}>
+    <h2 style={{ color: W, fontWeight: 900, fontSize: 32, lineHeight: 1.05, letterSpacing: '-0.03em', margin: '0 0 12px', fontFamily: F }}>
       {children}
     </h2>
   );
 }
 
-function H3({ children, colour }: { children: React.ReactNode; colour?: string }) {
+function H3({ children }: { children: React.ReactNode }) {
   return (
-    <h3 style={{ fontSize: 13, fontWeight: 800, lineHeight: 1.3, margin: '0 0 5px', letterSpacing: '-0.01em', color: colour ?? INK }}>
+    <h3 style={{ color: W, fontWeight: 900, fontSize: 16, lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 8px', fontFamily: F }}>
       {children}
     </h3>
   );
 }
 
-function Body({ children, size = 12 }: { children: React.ReactNode; size?: number }) {
-  return <p style={{ fontSize: size, lineHeight: 1.7, margin: '0 0 12px', color: MUTED }}>{children}</p>;
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <p style={{ color: S5, fontWeight: 700, fontSize: 9.5, letterSpacing: '0.15em', textTransform: 'uppercase' as const, margin: '0 0 6px', fontFamily: F }}>
+      {children}
+    </p>
+  );
 }
 
-function Bullets({ items, colour, size = 11 }: { items: string[]; colour?: string; size?: number }) {
+function Body({ children, size = 12.5, muted = false }: { children: React.ReactNode; size?: number; muted?: boolean }) {
+  return (
+    <p style={{ color: muted ? S5 : S4, fontSize: size, lineHeight: 1.65, margin: '0 0 12px', fontFamily: F }}>
+      {children}
+    </p>
+  );
+}
+
+// Arrow list — matches `ArrowRight size 12 text-teal-400` + `text-slate-400 text-sm leading-snug`
+function Arrows({ items, size = 11 }: { items: string[]; size?: number }) {
   return (
     <ul style={{ margin: '0 0 12px', padding: 0, listStyle: 'none' }}>
       {items.map((item, i) => (
-        <li key={i} style={{ display: 'flex', gap: 10, marginBottom: 6, alignItems: 'flex-start' }}>
-          <span style={{ color: colour ?? T, fontSize: 12, lineHeight: 1.4, flexShrink: 0 }}>→</span>
-          <span style={{ color: '#374151', fontSize: size, lineHeight: 1.55 }}>{item}</span>
+        <li key={i} style={{ display: 'flex', gap: 9, marginBottom: 7, alignItems: 'flex-start' }}>
+          <span style={{ color: TL, fontSize: size + 1, lineHeight: 1.5, flexShrink: 0, fontWeight: 700 }}>→</span>
+          <span style={{ color: S4, fontSize: size, lineHeight: 1.55, fontFamily: F }}>{item}</span>
         </li>
       ))}
     </ul>
   );
 }
 
-function PullQuote({ text }: { text: string }) {
+// Card — matches `bg-slate-900/60 border border-white/8 rounded-3xl`
+function Card({ children, teal, style }: { children: React.ReactNode; teal?: boolean; style?: React.CSSProperties }) {
   return (
-    <div style={{ borderLeft: `5px solid ${T}`, paddingLeft: 20, margin: '16px 0 0' }}>
-      <p style={{ color: SLATE, fontSize: 15, fontWeight: 700, lineHeight: 1.5, fontStyle: 'italic', margin: 0 }}>{text}</p>
+    <div style={{
+      background: teal ? 'rgba(20,184,166,0.08)' : 'rgba(15,23,42,0.7)',
+      border: teal ? '1px solid rgba(20,184,166,0.20)' : '1px solid rgba(255,255,255,0.08)',
+      borderRadius: 20, padding: '18px 22px',
+      ...style,
+    }}>
+      {children}
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   PAGE 1 — COVER
-══════════════════════════════════════════════════════════════════════════ */
-function CoverPage() {
+// Highlighted card — matches `bg-teal-500/15 border-2 border-teal-500/50`
+function CardHL({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <DocPage bg={DARK}>
-      <div style={{ height: 6, background: T, flexShrink: 0 }} />
-      <div style={{ flex: 1, display: 'flex', gap: 0, overflow: 'hidden' }}>
+    <div style={{
+      background: 'rgba(20,184,166,0.15)',
+      border: '2px solid rgba(20,184,166,0.50)',
+      borderRadius: 20, padding: '18px 22px',
+      boxShadow: '0 8px 30px rgba(13,148,136,0.20)',
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
 
-        {/* Left panel */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '56px 48px 44px 64px' }}>
+function Teal({ children }: { children: React.ReactNode }) {
+  return <span style={{ color: TL }}>{children}</span>;
+}
+
+function TealMuted({ children }: { children: React.ReactNode }) {
+  return <span style={{ color: S5, opacity: 0.7 }}>{children}</span>;
+}
+
+// Stat box — matches `text-2xl font-black text-teal-400` + `text-[11px] text-slate-500`
+function Stat({ val, label }: { val: string; label: string }) {
+  return (
+    <Card style={{ textAlign: 'center' as const, padding: '16px 12px' }}>
+      <div style={{ color: TL, fontSize: 26, fontWeight: 900, lineHeight: 1, marginBottom: 5, fontFamily: F }}>{val}</div>
+      <div style={{ color: S5, fontSize: 10, lineHeight: 1.4, fontFamily: F }}>{label}</div>
+    </Card>
+  );
+}
+
+function Rule() {
+  return <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '18px 0' }} />;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PAGE 1 — COVER
+══════════════════════════════════════════════════════════════════════ */
+function CoverPage() {
+  const caps = [
+    { label: 'Menu creation',       sub: 'Full spec in under 3 minutes' },
+    { label: 'Live GP & costing',   sub: 'Every dish, every day' },
+    { label: 'Allergens',           sub: "Natasha's Law, always live" },
+    { label: 'HACCP & safety',      sub: 'Audit-ready automatically' },
+    { label: 'Staff training',      sub: 'Built from your real ops' },
+    { label: 'Supplier pricing',    sub: 'Real-time, zero spreadsheets' },
+    { label: 'Ordering & delivery', sub: 'POs, reconciliation, discrepancies' },
+    { label: 'Multi-site control',  sub: 'Every site, one dashboard' },
+  ];
+
+  return (
+    <Page>
+      {/* Top teal bar */}
+      <div style={{ height: 5, background: T, flexShrink: 0 }} />
+
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
+        {/* Glow */}
+        <div style={{
+          position: 'absolute', top: -200, left: '40%', width: 700, height: 500,
+          background: 'rgba(20,184,166,0.08)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none',
+        }} />
+
+        {/* Left — hero copy */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '56px 48px 44px 56px' }}>
+
           {/* Brand */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: T, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 16, height: 16, borderRadius: 3, background: WHITE, opacity: 0.9 }} />
+            <div style={{ width: 36, height: 36, borderRadius: 9, background: T, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 14, height: 14, borderRadius: 3, background: W, opacity: 0.9 }} />
             </div>
-            <span style={{ color: WHITE, fontWeight: 900, fontSize: 17, letterSpacing: '-0.02em' }}>
+            <span style={{ color: W, fontWeight: 900, fontSize: 16, letterSpacing: '-0.02em', fontFamily: F }}>
               HospitalitySupport<span style={{ color: TL }}>.uk</span>
             </span>
           </div>
 
-          {/* Hero */}
+          {/* Hero headline */}
           <div>
-            <p style={{ color: TL, fontSize: 9.5, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const, margin: '0 0 18px' }}>
-              The complete operations platform for hospitality
+            <Badge text="The complete operations platform for hospitality" />
+            <H1>
+              Stop doing<br />
+              <Teal>the admin.</Teal><br />
+              <TealMuted>Start running the kitchen.</TealMuted>
+            </H1>
+            <p style={{ color: S4, fontSize: 15, lineHeight: 1.65, maxWidth: 400, margin: '0 0 28px', fontFamily: F }}>
+              One platform that runs your entire operation — menus, margins, allergens, compliance, training, and supplier pricing. All connected. All live. All automatic.
             </p>
-            <h1 style={{ color: WHITE, fontSize: 54, fontWeight: 900, lineHeight: 1.0, letterSpacing: '-0.04em', margin: '0 0 8px', maxWidth: 460 }}>
-              The operations team you never had to hire.
-            </h1>
-            <div style={{ width: 64, height: 5, background: T, borderRadius: 2, margin: '0 0 26px' }} />
-            <p style={{ color: FAINT, fontSize: 14, lineHeight: 1.65, maxWidth: 380, margin: '0 0 34px' }}>
-              Menu development. Live GP. Allergen compliance. Food safety. Training. FOH support. Supplier pricing. Ordering. All connected, live, and working the moment you sign up.
-            </p>
+
+            {/* Stats */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, maxWidth: 460 }}>
+              {[
+                { val: '5 min',  label: 'to go live' },
+                { val: 'Live',   label: 'price tracking' },
+                { val: '14',     label: 'allergens tracked' },
+                { val: '0',      label: 'spreadsheets needed' },
+              ].map((s, i) => <Stat key={i} val={s.val} label={s.label} />)}
+            </div>
           </div>
 
-          {/* CTA */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
-            <p style={{ color: MID, fontSize: 9, margin: '0 0 4px', textTransform: 'uppercase' as const, letterSpacing: '0.1em', fontWeight: 700 }}>Book a 30-minute demo</p>
-            <div style={{ background: T, color: WHITE, fontWeight: 900, fontSize: 13, padding: '13px 26px', borderRadius: 9, display: 'inline-block' }}>
-              hospitalitysupport.uk
-            </div>
+          {/* Footer note */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 18 }}>
+            <p style={{ color: '#1a3040', fontSize: 9, margin: 0, fontFamily: F }}>Confidential · Not for distribution · hospitalitysupport.uk</p>
           </div>
         </div>
 
-        {/* Right panel — stats */}
-        <div style={{ width: 320, background: '#0d1420', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '56px 40px', gap: 0, borderLeft: '1px solid rgba(255,255,255,0.05)' }}>
-          <p style={{ color: MUTED, fontSize: 9, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.12em', margin: '0 0 28px' }}>At a glance</p>
+        {/* Right — capability grid */}
+        <div style={{ width: 380, background: 'rgba(15,23,42,0.5)', borderLeft: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '56px 32px', gap: 0 }}>
+          <Label>Everything it covers</Label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
+            {caps.map((c, i) => (
+              <Card key={i} teal style={{ padding: '12px 14px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 7, marginBottom: 3 }}>
+                  <span style={{ color: TL, fontWeight: 700, fontSize: 11, lineHeight: 1.4, flexShrink: 0 }}>→</span>
+                  <span style={{ color: W, fontWeight: 900, fontSize: 11, lineHeight: 1.25, fontFamily: F }}>{c.label}</span>
+                </div>
+                <span style={{ color: S5, fontSize: 9.5, lineHeight: 1.4, display: 'block', paddingLeft: 18, fontFamily: F }}>{c.sub}</span>
+              </Card>
+            ))}
+          </div>
 
-          {[
-            { val: '£3.30',  sub: 'per kitchen / day' },
-            { val: '3 min',  sub: 'dish concept to live spec' },
-            { val: '5 min',  sub: 'sign-up to fully live' },
-            { val: '0',      sub: 'spreadsheets required' },
-            { val: '14',     sub: 'allergens tracked per dish' },
-            { val: '< 1s',   sub: 'price change to full recost' },
-          ].map((s, i) => (
-            <div key={i} style={{ padding: '18px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ color: TL, fontSize: 28, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-              <div style={{ color: MUTED, fontSize: 9.5, marginTop: 5, lineHeight: 1.3 }}>{s.sub}</div>
-            </div>
-          ))}
-
-          <div style={{ marginTop: 28 }}>
-            <p style={{ color: '#1e293b', fontSize: 9, margin: 0 }}>Confidential · Not for distribution</p>
+          <div style={{ marginTop: 24 }}>
+            <Card teal style={{ padding: '16px 18px', textAlign: 'center' as const }}>
+              <div style={{ color: W, fontWeight: 900, fontSize: 11.5, marginBottom: 4, fontFamily: F }}>Book a 30-minute demo</div>
+              <div style={{ color: TL, fontWeight: 900, fontSize: 14, fontFamily: F }}>hospitalitysupport.uk</div>
+            </Card>
           </div>
         </div>
       </div>
-    </DocPage>
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 2 — THE PROBLEM
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function ProblemPage() {
   return (
-    <DocPage>
-      <Header />
-      <div style={{ flex: 1, padding: `${PAD_Y}px ${PAD_X}px 24px`, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <Label text="The Problem" />
-        <H2>Hospitality doesn't have hundreds of problems. It has three.</H2>
+    <Page>
+      <PageHeader n={2} />
+      <div style={{ flex: 1, padding: '36px 56px 28px', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+        <Badge text="The Problem" />
+        <H2>Hospitality doesn't have hundreds of problems. It has <Teal>three.</Teal></H2>
         <Body>
-          Every challenge a hospitality operator faces traces back to people, process, or profit — and most businesses are fighting all three at once, without the resources to do any of them properly.
+          Every challenge an operator faces traces back to people, process, or profit. Most businesses are fighting all three at once, with no resource to fix any of them properly.
         </Body>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 40px', flex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, flex: 1 }}>
+
+          {/* People */}
           <div>
-            <div style={{ height: 4, background: '#dc2626', borderRadius: 2, marginBottom: 14 }} />
-            <H3 colour="#dc2626">01 — People</H3>
-            <Body size={11}>
-              Skill levels are eroding. Experience is leaving the industry. You're expected to deliver the same standards with less experienced staff — and most businesses rely on one or two people to hold everything together.
+            <div style={{ height: 3, background: 'rgba(255,255,255,0.15)', borderRadius: 2, marginBottom: 16 }} />
+            <Label>01 — People</Label>
+            <H3>The knowledge walks out with them.</H3>
+            <Body size={11.5}>
+              Skill levels are eroding. Turnover is constant. You're expected to deliver the same standards with less experienced staff — and most operations rely on one or two people to hold everything together.
             </Body>
-            <Body size={11}>
-              When that person leaves, the knowledge goes with them. Recipes, procedures, compliance history — stored only in someone's head.
-            </Body>
-            <Bullets colour="#dc2626" size={10} items={[
+            <Arrows size={10.5} items={[
               'High turnover means constant informal retraining',
-              'New starters cause service errors and compliance gaps',
-              'Knowledge concentrated in few people creates fragility',
+              'New starters cause errors and compliance gaps before they reach full competence',
+              'Knowledge concentrated in a few people creates fragility at scale',
             ]} />
           </div>
 
+          {/* Process */}
           <div>
-            <div style={{ height: 4, background: '#d97706', borderRadius: 2, marginBottom: 14 }} />
-            <H3 colour="#d97706">02 — Process</H3>
-            <Body size={11}>
-              Compliance is a constant battle — not because operators don't care, but because it's relentless and mostly done reactively. Food safety records, allergen documentation, certifications — all falling on people who are already stretched.
+            <div style={{ height: 3, background: 'rgba(20,184,166,0.4)', borderRadius: 2, marginBottom: 16 }} />
+            <Label>02 — Process</Label>
+            <H3>Compliance is reactive, not embedded.</H3>
+            <Body size={11.5}>
+              Food safety records, allergen documentation, certifications — all falling on people who are already stretched. When an inspector arrives, the scramble begins. When a guest asks about allergens, the answer starts with "I'll just check."
             </Body>
-            <Body size={11}>
-              When an inspector arrives, the scramble begins. When a guest asks about allergens, the answer starts with "I'll just check."
-            </Body>
-            <Bullets colour="#d97706" size={10} items={[
+            <Arrows size={10.5} items={[
               'Records created after problems, not as work happens',
-              'Allergen info out of date and not linked to live menu',
+              'Allergen information out of date and disconnected from the live menu',
               'Pre-service briefings verbal — no evidence trail',
             ]} />
           </div>
 
+          {/* Profit */}
           <div>
-            <div style={{ height: 4, background: T, borderRadius: 2, marginBottom: 14 }} />
-            <H3 colour={T}>03 — Profit</H3>
-            <Body size={11}>
-              Margins erode quietly. Supplier prices creep. Portions drift. Menus age. Most businesses don't lose margin in one hit — they bleed it slowly. By the time it's visible on the P&L, it's already cost thousands.
+            <div style={{ height: 3, background: TL, borderRadius: 2, marginBottom: 16 }} />
+            <Label>03 — Profit</Label>
+            <H3>Margin erodes quietly, then all at once.</H3>
+            <Body size={11.5}>
+              Supplier prices creep. Portions drift. Menus age. Most businesses don't lose margin in one big hit — they bleed it slowly. By the time it's visible on the P&L, it's already cost thousands.
             </Body>
-            <Body size={11}>
-              GP is calculated at menu launch and not revisited until month-end, if at all.
-            </Body>
-            <Bullets colour={T} size={10} items={[
-              "Supplier price changes don't trigger immediate recost",
-              'GP calculated at launch, not tracked continuously',
-              'Portion drift invisible until stock variance is undeniable',
+            <Arrows size={10.5} items={[
+              "Supplier price changes don't trigger an immediate menu recost",
+              'GP calculated at menu launch, not tracked continuously',
+              'Portion drift invisible until stock variance makes it undeniable',
             ]} />
           </div>
         </div>
 
-        <PullQuote text="Every challenge traces back to people, process, or profit. HospitalitySupport.uk is built to solve all three." />
+        <Card teal style={{ marginTop: 20 }}>
+          <p style={{ color: W, fontWeight: 900, fontSize: 13, margin: 0, fontFamily: F, lineHeight: 1.5 }}>
+            "Every challenge a hospitality operator faces traces back to people, process, or profit.
+            <span style={{ color: TL }}> HospitalitySupport.uk is built to solve all three.</span>"
+          </p>
+        </Card>
       </div>
-      <Footer n={2} />
-    </DocPage>
+      <PageFooter />
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 3 — THE SOLUTION
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function SolutionPage() {
   return (
-    <DocPage>
-      <Header />
-      <div style={{ flex: 1, padding: `${PAD_Y}px ${PAD_X}px 24px`, display: 'flex', overflow: 'hidden', gap: 56 }}>
+    <Page>
+      <PageHeader n={3} />
+      <div style={{ flex: 1, padding: '36px 56px 28px', display: 'flex', gap: 44, position: 'relative', zIndex: 1 }}>
 
-        {/* Left column */}
+        {/* Left */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <Label text="The Solution" />
-          <H2>Not software. An operations platform built around how hospitality actually works.</H2>
+          <Badge text="The Solution" />
+          <H2>Not software.<br /><Teal>An operations platform.</Teal></H2>
           <Body>
             Most hospitality technology is built for trained users with time, discipline, and structure. It assumes a stable team with capacity to configure and maintain a system. That's not the reality of running a kitchen.
           </Body>
           <Body>
-            HospitalitySupport.uk behaves like a competent operations team — built from real hospitality expertise, available around the clock, designed to operate under real pressure. You don't configure it. You just use it.
+            HospitalitySupport.uk behaves like a competent operations team — built from real hospitality expertise, available around the clock, designed for real kitchens under real pressure. You don't configure it. You just use it.
           </Body>
 
-          <Divider slim />
+          <Rule />
 
           <H3>Built by chefs, for chefs</H3>
-          <Body>
-            The platform was designed by people who have spent years in professional kitchens. The interface is plain English. No training required. If a chef can describe a dish, the platform builds it.
+          <Body size={11.5}>
+            Designed by people who have spent years in professional kitchens — not developers who studied the industry from the outside. Plain English. No training required. If a chef can describe a dish, the platform builds it.
           </Body>
 
-          <Divider slim />
+          <Rule />
 
           <H3>Everything connected. Always live.</H3>
-          <Body>
-            A dish is created. Instantly, allergens are known. HACCP controls are generated. Cost is calculated against live supplier prices. When a supplier changes a price, every linked dish recoasts in under a second. When a recipe changes, the allergen matrix updates.
+          <Body size={11.5}>
+            Create a dish — allergens, cost, HACCP, training notes, and FOH description are generated simultaneously. Change a supplier price — every linked dish recoasts in under a second. Change a recipe — allergen matrix, nutrition, and training all update.
           </Body>
 
-          <PullQuote text="You don't build your business around it. It builds itself around you." />
+          <Card teal style={{ marginTop: 'auto' }}>
+            <p style={{ color: TL, fontWeight: 700, fontSize: 12.5, fontStyle: 'italic', margin: 0, lineHeight: 1.5, fontFamily: F }}>
+              "You don't build your business around it. It builds itself around you."
+            </p>
+          </Card>
         </div>
 
-        {/* Right column */}
-        <div style={{ width: 380, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Right */}
+        <div style={{ width: 360, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Speed stats */}
-          <div style={{ border: `1px solid ${RULE}`, borderRadius: 10, overflow: 'hidden' }}>
-            <div style={{ background: INK, padding: '12px 20px' }}>
-              <p style={{ color: TL, fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, margin: 0 }}>Platform speed</p>
+          <div>
+            <Label>Platform speed</Label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 8 }}>
+              {[
+                { val: '3 min',   label: 'dish concept to full spec' },
+                { val: '< 1s',    label: 'price change to full recost' },
+                { val: '5 min',   label: 'sign-up to fully live' },
+                { val: '14',      label: 'allergens tracked per dish' },
+              ].map((s, i) => <Stat key={i} val={s.val} label={s.label} />)}
             </div>
-            {[
-              { val: '3 min',   label: 'Dish concept to full spec' },
-              { val: '< 1 sec', label: 'Price change to full recost' },
-              { val: '5 min',   label: 'Sign-up to fully live' },
-              { val: '14',      label: 'Allergens tracked per dish' },
-            ].map((s, i) => (
-              <div key={i} style={{ padding: '14px 20px', background: i % 2 === 0 ? WHITE : SNOW, borderTop: `1px solid ${RULE}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: MUTED, fontSize: 11 }}>{s.label}</span>
-                <span style={{ color: T, fontSize: 18, fontWeight: 900 }}>{s.val}</span>
-              </div>
-            ))}
           </div>
 
           {/* Why it works */}
-          <div style={{ background: `${T}08`, border: `1px solid ${T}25`, borderRadius: 10, padding: '20px 24px' }}>
-            <p style={{ fontSize: 11, fontWeight: 800, color: T, margin: '0 0 12px' }}>Why it works differently</p>
-            <Bullets size={10.5} items={[
+          <Card>
+            <Label>Why it works differently</Label>
+            <Arrows size={11} items={[
               'No onboarding sessions or implementation projects',
               'No training required for kitchen or management teams',
               'Works on any device — phone, tablet, desktop',
-              'Plain English — no modules, no menus to navigate',
+              'Plain English — no modules or menus to navigate',
+              'Responds the same for a head chef or a site director',
             ]} />
-          </div>
+          </Card>
 
-          {/* Pipeline context */}
-          <div style={{ background: SNOW, border: `1px solid ${RULE}`, borderRadius: 10, padding: '16px 20px' }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: MUTED, textTransform: 'uppercase' as const, letterSpacing: '0.1em', margin: '0 0 8px' }}>Pipeline value by site size</p>
-            {[
-              { label: '1 site',       mrr: '£100/mo' },
-              { label: '2–5 sites',    mrr: '£300/mo' },
-              { label: '6–15 sites',   mrr: '£900/mo' },
-              { label: '16+ sites',    mrr: '£1,600/mo' },
-            ].map((r, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: i < 3 ? `1px solid ${RULE}` : 'none' }}>
-                <span style={{ fontSize: 11, color: MUTED }}>{r.label}</span>
-                <span style={{ fontSize: 11, fontWeight: 800, color: T }}>{r.mrr}</span>
-              </div>
-            ))}
-          </div>
+          {/* Pipeline value */}
+          <Card teal>
+            <Label>MRR pipeline by site size</Label>
+            <div style={{ marginTop: 6 }}>
+              {[
+                { label: '1 site',      mrr: '£100 / mo' },
+                { label: '2–5 sites',   mrr: '£300 / mo' },
+                { label: '6–15 sites',  mrr: '£900 / mo' },
+                { label: '16+ sites',   mrr: '£1,600 / mo' },
+              ].map((r, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', fontFamily: F }}>
+                  <span style={{ fontSize: 11.5, color: S4 }}>{r.label}</span>
+                  <span style={{ fontSize: 11.5, fontWeight: 900, color: TL }}>{r.mrr}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
-      <Footer n={3} />
-    </DocPage>
+      <PageFooter />
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 4 — WHAT IT COVERS
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function CapabilityPage() {
   const caps = [
-    { col: '#0d9488', title: 'Menu Development & Recipe Spec',
+    { label: 'Menu Development & Recipe Spec',
       body: 'Describe a dish in plain English — full spec in under 3 minutes: recipe, method, mise en place, portions, yield, batch notes, and pairings. Every dish feeds every other module automatically.' },
-    { col: '#0284c7', title: 'Cost & GP Control',
+    { label: 'Cost & GP Control',
       body: "Every dish priced against your live supplier catalogue the moment it's created. GP tracked continuously. When a supplier changes a price, every affected dish recoasts in under a second." },
-    { col: '#ea580c', title: 'Ordering & Deliveries',
-      body: 'Shopping list auto-built from the live menu. Purchase orders generated with one action. Delivery checker matches goods received against the PO, flags discrepancies, keeps the audit record.' },
-    { col: '#0891b2', title: 'Supplier Pricing & Management',
+    { label: 'Ordering & Deliveries',
+      body: 'Shopping list auto-built from the live menu. Purchase orders generated with one action. Delivery checker matches goods received against the PO, flags discrepancies, and keeps the audit record.' },
+    { label: 'Supplier Pricing & Management',
       body: 'Suppliers maintain their own pricing in a dedicated portal. You see updates the moment they happen. Invoice scanning matches line items automatically. All communication logged and auditable.' },
-    { col: '#dc2626', title: 'Allergens & Nutrition',
+    { label: 'Allergens & Nutrition',
       body: "All 14 allergens tracked per dish, automatically, from the ingredient list. Natasha's Law compliant. Updates itself when a recipe changes. Nutritional info calculated and kept live per portion." },
-    { col: '#d97706', title: 'HACCP & Food Safety',
+    { label: 'HACCP & Food Safety',
       body: 'Critical control points generated per dish at creation — receiving, storage, cooking, chilling, reheating. Specific critical limits and corrective actions. Inspection-ready reports built in.' },
-    { col: '#059669', title: 'Training & Compliance',
+    { label: 'Training & Compliance',
       body: 'Training built from your actual menus, roles, and procedures. Level 2 food hygiene included. Legal compliance checked continuously. Certifications tracked with automatic expiry alerts.' },
-    { col: '#7c3aed', title: 'Front of House',
+    { label: 'Front of House',
       body: "FOH always has the live menu — what's on, what's 86'd, allergens present, specials. Dish descriptions and pairings generated and current. Fewer errors, fewer complaints, better guest experience." },
   ];
 
   return (
-    <DocPage>
-      <Header />
-      <div style={{ flex: 1, padding: `${PAD_Y}px ${PAD_X}px 20px`, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Label text="What It Covers" />
-        <H2>Every area of your operation. All connected. Always live.</H2>
+    <Page>
+      <PageHeader n={4} />
+      <div style={{ flex: 1, padding: '36px 56px 24px', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+        <Badge text="What It Covers" />
+        <H2>Every area of your operation. <Teal>All connected. Always live.</Teal></H2>
         <Body>
           Eight operational areas — all connected through the same live data, all updating automatically when anything changes. Not a collection of tools. One platform that understands your whole operation.
         </Body>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px 20px', flex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12, flex: 1 }}>
           {caps.map((c, i) => (
-            <div key={i} style={{ border: `1px solid ${RULE}`, borderRadius: 9, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ height: 4, background: c.col, flexShrink: 0 }} />
-              <div style={{ padding: '12px 14px', flex: 1 }}>
-                <H3 colour={c.col}>{c.title}</H3>
-                <p style={{ fontSize: 10.5, lineHeight: 1.6, color: MUTED, margin: 0 }}>{c.body}</p>
-              </div>
-            </div>
+            <Card key={i} style={{ display: 'flex', flexDirection: 'column', padding: '16px 18px' }}>
+              <div style={{ width: 3, height: 28, background: TL, borderRadius: 2, marginBottom: 12, flexShrink: 0 }} />
+              <H3>{c.label}</H3>
+              <p style={{ color: S4, fontSize: 10.5, lineHeight: 1.6, margin: 0, fontFamily: F }}>{c.body}</p>
+            </Card>
           ))}
         </div>
 
-        <div style={{ background: `${T}0c`, border: `1px solid ${T}28`, borderRadius: 9, padding: '14px 20px', marginTop: 14 }}>
-          <p style={{ fontSize: 11.5, fontWeight: 700, color: T, margin: '0 0 5px', lineHeight: 1.4 }}>Everything above is connected to everything else.</p>
-          <p style={{ fontSize: 10.5, color: MUTED, margin: 0, lineHeight: 1.6 }}>
-            Create a dish — allergens, costs, HACCP, training notes, and FOH description generated simultaneously. Change a supplier price — every linked dish recoasts. Change a recipe — allergen matrix, nutrition, and training all update. Zero manual connections.
+        <Card teal style={{ marginTop: 14 }}>
+          <p style={{ fontWeight: 900, fontSize: 12, color: W, margin: '0 0 5px', fontFamily: F }}>Everything above is connected to everything else.</p>
+          <p style={{ color: S4, fontSize: 11, margin: 0, lineHeight: 1.6, fontFamily: F }}>
+            Create a dish — allergens, costs, HACCP, training notes, and FOH description are generated simultaneously. Change a supplier price — every linked dish recoasts. Change a recipe — allergen matrix, nutrition, and training all update. Zero manual connections.
           </p>
-        </div>
+        </Card>
       </div>
-      <Footer n={4} />
-    </DocPage>
+      <PageFooter />
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 5 — WHO IT'S FOR
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function AudiencePage() {
   const segments = [
     {
       title: 'Independent Restaurants & Pubs',
       body: 'Owner-operators and working chefs responsible for everything but with capacity for none of it properly.',
-      bullets: [
+      items: [
         'Full menu management without a food tech team',
         'Live GP without a finance department',
         'Compliance without a dedicated manager',
@@ -428,7 +526,7 @@ function AudiencePage() {
     {
       title: 'Groups & Multi-Site Operators',
       body: 'Operations directors who need visibility and consistency across sites without building a head office team.',
-      bullets: [
+      items: [
         'Group-level GP reporting across all sites',
         'Consistent menu and allergen standards everywhere',
         'Site-level compliance visible from the centre',
@@ -438,7 +536,7 @@ function AudiencePage() {
     {
       title: 'Dark Kitchens & Production',
       body: 'High-throughput operations where consistency and documentation are critical. Multiple brands, high staff turnover.',
-      bullets: [
+      items: [
         'Multiple menu brands from one platform',
         'Training that keeps pace with high churn',
         'Compliance that scales without headcount',
@@ -448,7 +546,7 @@ function AudiencePage() {
     {
       title: 'Contract Caterers',
       body: 'Operators managing hospitality for third-party clients who need to demonstrate standards across a portfolio.',
-      bullets: [
+      items: [
         'Client-ready compliance reporting on demand',
         'Consistent standards across managed contracts',
         'Live cost visibility per site or contract',
@@ -458,40 +556,37 @@ function AudiencePage() {
   ];
 
   return (
-    <DocPage>
-      <Header />
-      <div style={{ flex: 1, padding: `${PAD_Y}px ${PAD_X}px 20px`, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Label text="Who It's For" />
-        <H2>Built for operators who are done carrying everything themselves.</H2>
+    <Page>
+      <PageHeader n={5} />
+      <div style={{ flex: 1, padding: '36px 56px 24px', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+        <Badge text="Who It's For" />
+        <H2>Built for operators who are done <Teal>carrying everything themselves.</Teal></H2>
         <Body>
           HospitalitySupport.uk is built for the reality of running a hospitality business — not the ideal version. For operators managing with less than they need, who know things are slipping through the gaps.
         </Body>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0 32px', flex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 16, marginBottom: 20 }}>
           {segments.map((s, i) => (
-            <div key={i}>
-              <div style={{ height: 3, background: T, borderRadius: 2, marginBottom: 12 }} />
+            <Card key={i} style={{ display: 'flex', flexDirection: 'column', padding: '18px 20px' }}>
               <H3>{s.title}</H3>
-              <Body size={10.5}>{s.body}</Body>
-              <Bullets size={10} items={s.bullets} />
-            </div>
+              <Body size={11}>{s.body}</Body>
+              <Arrows size={10.5} items={s.items} />
+            </Card>
           ))}
         </div>
 
-        <Divider slim />
+        <Rule />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
-          <div>
-            <H3>This is specifically for you if:</H3>
-            <Bullets size={10.5} items={[
+        <div>
+          <Label>This is specifically for you if:</Label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 48px', marginTop: 10 }}>
+            <Arrows size={11} items={[
               'You manage GP on spreadsheets and catch problems too late',
-              "Training relies on one or two key people — and you know the risk",
+              'Training relies on one or two key people — and you know the risk',
               'You spend more time on compliance than running the business',
               'Multiple sites are losing visibility as you scale',
             ]} />
-          </div>
-          <div style={{ paddingTop: 22 }}>
-            <Bullets size={10.5} items={[
+            <Arrows size={11} items={[
               "You're paying for software your team doesn't fully use",
               'You want complete operations capability without building it',
               'An experienced person is holding everything together',
@@ -500,122 +595,140 @@ function AudiencePage() {
           </div>
         </div>
 
-        <PullQuote text="The question isn't whether you can afford it. It's whether you can afford what's happening without it." />
+        <Card teal style={{ marginTop: 'auto' }}>
+          <p style={{ color: TL, fontWeight: 700, fontSize: 12.5, fontStyle: 'italic', margin: 0, lineHeight: 1.5, fontFamily: F }}>
+            "The question isn't whether you can afford it. It's whether you can afford what's happening without it."
+          </p>
+        </Card>
       </div>
-      <Footer n={5} />
-    </DocPage>
+      <PageFooter />
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 6 — PRICING
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function PricingPage() {
   const tiers = [
     {
-      tier: 'Standard Venue', price: '£100', period: '/month', tag: '£3.30 per kitchen / day',
-      who: 'Pubs, restaurants, cafés, and independent hospitality businesses.',
-      hi: true,
-      includes: [
-        'Full platform access — unlimited users',
-        'Menu development & recipe spec',
-        'Live GP & automatic recosting',
-        "Allergen management — Natasha's Law compliant",
-        'HACCP controls generated per dish',
+      name: 'Standard Venue', price: '£100', period: 'per month',
+      for: 'Pubs, restaurants, cafés',
+      pitch: 'Less than the cost of one wasted delivery. More than enough to protect every margin, every day.',
+      hi: false,
+      features: [
+        'Full menu creation & live GP control',
+        "Allergen compliance — Natasha's Law handled",
+        'HACCP & food safety documentation',
+        'Staff training generated from your ops',
+        'Supplier price monitoring & auto-recosting',
+        'Unlimited staff access — no per-user fees',
         'Ordering, purchase orders & delivery checking',
-        'Bespoke training from your own menus & procedures',
-        'Level 2 food hygiene included',
-        'Compliance tracking & digital sign-off',
         'Front-of-house knowledge base',
       ],
     },
     {
-      tier: 'Dark Kitchen / Production Kitchen', price: '£250', period: '/month', tag: '',
-      who: 'Dark kitchens, production kitchens, and multi-brand high-churn operations.',
-      hi: false,
-      includes: [
+      name: 'High-Intensity Kitchen', price: '£250', period: 'per month',
+      for: 'Dark kitchens & production kitchens',
+      pitch: 'Priced for operational load, not headcount. Built for kitchens where margins move daily and errors cost thousands.',
+      hi: true,
+      features: [
         'Everything in Standard Venue',
-        'Multiple menu brands per kitchen',
-        'Higher training throughput for high churn',
-        'Enhanced compliance for multi-shift operations',
+        'Multiple menus and brands per kitchen',
+        'Higher-volume training & compliance throughput',
+        'Larger teams and higher staff turnover supported',
         'Priority support',
       ],
     },
     {
-      tier: 'Multi-Site & Group', price: '£100', period: '/site/month', tag: 'Same price, every site',
-      who: 'Operators with two or more sites — pub groups, restaurant groups, managed estates.',
+      name: 'Multi-Site & Groups', price: '£100', period: 'per kitchen / month',
+      for: 'Groups, estates, franchise operators',
+      pitch: "Same per-kitchen price as Standard. You don't pay more to see more — you get full visibility across your estate.",
       hi: false,
-      includes: [
-        'Full Standard Venue at every site',
-        'Group dashboard — GP, compliance, spend across all sites',
-        'Centralised menu management with site-level customisation',
-        'Group compliance reporting for head office',
+      features: [
+        'Everything in Standard Venue',
+        'Group-level compliance and spend reporting',
+        'Central oversight with local execution',
+        'Consistent standards without micromanagement',
         'Shared supplier relationships across the group',
       ],
     },
   ];
 
   return (
-    <DocPage>
-      <Header />
-      <div style={{ flex: 1, padding: `${PAD_Y}px ${PAD_X}px 20px`, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Label text="Pricing" />
-        <H2>Priced per kitchen. Not per user. Not per seat.</H2>
+    <Page>
+      <PageHeader n={6} />
+      <div style={{ flex: 1, padding: '36px 56px 24px', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+        <Badge text="Pricing" />
+        <H2>Priced per kitchen.<br /><Teal>Not per user. Not per seat.</Teal></H2>
         <Body>
-          Every person who works in or manages your operation has full access. No user limits, no module fees, no professional services charges. The price you see is the price you pay — and it includes everything.
+          Annual billing. Your whole team, one flat fee. No add-ons for compliance, training, or multi-user access. The price you see is the price you pay — and it includes everything.
         </Body>
 
-        <div style={{ display: 'flex', gap: 20, flex: 1 }}>
-          {tiers.map((p, i) => (
-            <div key={i} style={{ flex: 1, border: `1px solid ${p.hi ? `${T}45` : RULE}`, borderRadius: 11, overflow: 'hidden', background: p.hi ? `${T}06` : WHITE, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ padding: '14px 20px', borderBottom: `1px solid ${p.hi ? `${T}25` : RULE}`, background: p.hi ? `${T}10` : SNOW }}>
-                <p style={{ fontSize: 9.5, fontWeight: 800, color: T, textTransform: 'uppercase' as const, letterSpacing: '0.1em', margin: '0 0 3px' }}>{p.tier}</p>
-                <p style={{ fontSize: 10.5, color: MUTED, margin: '0 0 10px' }}>{p.who}</p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
-                  <span style={{ color: INK, fontSize: 30, fontWeight: 900, lineHeight: 1 }}>{p.price}</span>
-                  <span style={{ color: MUTED, fontSize: 11 }}>{p.period}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 18, flex: 1 }}>
+          {tiers.map((t, i) => {
+            const Inner = t.hi ? CardHL : Card;
+            return (
+              <Inner key={i} style={{ display: 'flex', flexDirection: 'column', padding: '20px 22px' }}>
+                {t.hi && (
+                  <div style={{
+                    display: 'inline-block', alignSelf: 'flex-start',
+                    background: 'rgba(20,184,166,0.20)', border: '1px solid rgba(20,184,166,0.40)',
+                    color: T3, fontSize: 8.5, fontWeight: 900, letterSpacing: '0.15em',
+                    textTransform: 'uppercase' as const, borderRadius: 999, padding: '4px 12px', marginBottom: 12, fontFamily: F,
+                  }}>High volume</div>
+                )}
+                <Label>{t.for}</Label>
+                <H3>{t.name}</H3>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 5, margin: '10px 0 16px' }}>
+                  <span style={{ color: W, fontSize: 40, fontWeight: 900, lineHeight: 1, fontFamily: F }}>{t.price}</span>
+                  <span style={{ color: S4, fontSize: 12 }}>{t.period}</span>
                 </div>
-                {p.tag && <p style={{ color: T, fontSize: 9, fontWeight: 700, margin: '3px 0 0' }}>{p.tag}</p>}
-              </div>
-              <div style={{ padding: '14px 20px', flex: 1 }}>
-                {p.includes.map((inc, ii) => (
-                  <div key={ii} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 7 }}>
-                    <span style={{ color: T, fontSize: 10, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontSize: 10.5, color: '#374151', lineHeight: 1.45 }}>{inc}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                <Arrows size={11} items={t.features} />
+                <p style={{ color: t.hi ? 'rgba(153,246,228,0.7)' : S5, fontSize: 10.5, lineHeight: 1.6, fontStyle: 'italic', margin: 'auto 0 0', paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)', fontFamily: F }}>
+                  {t.pitch}
+                </p>
+              </Inner>
+            );
+          })}
         </div>
 
-        <div style={{ background: SNOW, border: `1px solid ${RULE}`, borderRadius: 8, padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
-          <p style={{ color: MUTED, fontSize: 10.5, margin: 0 }}>Annual billing · No setup fees · No per-user fees · No hidden costs · No implementation charges</p>
-          <p style={{ color: T, fontSize: 10.5, fontWeight: 700, margin: 0, flexShrink: 0, marginLeft: 16 }}>Cancel any time</p>
-        </div>
+        <Card teal style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <p style={{ color: W, fontWeight: 900, fontSize: 14, margin: '0 0 4px', fontFamily: F }}>The cost of one bad month pays for a year.</p>
+              <p style={{ color: S4, fontSize: 11, margin: 0, fontFamily: F }}>
+                Margin erosion, allergen errors, failed inspections, staff retraining — any one of these costs more than the annual subscription.
+              </p>
+            </div>
+            <div style={{ flexShrink: 0, marginLeft: 24 }}>
+              <p style={{ color: S5, fontSize: 9, margin: '0 0 4px', fontFamily: F }}>Annual billing · No setup fees · Cancel any time</p>
+            </div>
+          </div>
+        </Card>
       </div>
-      <Footer n={6} />
-    </DocPage>
+      <PageFooter />
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 7 — COMPARISON
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function ComparisonPage() {
   const rows = [
-    ['Time to go live',           'Under 5 minutes',                     '4–8 week implementation'],
-    ['Dish to full spec',         'Under 3 minutes',                     '2–3 hours of manual work'],
-    ['Allergen management',       'Auto-generated, always live',          'Manual spreadsheets, updated infrequently'],
-    ['HACCP documentation',       'Built per dish, automatically',        'Generic templates copied and pasted'],
-    ['Ordering & POs',            'Auto-built from live menu',            'Manual shopping lists'],
-    ['Delivery checking',         'Automated scan vs PO matching',        'Paper-based, no records'],
-    ['GP tracking',               'Live — updates every price change',    'Monthly recalculation, if at all'],
-    ['Supplier price changes',    'Suppliers update their own portal',    'You manually re-enter prices'],
-    ['Training content',          'From your actual operations',          'Generic industry content'],
-    ['Compliance evidence',       'Created as work happens',              'Retrospective, often incomplete'],
-    ['Interface',                 'Plain English — no training needed',   'Complex UI requiring onboarding'],
-    ['Built by',                  'Hospitality operators',                'Technology developers'],
+    ['Time to go live',        'Under 5 minutes',                    '4–8 week implementation'],
+    ['Dish to full spec',      'Under 3 minutes',                    '2–3 hours of manual work'],
+    ['Allergen management',    'Auto-generated, always live',         'Manual spreadsheets, updated infrequently'],
+    ['HACCP documentation',    'Built per dish, automatically',       'Generic templates copied and pasted'],
+    ['Ordering & POs',         'Auto-built from live menu',           'Manual shopping lists'],
+    ['Delivery checking',      'Automated scan vs PO matching',       'Paper-based, no records'],
+    ['GP tracking',            'Live — every price change',           'Monthly recalculation, if at all'],
+    ['Supplier price changes', 'Suppliers update their own portal',   'You manually re-enter prices'],
+    ['Training content',       'From your actual operations',         'Generic industry content'],
+    ['Compliance evidence',    'Created as work happens',             'Retrospective, often incomplete'],
+    ['Interface',              'Plain English — no training needed',  'Complex UI requiring onboarding'],
+    ['Built by',               'Hospitality operators',               'Technology developers'],
   ];
 
   const quotes = [
@@ -626,151 +739,159 @@ function ComparisonPage() {
   ];
 
   return (
-    <DocPage>
-      <Header />
-      <div style={{ flex: 1, padding: `${PAD_Y}px ${PAD_X}px 20px`, overflow: 'hidden', display: 'flex', gap: 40 }}>
+    <Page>
+      <PageHeader n={7} />
+      <div style={{ flex: 1, padding: '36px 56px 24px', display: 'flex', gap: 40, position: 'relative', zIndex: 1 }}>
 
-        {/* Left — comparison table */}
-        <div style={{ flex: 1.1, display: 'flex', flexDirection: 'column' }}>
-          <Label text="Why HospitalitySupport.uk" />
-          <H2>Simple, intuitive, built around how kitchens actually operate.</H2>
+        {/* Left — table */}
+        <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column' }}>
+          <Badge text="Why HospitalitySupport.uk" />
+          <H2>Simple, intuitive, <Teal>built around how kitchens actually operate.</Teal></H2>
           <Body>
-            Most hospitality platforms were built by developers who studied the industry from the outside. They require implementation projects and training. The result is software that sits unused or used badly — and doesn't fix the problems it was bought to solve.
+            Most platforms were built by developers who studied hospitality from the outside. They require implementation projects and training — then sit unused. HospitalitySupport.uk was built by people who have run kitchens.
           </Body>
 
-          <div style={{ border: `1px solid ${RULE}`, borderRadius: 9, overflow: 'hidden', flex: 1 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '34% 33% 33%', background: INK }}>
-              <div style={{ padding: '8px 14px', color: FAINT, fontSize: 9, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>Capability</div>
-              <div style={{ padding: '8px 14px', color: TL, fontSize: 9.5, fontWeight: 800, borderLeft: '1px solid rgba(255,255,255,0.07)' }}>HospitalitySupport.uk</div>
-              <div style={{ padding: '8px 14px', color: '#475569', fontSize: 9, fontWeight: 700, borderLeft: '1px solid rgba(255,255,255,0.07)' }}>Traditional platforms</div>
+          <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, overflow: 'hidden', flex: 1 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '30% 35% 35%', background: S9 }}>
+              <div style={{ padding: '9px 14px', color: S5, fontSize: 9, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontFamily: F }}>Capability</div>
+              <div style={{ padding: '9px 14px', color: TL, fontSize: 10, fontWeight: 900, borderLeft: '1px solid rgba(255,255,255,0.05)', fontFamily: F }}>HospitalitySupport.uk</div>
+              <div style={{ padding: '9px 14px', color: S5, fontSize: 9.5, fontWeight: 700, borderLeft: '1px solid rgba(255,255,255,0.05)', fontFamily: F }}>Traditional platforms</div>
             </div>
             {rows.map((row, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '34% 33% 33%', background: i % 2 === 0 ? WHITE : SNOW, borderTop: `1px solid ${RULE}` }}>
-                <div style={{ padding: '5.5px 14px', fontSize: 10, color: INK, fontWeight: 600 }}>{row[0]}</div>
-                <div style={{ padding: '5.5px 14px', fontSize: 10, color: T, fontWeight: 600, borderLeft: `1px solid ${RULE}` }}>{row[1]}</div>
-                <div style={{ padding: '5.5px 14px', fontSize: 10, color: FAINT, borderLeft: `1px solid ${RULE}` }}>{row[2]}</div>
+              <div key={i} style={{
+                display: 'grid', gridTemplateColumns: '30% 35% 35%',
+                background: i % 2 === 0 ? 'rgba(15,23,42,0.4)' : 'rgba(15,23,42,0.7)',
+                borderTop: '1px solid rgba(255,255,255,0.04)',
+              }}>
+                <div style={{ padding: '6px 14px', fontSize: 10.5, color: S4, fontWeight: 600, fontFamily: F }}>{row[0]}</div>
+                <div style={{ padding: '6px 14px', fontSize: 10.5, color: TL, fontWeight: 700, borderLeft: '1px solid rgba(255,255,255,0.04)', fontFamily: F }}>{row[1]}</div>
+                <div style={{ padding: '6px 14px', fontSize: 10.5, color: S5, borderLeft: '1px solid rgba(255,255,255,0.04)', fontFamily: F }}>{row[2]}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Right — quotes */}
-        <div style={{ width: 340, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: 14, paddingTop: 88 }}>
-          <p style={{ fontSize: 10, fontWeight: 800, color: T, letterSpacing: '0.1em', textTransform: 'uppercase' as const, margin: 0 }}>What operators say</p>
+        <div style={{ width: 320, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: 14, paddingTop: 80 }}>
+          <Label>What operators say</Label>
           {quotes.map((q, i) => (
-            <div key={i} style={{ background: SNOW, border: `1px solid ${RULE}`, borderRadius: 9, padding: '14px 16px', borderLeft: `4px solid ${T}` }}>
-              <p style={{ fontSize: 11, lineHeight: 1.55, color: SLATE, fontStyle: 'italic', margin: '0 0 7px' }}>"{q.q}"</p>
-              <p style={{ fontSize: 9, color: FAINT, fontWeight: 600, margin: 0 }}>{q.a}</p>
-            </div>
+            <Card key={i} teal style={{ padding: '14px 16px' }}>
+              <p style={{ fontSize: 11.5, lineHeight: 1.55, color: S4, fontStyle: 'italic', margin: '0 0 8px', fontFamily: F }}>"{q.q}"</p>
+              <p style={{ fontSize: 9.5, color: S5, fontWeight: 600, margin: 0, fontFamily: F }}>{q.a}</p>
+            </Card>
           ))}
         </div>
       </div>
-      <Footer n={7} />
-    </DocPage>
+      <PageFooter />
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    PAGE 8 — CLOSE
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 function ClosePage() {
   const modules = [
-    { label: 'Menu Development', col: '#0d9488' },
-    { label: 'Cost & GP',        col: '#0284c7' },
-    { label: 'Ordering & POs',   col: '#ea580c' },
-    { label: 'Supplier Pricing', col: '#0891b2' },
-    { label: 'Allergens',        col: '#dc2626' },
-    { label: 'HACCP & Safety',   col: '#d97706' },
-    { label: 'Training',         col: '#059669' },
-    { label: 'Front of House',   col: '#7c3aed' },
+    'Menu Development', 'Cost & GP', 'Ordering & POs',
+    'Supplier Pricing', 'Allergens', 'HACCP & Safety',
+    'Training', 'Front of House',
   ];
 
   return (
-    <DocPage bg={DARK}>
+    <Page>
+      {/* Top teal bar */}
       <div style={{ height: 5, background: T, flexShrink: 0 }} />
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
-        {/* Left */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '56px 48px 44px 64px' }}>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
+        {/* Glow */}
+        <div style={{
+          position: 'absolute', bottom: -100, right: '30%', width: 600, height: 400,
+          background: 'rgba(20,184,166,0.06)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none',
+        }} />
+
+        {/* Left — main copy */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '56px 48px 44px 56px' }}>
           <div>
-            <p style={{ color: TL, fontSize: 10, fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' as const, margin: '0 0 16px' }}>
-              The Bottom Line
-            </p>
-            <h2 style={{ color: WHITE, fontSize: 42, fontWeight: 900, lineHeight: 1.0, letterSpacing: '-0.03em', margin: '0 0 6px', maxWidth: 460 }}>
-              It doesn't change what hospitality is.
+            <Badge text="The Bottom Line" />
+            <h2 style={{ color: W, fontWeight: 900, fontSize: 50, lineHeight: 0.95, letterSpacing: '-0.04em', margin: '0 0 12px', fontFamily: F }}>
+              It doesn't change<br />what hospitality is.<br />
+              <span style={{ color: TL }}>It changes what you<br />have to carry.</span>
             </h2>
-            <div style={{ width: 60, height: 5, background: T, borderRadius: 2, margin: '0 0 20px' }} />
-            <p style={{ color: FAINT, fontSize: 15, lineHeight: 1.7, margin: '0 0 18px', maxWidth: 440 }}>
-              It changes what you personally have to carry.
-            </p>
-            <p style={{ color: MUTED, fontSize: 11.5, lineHeight: 1.75, maxWidth: 440, margin: '0 0 10px' }}>
+            <div style={{ width: 64, height: 5, background: T, borderRadius: 2, margin: '20px 0 24px' }} />
+            <p style={{ color: S4, fontSize: 13.5, lineHeight: 1.7, maxWidth: 440, margin: '0 0 14px', fontFamily: F }}>
               Menu development. GP control. Allergen management. Compliance. Training. Front-of-house support. Supplier pricing. Ordering. All of it — working together, always live, built around your actual operation.
             </p>
-            <p style={{ color: MID, fontSize: 11.5, lineHeight: 1.75, maxWidth: 420, margin: 0 }}>
+            <p style={{ color: S5, fontSize: 13, lineHeight: 1.7, maxWidth: 420, margin: 0, fontFamily: F }}>
               From £3.30 a day. Per kitchen, not per user. No setup fees. No implementation project. No training required. Live in under 5 minutes.
             </p>
           </div>
 
           {/* Module strip */}
-          <div style={{ display: 'flex', gap: 0, borderRadius: 9, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
-            {modules.map((m, i) => (
-              <div key={i} style={{ flex: 1, padding: '14px 0', textAlign: 'center' as const, background: m.col, borderRight: i < 7 ? '1px solid rgba(0,0,0,0.12)' : 'none' }}>
-                <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: 8.5, fontWeight: 800, display: 'block', padding: '0 4px', lineHeight: 1.3 }}>{m.label}</span>
-              </div>
-            ))}
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 6, marginBottom: 20 }}>
+              {modules.map((m, i) => (
+                <Card key={i} teal style={{ padding: '10px 6px', textAlign: 'center' as const }}>
+                  <span style={{ color: W, fontSize: 9, fontWeight: 800, lineHeight: 1.3, display: 'block', fontFamily: F }}>{m}</span>
+                </Card>
+              ))}
+            </div>
+            <p style={{ color: '#0d2030', fontSize: 9, margin: 0, fontFamily: F }}>No payroll. No politics. No sick days. No knowledge walking out the door.</p>
           </div>
         </div>
 
         {/* Right — CTA panel */}
-        <div style={{ width: 340, background: '#0d1420', borderLeft: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '56px 40px', gap: 24 }}>
+        <div style={{ width: 340, background: 'rgba(10,18,30,0.8)', borderLeft: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '56px 40px', gap: 28 }}>
+
           <div>
-            <p style={{ color: TL, fontSize: 14, fontWeight: 800, margin: '0 0 10px', letterSpacing: '-0.01em' }}>
+            <p style={{ color: TL, fontWeight: 900, fontSize: 16, margin: '0 0 12px', letterSpacing: '-0.01em', fontFamily: F }}>
               Book a 30-minute demo
             </p>
-            <p style={{ color: MUTED, fontSize: 11, lineHeight: 1.65, margin: '0 0 20px' }}>
+            <p style={{ color: S4, fontSize: 12, lineHeight: 1.65, margin: '0 0 22px', fontFamily: F }}>
               We'll show your actual dishes recosting live against your supplier prices. No slides. No generic demo. Your data, your operation, in real time.
             </p>
-            <div style={{ background: T, color: WHITE, fontWeight: 900, fontSize: 13, padding: '14px 24px', borderRadius: 9, textAlign: 'center' as const }}>
+            <div style={{ background: T, color: W, fontWeight: 900, fontSize: 14, padding: '14px 0', borderRadius: 12, textAlign: 'center' as const, letterSpacing: '-0.01em', fontFamily: F }}>
               hospitalitysupport.uk
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 24 }}>
-            <p style={{ color: '#1e293b', fontSize: 9, margin: '0 0 16px', textTransform: 'uppercase' as const, letterSpacing: '0.1em', fontWeight: 700 }}>Pipeline value</p>
+          <Rule />
+
+          <div>
+            <Label>Pipeline value by site size</Label>
             {[
-              { label: '1 site',     mrr: '£100/mo',    note: 'Standard Venue' },
-              { label: '2–5 sites',  mrr: '£300/mo',    note: 'Multi-Site' },
-              { label: '6–15 sites', mrr: '£900/mo',    note: 'Multi-Site' },
-              { label: '16+ sites',  mrr: '£1,600/mo',  note: 'Multi-Site' },
+              { label: '1 site',      mrr: '£100/mo' },
+              { label: '2–5 sites',   mrr: '£300/mo' },
+              { label: '6–15 sites',  mrr: '£900/mo' },
+              { label: '16+ sites',   mrr: '£1,600/mo' },
             ].map((r, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                <span style={{ fontSize: 10.5, color: '#334155' }}>{r.label}</span>
-                <span style={{ fontSize: 11, fontWeight: 800, color: TL }}>{r.mrr}</span>
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none', fontFamily: F }}>
+                <span style={{ fontSize: 11, color: S5 }}>{r.label}</span>
+                <span style={{ fontSize: 12, fontWeight: 900, color: TL }}>{r.mrr}</span>
               </div>
             ))}
           </div>
 
-          <p style={{ color: '#111827', fontSize: 9, margin: 0, lineHeight: 1.55 }}>
-            No payroll. No politics. No sick days. No knowledge walking out the door.
+          <p style={{ color: '#0d1f2d', fontSize: 9.5, margin: 0, lineHeight: 1.6, fontFamily: F }}>
+            Confidential · Not for distribution
           </p>
         </div>
-
       </div>
-    </DocPage>
+    </Page>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    EXPORT
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════ */
 export default function BrochurePage() {
   return (
     <div className="min-h-full bg-slate-950 p-6">
       <div style={{ maxWidth: PW + 48 }} className="mx-auto">
+
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">Brochure — 300×300mm Square</h1>
-            <p className="text-slate-400 text-sm mt-1">8 pages · Landscape square format · Print or save as PDF</p>
+            <p className="text-slate-400 text-sm mt-1">8 pages · Square landscape format · Print or save as PDF</p>
           </div>
           <button
             onClick={() => window.print()}
@@ -781,9 +902,10 @@ export default function BrochurePage() {
         </div>
 
         <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { margin: 0; padding: 0; background: white !important; }
+            body { margin: 0; padding: 0; background: #080f1a !important; }
             .no-print { display: none !important; }
             .print-page {
               box-shadow: none !important;
