@@ -253,63 +253,118 @@ function MindMap() {
 }
 
 function Page1() {
+
   return (
     <Page n={1}>
-      <div style={{ background: MID, flex: 1, padding: '12px 24px 10px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -60, right: -60, width: 300, height: 300, background: 'radial-gradient(circle, rgba(13,148,136,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      {/* ACT 1 — The chef's reality: split left/right */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', flex: '0 0 auto' }}>
 
-        {/* Compact header row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, gap: 16 }}>
-          <div style={{ flex: 1 }}>
-            <Badge text="The operating platform for modern hospitality" />
-            <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '2px 0 4px' }}>
-              Every area of your operation.{' '}
-              <span style={{ color: '#2dd4bf' }}>All connected. Always live.</span>
-            </h1>
-            <p style={{ color: '#64748b', fontSize: 9.5, lineHeight: 1.5, margin: 0, maxWidth: 480 }}>
-              It starts with menu development — and branches into every part of your business. One platform. No spreadsheets. No separate systems.
-            </p>
+        {/* Left — the emotional hook */}
+        <div style={{ background: '#060d16', padding: '20px 20px 18px 28px', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ fontSize: 8, fontWeight: 800, color: '#f87171', textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 10 }}>
+            The reality of running a kitchen
           </div>
-          {/* Price badge */}
-          <div style={{ background: T, borderRadius: 9, padding: '9px 14px', textAlign: 'center' as const, flexShrink: 0 }}>
-            <div style={{ color: '#fff', fontSize: 18, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 8, marginTop: 2 }}>per kitchen / day</div>
+          <p style={{ color: '#fff', fontSize: 19, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '0 0 10px' }}>
+            You became a chef<br />
+            because you love to cook.
+          </p>
+          <p style={{ color: '#94a3b8', fontSize: 10, lineHeight: 1.65, margin: '0 0 12px' }}>
+            Somewhere between the first job and running your own kitchen, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The training. The supplier calls.
+          </p>
+          <p style={{ color: '#e2e8f0', fontSize: 11, fontWeight: 700, lineHeight: 1.5, fontStyle: 'italic', borderLeft: `3px solid ${T}`, paddingLeft: 11, margin: 0 }}>
+            "I didn't go to catering college to update an allergen spreadsheet at midnight."
+          </p>
+        </div>
+
+        {/* Right — the noise cloud */}
+        <div style={{ background: '#090f1a', padding: '16px 20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ fontSize: 8, fontWeight: 800, color: '#475569', textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 10 }}>
+            What actually fills the day
+          </div>
+          {/* Noise pills — scattered layout using absolute positioning within a relative container */}
+          <div style={{ position: 'relative', height: 148 }}>
+            {[
+              { text: 'allergen spreadsheets', top: 0, left: 4, col: '#f87171' },
+              { text: 'HACCP paperwork', top: 0, left: 140, col: '#f87171' },
+              { text: 'GP that\'s never right', top: 0, left: 256, col: '#f87171' },
+              { text: 'staff no-shows', top: 24, left: 60, col: '#fbbf24' },
+              { text: 'supplier invoice queries', top: 24, left: 184, col: '#fbbf24' },
+              { text: 'training records', top: 48, left: 0, col: '#94a3b8' },
+              { text: 'price increases you missed', top: 48, left: 108, col: '#f87171' },
+              { text: 'FOH asking what\'s in the dish', top: 48, left: 258, col: '#94a3b8' },
+              { text: 'compliance checklists', top: 72, left: 40, col: '#fbbf24' },
+              { text: 'menu costing', top: 72, left: 192, col: '#94a3b8' },
+              { text: 'certification renewals', top: 96, left: 8, col: '#94a3b8' },
+              { text: 'delivery discrepancies', top: 96, left: 156, col: '#fbbf24' },
+              { text: 'portion drift', top: 120, left: 50, col: '#94a3b8' },
+              { text: 'last-minute menu changes', top: 120, left: 148, col: '#f87171' },
+              { text: 'food safety audits', top: 120, left: 300, col: '#f87171' },
+            ].map((item, i) => (
+              <span
+                key={i}
+                style={{
+                  position: 'absolute',
+                  top: item.top,
+                  left: item.left,
+                  fontSize: 8.5,
+                  fontWeight: 600,
+                  color: item.col,
+                  background: `${item.col}12`,
+                  border: `1px solid ${item.col}30`,
+                  borderRadius: 20,
+                  padding: '2px 8px',
+                  whiteSpace: 'nowrap' as const,
+                  opacity: 0.75 + (i % 4) * 0.07,
+                }}
+              >
+                {item.text}
+              </span>
+            ))}
+          </div>
+          {/* Strike-through the noise */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 9, marginTop: 4 }}>
+            <span style={{ color: '#334155', fontSize: 9, fontStyle: 'italic' }}>
+              None of this is why you got into hospitality.
+            </span>
           </div>
         </div>
+      </div>
 
-        {/* Three problems — tight horizontal strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 6 }}>
-          {[
-            { prob: 'People', col: '#f87171', desc: 'Skills eroding. Turnover constant. Standards rely on one or two people.' },
-            { prob: 'Process', col: '#fbbf24', desc: 'Compliance reactive. Evidence missing until you need it.' },
-            { prob: 'Profit', col: '#34d399', desc: 'Margins bleeding slowly. Supplier prices creep. Caught too late.' },
-          ].map(p => (
-            <div key={p.prob} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${p.col}28`, borderRadius: 7, padding: '6px 10px', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-              <div style={{ color: p.col, fontSize: 9, fontWeight: 900, flexShrink: 0, marginTop: 1 }}>{p.prob}</div>
-              <div style={{ color: '#475569', fontSize: 8, lineHeight: 1.4 }}>{p.desc}</div>
-            </div>
-          ))}
+      {/* ACT 2 — The solution: full-width dark band then mind map */}
+      <div style={{ background: MID, borderTop: `2px solid ${T}`, padding: '10px 24px 6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexShrink: 0 }}>
+        <div>
+          <div style={{ fontSize: 8, fontWeight: 800, color: '#2dd4bf', textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 4 }}>
+            HospitalitySupport.uk
+          </div>
+          <p style={{ color: '#fff', fontSize: 15, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '0 0 3px' }}>
+            Every area of your operation.{' '}
+            <span style={{ color: '#2dd4bf' }}>All connected. Always live.</span>
+          </p>
+          <p style={{ color: '#64748b', fontSize: 9, lineHeight: 1.5, margin: 0, maxWidth: 400 }}>
+            It starts with menu development — and everything else follows automatically. Costs. Allergens. HACCP. Training. Compliance. Supplier pricing. All of it, built from one source of truth.
+          </p>
         </div>
-
-        {/* Mind map — takes all remaining space */}
-        <div style={{ flex: 1, minHeight: 0 }}>
-          <MindMap />
-        </div>
-
-        {/* Stats strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5, marginTop: 4 }}>
+        <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
           {[
-            { val: '3 min', label: 'Concept → live dish' },
-            { val: '14', label: 'Allergens tracked' },
-            { val: '5 min', label: 'Overall go-live' },
-            { val: '0', label: 'Spreadsheets needed' },
+            { val: '3 min', label: 'Dish live' },
+            { val: '14', label: 'Allergens' },
+            { val: '0', label: 'Spreadsheets' },
           ].map(s => (
-            <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6, padding: '5px 6px', textAlign: 'center' as const }}>
-              <div style={{ color: '#2dd4bf', fontSize: 13, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-              <div style={{ color: '#475569', fontSize: 7, marginTop: 2 }}>{s.label}</div>
+            <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, padding: '5px 8px', textAlign: 'center' as const }}>
+              <div style={{ color: '#2dd4bf', fontSize: 12, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+              <div style={{ color: '#475569', fontSize: 7, marginTop: 1 }}>{s.label}</div>
             </div>
           ))}
+          <div style={{ background: T, borderRadius: 6, padding: '5px 10px', textAlign: 'center' as const }}>
+            <div style={{ color: '#fff', fontSize: 12, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 7, marginTop: 1 }}>per day</div>
+          </div>
         </div>
+      </div>
+
+      {/* Mind map — fills remaining page */}
+      <div style={{ background: MID, flex: 1, minHeight: 0, padding: '0 8px 6px' }}>
+        <MindMap />
       </div>
     </Page>
   );
