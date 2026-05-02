@@ -50,7 +50,7 @@ export const staticAds: StaticAd[] = [
     ctaText: 'Learn more',
     likes: '2.1k',
     comments: '143',
-    caption: "Restaurants lose profit silently. GP drift. Supplier price hikes. Menu items costed wrong. It compounds before you see it.\n\nHospitalitySupport.uk catches it all — live, continuously, at £3.30 a day.\n\nLink in bio.",
+    caption: "Restaurants lose margin silently. A supplier price moves. A dish drifts. A menu goes unchecked. It compounds for weeks before it shows up anywhere.\n\nHospitalitySupport.uk catches it live — before it costs you.\n\n£3.30 a day. Link in bio.",
     hashtags: '#hospitalitybusiness #restaurantowner #gpmargin #profitmargin #foodbusiness #kitchenmanagement #hospitality',
   },
   {
@@ -60,7 +60,7 @@ export const staticAds: StaticAd[] = [
     label: 'Product Benefit',
     description: 'Shows the three core pillars with interactive pill tags. Clean off-white, aspirational tone.',
     accentColor: '#0284c7',
-    bgStyle: 'off-white',
+    bgStyle: 'dark-navy',
     badge: 'HospitalitySupport.uk',
     headline: 'To help restaurants with:',
     pillTags: ['Certainty', 'Consistency', 'Control'],
@@ -76,7 +76,7 @@ export const staticAds: StaticAd[] = [
     ctaText: 'Learn more',
     likes: '1.6k',
     comments: '89',
-    caption: "Certainty over chaos. Consistency over gut feel. Control over margin.\n\nHospitalitySupport.uk gives you a full operations team at £3.30 a day — not software. A team.\n\nLink in bio.",
+    caption: "GP live. Compliance tracked. Supplier prices monitored. Training done.\n\nHospitalitySupport.uk isn't software you manage — it's the operations setup that runs alongside you.\n\n£3.30 a day. Per kitchen.\n\nLink in bio.",
     hashtags: '#restaurantmanagement #operationsmanagement #hospitalitybusiness #foodbusiness #menuengineering #kitchenmanagement',
   },
   {
@@ -106,7 +106,7 @@ export const staticAds: StaticAd[] = [
     ctaText: 'Learn more',
     likes: '3.4k',
     comments: '217',
-    caption: "Healthy margins shouldn't require a finance degree or a full-time food cost controller.\n\nOne message. Instant GP breakdown. Live across every dish.\n\n£3.30 a day. No seat licences.\n\nLink in bio.",
+    caption: "GP doesn't have to be something you check at month-end and wince at.\n\nOne message. Instant breakdown across every dish. Flagged when it drifts. Fixed before service.\n\n£3.30 a day. No seat licences.\n\nLink in bio.",
     hashtags: '#restaurantowner #gpmargin #foodcost #profitmargin #hospitalitybusiness #kitchenmanagement #cheflife',
   },
   {
@@ -158,7 +158,7 @@ export const staticAds: StaticAd[] = [
     ctaText: 'Learn more',
     likes: '1.2k',
     comments: '61',
-    caption: "GP. Training. Compliance. Supplier costs. All visible. All live.\n\nStop finding out about problems after they've cost you money.\n\nHospitalitySupport.uk — £3.30 a day.\n\nLink in bio.",
+    caption: "GP this week. Supplier alerts. Training sign-offs. Compliance status. All in one place, all current.\n\nMost operators find out about these things too late. This puts you ahead of them.\n\nHospitalitySupport.uk — £3.30 a day.\n\nLink in bio.",
     hashtags: '#restaurantmanagement #kitchenmanagement #operationsmanagement #hospitalitybusiness #foodcost #gpmargin',
   },
 ];
