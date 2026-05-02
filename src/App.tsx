@@ -12,6 +12,8 @@ import BrandPage from './pages/marketing/BrandPage';
 import BrochurePage from './pages/marketing/BrochurePage';
 import Print1Page from './pages/marketing/Print1Page';
 import Print5Page from './pages/marketing/Print5Page';
+import EnquiriesPage from './pages/marketing/EnquiriesPage';
+import DiaryPage from './pages/marketing/DiaryPage';
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
           <Route path="brochure" element={<BrochurePage />} />
           <Route path="print-1" element={<Print1Page />} />
           <Route path="print-5" element={<Print5Page />} />
+          <Route path="enquiries" element={<EnquiriesPage />} />
+          <Route path="diary" element={<DiaryPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

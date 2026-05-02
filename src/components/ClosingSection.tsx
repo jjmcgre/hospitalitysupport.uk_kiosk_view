@@ -17,7 +17,7 @@ export default function ClosingSection() {
           <span className="text-white">See it live.</span>
         </h2>
         <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
-          We'll load your real data, connect a supplier, and show your dishes recosting in front of you. No slides. No sales pitch. Just your operation, running on the platform.
+          We'll walk you through the platform live — menus built, dishes costed, allergens generated, compliance running. No slides. No sales pitch. Just the platform doing exactly what it does.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mx-auto mb-12 text-left">

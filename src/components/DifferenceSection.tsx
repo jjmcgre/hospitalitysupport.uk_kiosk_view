@@ -10,8 +10,8 @@ const pillars = [
   {
     icon: Zap,
     title: 'Live in 5 minutes',
-    sub: 'Your data, not ours',
-    body: 'Upload your existing recipes, supplier lists, staff records. Ingested and live in minutes. No 6-week implementation. No consultants.',
+    sub: 'Live in 5 minutes',
+    body: 'Walk into the demo and it\'s already running. No setup, no data upload, no 6-week implementation. You see the full platform live on the call.',
   },
   {
     icon: Link2,

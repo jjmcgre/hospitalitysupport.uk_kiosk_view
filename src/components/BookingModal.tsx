@@ -123,9 +123,9 @@ export default function BookingModal() {
                 <div className="text-teal-300 text-xs font-bold uppercase tracking-widest mb-2">What happens in the demo</div>
                 <div className="space-y-1.5">
                   {[
-                    'We load your actual dishes and show live recosting',
-                    'Allergens, HACCP, and nutrition built in real time',
-                    'No slides. Your data. Your operation.',
+                    'We walk through the platform live — menus, costings, allergens, HACCP',
+                    'You see exactly what it does and how fast it works',
+                    'No slides. No prep needed from you. Just the platform, live.',
                   ].map(pt => (
                     <div key={pt} className="flex items-start gap-2">
                       <ArrowRight size={11} className="text-teal-400 mt-0.5 flex-shrink-0" />

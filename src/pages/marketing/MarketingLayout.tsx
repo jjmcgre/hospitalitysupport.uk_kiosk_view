@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Monitor } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Monitor, Inbox, CalendarDays } from 'lucide-react';
+
+const liveItems = [
+  { to: '/enquiries', label: 'Enquiries', icon: Inbox },
+  { to: '/diary', label: 'Demo Diary', icon: CalendarDays },
+];
 
 const campaignItems = [
   { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
@@ -53,6 +58,27 @@ export default function MarketingLayout() {
               <Monitor size={16} className="flex-shrink-0" />
               Kiosk Overview
             </Link>
+          </div>
+
+          <div className="border-t border-slate-800 pt-2 mb-2">
+            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Live</p>
+            {liveItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`
+                }
+              >
+                <item.icon size={16} className="flex-shrink-0" />
+                {item.label}
+              </NavLink>
+            ))}
           </div>
 
           <div className="border-t border-slate-800 pt-2">
