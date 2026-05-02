@@ -5,25 +5,22 @@ const DARK = '#080f1a';
 const MID = '#0f1623';
 const UI = '#1a2535';
 
-/* ─── Shared shell ─── */
+/* ─── Shared page shell ─── */
 function Page({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <div
       className="print-page bg-white shadow-2xl overflow-hidden"
       style={{ width: '210mm', minHeight: '297mm', margin: '0 auto', fontFamily: "'Inter', system-ui, sans-serif", display: 'flex', flexDirection: 'column' }}
     >
-      {/* top bar */}
       <div style={{ background: DARK, padding: '9px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         <span style={{ color: '#fff', fontWeight: 900, fontSize: 13, letterSpacing: '-0.01em' }}>
           HospitalitySupport<span style={{ color: '#2dd4bf' }}>.uk</span>
         </span>
         <span style={{ color: '#334155', fontSize: 8.5 }}>Page {n} of 5</span>
       </div>
-      {/* content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {children}
       </div>
-      {/* footer */}
       <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '6px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         <span style={{ color: '#94a3b8', fontSize: 7.5 }}>Built by operators, for operators · No 6-week onboarding · No consultants</span>
         <span style={{ color: T, fontSize: 7.5, fontWeight: 700 }}>hospitalitysupport.uk</span>
@@ -52,92 +49,218 @@ function MockWindow({ title, live, children }: { title: string; live?: boolean; 
   );
 }
 
-function Row({ label, val, colour, right }: { label: string; val: string; colour?: string; right?: boolean }) {
+/* ───────────────────────────────────────────────────────────────────────────
+   PAGE 1 — MIND MAP
+   Centre: Menu Development → branches to every capability area
+─────────────────────────────────────────────────────────────────────────── */
+
+// SVG mind map — fixed coordinates calculated for A4 width ~595px content area
+// Centre node at (297, 200). 8 branches radiate outward with sub-nodes.
+function MindMap() {
+  const cx = 297;
+  const cy = 198;
+
+  // Branch definitions: angle in degrees, colour, label, sub-items
+  const branches = [
+    {
+      angle: -90, colour: '#0d9488', label: 'Recipe & Spec',
+      subs: ['Full recipe', 'Portions & method', 'Mise en place', 'Batch notes'],
+    },
+    {
+      angle: -45, colour: '#0284c7', label: 'Cost & GP',
+      subs: ['Live ingredient costs', 'GP calculation', 'Sell price guidance', 'Margin alerts'],
+    },
+    {
+      angle: 0, colour: '#7c3aed', label: 'Supplier Pricing',
+      subs: ['Live price tracking', 'Auto-recost on change', 'Invoice scanning', 'B2B messaging'],
+    },
+    {
+      angle: 45, colour: '#dc2626', label: 'Allergens',
+      subs: ['14 allergens auto-generated', 'Natasha\'s Law', 'Matrix per dish', 'Auto-updates'],
+    },
+    {
+      angle: 90, colour: '#d97706', label: 'HACCP & Safety',
+      subs: ['CCPs per dish', 'Critical limits', 'Corrective actions', 'Inspection reports'],
+    },
+    {
+      angle: 135, colour: '#059669', label: 'Training',
+      subs: ['Generated from your ops', 'Cert tracking', 'Auto-updates on change', 'Onboarding'],
+    },
+    {
+      angle: 180, colour: '#0891b2', label: 'Front of House',
+      subs: ['Live menu knowledge', 'Allergen answers', 'Dish descriptions', 'Wine pairings'],
+    },
+    {
+      angle: -135, colour: '#9333ea', label: 'Compliance',
+      subs: ['Evidence as it happens', 'Signed briefings', 'Temp logs', 'One-click reports'],
+    },
+  ];
+
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+  // Branch node centre distance from core
+  const branchR = 92;
+  // Sub-node distance beyond branch node
+  const subR = 52;
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 11px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-      <span style={{ color: '#94a3b8', fontSize: 8.5 }}>{label}</span>
-      <span style={{ color: colour || '#e2e8f0', fontSize: right ? 9 : 8.5, fontWeight: 700 }}>{val}</span>
-    </div>
+    <svg
+      viewBox="0 0 594 430"
+      style={{ width: '100%', display: 'block' }}
+    >
+      <defs>
+        <radialGradient id="core-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* Background glow */}
+      <ellipse cx={cx} cy={cy} rx={110} ry={110} fill="url(#core-glow)" />
+
+      {branches.map((b) => {
+        const rad = toRad(b.angle);
+        const bx = cx + branchR * Math.cos(rad);
+        const by = cy + branchR * Math.sin(rad);
+
+        // midpoint for curve control
+        const mpx = (cx + bx) / 2;
+        const mpy = (cy + by) / 2;
+
+        return (
+          <g key={b.label}>
+            {/* Main branch line */}
+            <path
+              d={`M ${cx} ${cy} Q ${mpx} ${mpy} ${bx} ${by}`}
+              stroke={b.colour}
+              strokeWidth="1.8"
+              fill="none"
+              strokeOpacity="0.7"
+            />
+
+            {/* Branch node circle */}
+            <circle cx={bx} cy={by} r={28} fill={DARK} stroke={b.colour} strokeWidth="1.5" />
+            <circle cx={bx} cy={by} r={26} fill={MID} />
+
+            {/* Branch label — split to 2 lines max */}
+            {b.label.split(' ').length <= 2 ? (
+              <>
+                <text x={bx} y={by - 3} textAnchor="middle" fill={b.colour} fontSize="7.5" fontWeight="800" fontFamily="Inter, system-ui, sans-serif">{b.label.split(' ')[0]}</text>
+                <text x={bx} y={by + 7} textAnchor="middle" fill={b.colour} fontSize="7.5" fontWeight="800" fontFamily="Inter, system-ui, sans-serif">{b.label.split(' ').slice(1).join(' ')}</text>
+              </>
+            ) : (
+              <text x={bx} y={by + 3} textAnchor="middle" fill={b.colour} fontSize="7.5" fontWeight="800" fontFamily="Inter, system-ui, sans-serif">{b.label}</text>
+            )}
+
+            {/* Sub-nodes */}
+            {b.subs.map((sub, si) => {
+              // spread sub-nodes in a fan around the branch direction
+              const fanSpread = 36;
+              const fanStart = b.angle - (fanSpread * (b.subs.length - 1)) / 2;
+              const subAngle = fanStart + si * fanSpread;
+              const subRad = toRad(subAngle);
+              const sx = bx + subR * Math.cos(subRad);
+              const sy = by + subR * Math.sin(subRad);
+
+              return (
+                <g key={sub}>
+                  <line
+                    x1={bx} y1={by} x2={sx} y2={sy}
+                    stroke={b.colour} strokeWidth="1" strokeOpacity="0.35"
+                    strokeDasharray="2,2"
+                  />
+                  {/* Sub pill */}
+                  <rect
+                    x={sx - 28} y={sy - 7}
+                    width={56} height={14}
+                    rx={7}
+                    fill={DARK}
+                    stroke={b.colour}
+                    strokeWidth="0.8"
+                    strokeOpacity="0.4"
+                  />
+                  <text
+                    x={sx} y={sy + 3.5}
+                    textAnchor="middle"
+                    fill="#94a3b8"
+                    fontSize="5.8"
+                    fontFamily="Inter, system-ui, sans-serif"
+                  >
+                    {sub}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        );
+      })}
+
+      {/* Core node — on top of everything */}
+      <circle cx={cx} cy={cy} r={42} fill={DARK} stroke={T} strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r={39} fill={MID} />
+      <text x={cx} y={cy - 9} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Menu</text>
+      <text x={cx} y={cy + 2} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Development</text>
+      <text x={cx} y={cy + 13} textAnchor="middle" fill="#2dd4bf" fontSize="7" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">· everything starts here ·</text>
+    </svg>
   );
 }
 
-/* ───────────────────────────────────────────────────────────────────────────
-   PAGE 1 — THE FULL PICTURE
-   Headline: the system, all 8 specialists, the 3 problems it solves, pricing
-─────────────────────────────────────────────────────────────────────────── */
 function Page1() {
-  const team = [
-    { icon: '👨‍🍳', role: 'Menu Development Chef', line: 'Full dish from concept in under 3 min' },
-    { icon: '📈', role: 'Cost & GP Controller', line: 'Live margin on every dish, every change' },
-    { icon: '🚚', role: 'Supplier & Price Watcher', line: 'Every price movement tracked, auto-recosted' },
-    { icon: '🛡️', role: 'Allergen & Nutrition Specialist', line: '14 allergens + nutrition, auto-generated' },
-    { icon: '🎓', role: 'Training Manager', line: 'Real training, tracked, auto-updated' },
-    { icon: '✅', role: 'Compliance Lead', line: 'Evidence as it happens. Inspection-ready always' },
-    { icon: '🍷', role: 'Wine & Bar Specialist', line: 'Margin protected. Yield drift flagged early' },
-    { icon: '👥', role: 'Front-of-House Specialist', line: 'FOH always knows the menu. Fewer errors' },
-  ];
-
   return (
     <Page n={1}>
-      <div style={{ background: MID, padding: '20px 28px 18px', position: 'relative', overflow: 'hidden', flex: 1 }}>
-        <div style={{ position: 'absolute', top: -80, right: -80, width: 360, height: 360, background: 'radial-gradient(circle, rgba(13,148,136,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ background: MID, flex: 1, padding: '16px 28px 14px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 300, height: 300, background: 'radial-gradient(circle, rgba(13,148,136,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <Badge text="The operating system for modern hospitality" />
-        <h1 style={{ color: '#fff', fontSize: 30, fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '0 0 10px', maxWidth: 430 }}>
-          A team of experts<br />in your pocket.
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: 11, lineHeight: 1.6, maxWidth: 450, margin: '0 0 18px' }}>
-          Menu development. GP control. Allergens. HACCP. Training. Compliance. Supplier pricing. Front-of-house support. Eight specialists, one platform — built around how hospitality actually works.
-        </p>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+          <div>
+            <Badge text="The operating platform for modern hospitality" />
+            <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '0 0 6px', maxWidth: 340 }}>
+              Every area of your operation.<br />
+              <span style={{ color: '#2dd4bf' }}>All connected. Always live.</span>
+            </h1>
+            <p style={{ color: '#64748b', fontSize: 10, lineHeight: 1.55, maxWidth: 340, margin: 0 }}>
+              It starts with menu development — and branches into every part of your business. One platform, built around how hospitality actually works.
+            </p>
+          </div>
 
-        {/* Three problems */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 18 }}>
+          {/* Three problems — right side */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5, width: 155, flexShrink: 0 }}>
+            <div style={{ fontSize: 7.5, fontWeight: 800, color: '#475569', textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 1 }}>The three root problems</div>
+            {[
+              { prob: 'People', col: '#f87171', desc: 'Skills eroding. Turnover constant.' },
+              { prob: 'Process', col: '#fbbf24', desc: 'Compliance reactive. Evidence missing.' },
+              { prob: 'Profit', col: '#34d399', desc: 'Margins bleeding. Caught too late.' },
+            ].map(p => (
+              <div key={p.prob} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${p.col}30`, borderRadius: 7, padding: '6px 9px', display: 'flex', gap: 7, alignItems: 'flex-start' }}>
+                <div style={{ color: p.col, fontSize: 8.5, fontWeight: 900, width: 42, flexShrink: 0 }}>{p.prob}</div>
+                <div style={{ color: '#64748b', fontSize: 8, lineHeight: 1.4 }}>{p.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mind map */}
+        <div style={{ flex: 1, position: 'relative', margin: '0 -4px' }}>
+          <MindMap />
+        </div>
+
+        {/* Footer stats + price */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr) auto', gap: 6, marginTop: 6 }}>
           {[
-            { prob: 'People', icon: '👤', desc: 'Skill levels eroding. Turnover constant. Standards depend on one or two good people.' },
-            { prob: 'Process', icon: '📋', desc: 'Compliance relentless and reactive. Evidence missing. Inspections always a scramble.' },
-            { prob: 'Profit', icon: '💸', desc: 'Margins bleeding slowly. Supplier prices creep. You notice too late — if at all.' },
-          ].map(p => (
-            <div key={p.prob} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9, padding: '11px 12px' }}>
-              <div style={{ fontSize: 16, marginBottom: 5 }}>{p.icon}</div>
-              <div style={{ color: '#f87171', fontSize: 9, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 3 }}>{p.prob}</div>
-              <div style={{ color: '#64748b', fontSize: 9, lineHeight: 1.5 }}>{p.desc}</div>
+            { val: '3 min', label: 'Concept → live dish' },
+            { val: '14', label: 'Allergens tracked' },
+            { val: '5 min', label: 'Overall go-live' },
+            { val: '0', label: 'Spreadsheets needed' },
+          ].map(s => (
+            <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '7px 6px', textAlign: 'center' as const }}>
+              <div style={{ color: '#2dd4bf', fontSize: 14, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+              <div style={{ color: '#475569', fontSize: 7, marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
-        </div>
-
-        {/* Team grid */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ fontSize: 8.5, fontWeight: 800, color: '#475569', textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 8 }}>Your team — without the payroll</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5 }}>
-            {team.map(t => (
-              <div key={t.role} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '8px 9px' }}>
-                <div style={{ fontSize: 14, marginBottom: 4 }}>{t.icon}</div>
-                <div style={{ color: '#e2e8f0', fontSize: 8.5, fontWeight: 700, lineHeight: 1.2, marginBottom: 3 }}>{t.role}</div>
-                <div style={{ color: '#475569', fontSize: 8, lineHeight: 1.35 }}>{t.line}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Stats + pricing strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 10 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
-            {[
-              { val: '3 min', label: 'Dish concept → live' },
-              { val: '14', label: 'Allergens tracked' },
-              { val: '5 min', label: 'Overall go-live' },
-              { val: '0', label: 'Spreadsheets needed' },
-            ].map(s => (
-              <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '8px 7px', textAlign: 'center' as const }}>
-                <div style={{ color: '#2dd4bf', fontSize: 15, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-                <div style={{ color: '#475569', fontSize: 7.5, marginTop: 3 }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ background: T, borderRadius: 9, padding: '10px 13px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
-            <div style={{ color: '#fff', fontSize: 17, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
-            <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 8.5, marginTop: 2 }}>per day</div>
-            <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 7.5, marginTop: 4, lineHeight: 1.4 }}>Per kitchen, not per user. No setup fees.</div>
+          <div style={{ background: T, borderRadius: 7, padding: '7px 12px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center', textAlign: 'center' as const }}>
+            <div style={{ color: '#fff', fontSize: 16, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 7.5, marginTop: 2 }}>per day</div>
           </div>
         </div>
       </div>
@@ -147,14 +270,12 @@ function Page1() {
 
 /* ───────────────────────────────────────────────────────────────────────────
    PAGE 2 — MENU, RECIPE & GP
-   Shows: dish built in minutes, full recipe priced live, allergens, HACCP
 ─────────────────────────────────────────────────────────────────────────── */
 function Page2() {
   return (
     <Page n={2}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
-        {/* Left — mocks */}
         <div style={{ background: '#f1f5f9', padding: '16px 12px 14px 28px', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: 9 }}>
           <Badge text="Menu Development · Cost & GP · Allergens · HACCP" />
           <h2 style={{ color: '#0f172a', fontSize: 20, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 4px' }}>
@@ -162,7 +283,6 @@ function Page2() {
             <span style={{ color: T }}>Under 3 minutes.</span>
           </h2>
 
-          {/* The prompt */}
           <MockWindow title="step 01 — describe your dish">
             <div style={{ padding: '8px 11px' }}>
               <div style={{ background: 'rgba(45,212,191,0.07)', border: '1px solid rgba(45,212,191,0.18)', borderRadius: 6, padding: '7px 10px', color: '#e2e8f0', fontSize: 9.5, lineHeight: 1.5 }}>
@@ -171,9 +291,8 @@ function Page2() {
             </div>
           </MockWindow>
 
-          {/* Recipe built */}
           <MockWindow title="step 02 — recipe built, priced against live suppliers" live>
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '5px 11px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
+            <div style={{ padding: '5px 11px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
               <span style={{ color: '#e2e8f0', fontSize: 9, fontWeight: 700 }}>Pan-Seared Sea Trout, Lemon Beurre Blanc</span>
               <span style={{ color: '#2dd4bf', fontSize: 9.5, fontWeight: 800 }}>GP 73%</span>
             </div>
@@ -196,7 +315,6 @@ function Page2() {
             </div>
           </MockWindow>
 
-          {/* Allergens */}
           <MockWindow title="step 03 — allergen matrix, auto-generated">
             <div style={{ padding: '7px 11px' }}>
               <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' as const, marginBottom: 5 }}>
@@ -215,7 +333,6 @@ function Page2() {
             </div>
           </MockWindow>
 
-          {/* HACCP */}
           <MockWindow title="step 04 — HACCP controls, per dish">
             <div style={{ padding: '7px 11px' }}>
               {[
@@ -235,10 +352,9 @@ function Page2() {
           </MockWindow>
         </div>
 
-        {/* Right — what's generated */}
         <div style={{ padding: '16px 28px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <p style={{ color: '#475569', fontSize: 10.5, lineHeight: 1.6, margin: '0 0 4px' }}>
-            A head chef used to spend 2–3 hours on this per dish. Recipe development, costing it up, allergen checks, HACCP, portioning guides — all separate tasks, all manual. Now it's one conversation.
+            A head chef used to spend 2–3 hours on this per dish. Recipe development, costing, allergen checks, HACCP, portioning — all separate tasks, all manual. The platform handles all of it from a single description.
           </p>
 
           <div style={{ padding: '10px 12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8 }}>
@@ -252,7 +368,7 @@ function Page2() {
               'Nutritional breakdown per portion (kcal, protein, fat, carbs, salt)',
               'FOH dish description ready for menus and table cards',
               'Wine and beverage pairings',
-              'Training notes for BOH and FOH staff',
+              'Training notes for kitchen and front of house',
               'Live GP tracking — recosted on every supplier price change',
             ].map((t, i) => (
               <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
@@ -286,16 +402,14 @@ function Page2() {
 
 /* ───────────────────────────────────────────────────────────────────────────
    PAGE 3 — LIVE PRICING & SUPPLIER ECOSYSTEM
-   Shows: costing table with live flags, supplier portal, price propagation
 ─────────────────────────────────────────────────────────────────────────── */
 function Page3() {
   return (
     <Page n={3}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
-        {/* Left — callouts */}
         <div style={{ padding: '16px 12px 14px 28px', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <Badge text="Supplier & Price Watcher · Cost & GP Controller" />
+          <Badge text="Live Supplier Pricing · Cost & GP Intelligence" />
           <h2 style={{ color: '#0f172a', fontSize: 20, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 4px' }}>
             Supplier changes price.<br />
             <span style={{ color: T }}>Every dish recoasts itself.</span>
@@ -305,12 +419,12 @@ function Page3() {
           </p>
 
           {[
-            { icon: '🔗', title: 'Connect existing suppliers', body: 'One invitation. They get their own portal. Pricing, catalogues, promotions — they keep it current. You see the results.' },
-            { icon: '⚡', title: 'Sub-second propagation', body: 'Supplier changes a price at 06:00. By 06:01 every linked dish is recosted and your morning dashboard shows the impact.' },
+            { icon: '🔗', title: 'Connect existing suppliers', body: 'One invitation. Suppliers get their own portal. Pricing and catalogues — they keep it current. You see the results.' },
+            { icon: '⚡', title: 'Sub-second propagation', body: 'Supplier changes a price at 06:00. By 06:01 every linked dish is recosted and your dashboard shows the impact.' },
             { icon: '🔔', title: 'Flagged before service', body: 'Dishes below GP target are highlighted automatically. You know before a cover is served.' },
-            { icon: '🔄', title: 'Two-tier supply chain', body: "See what your supplier is paying their vendor. Understand cost pressure before it hits your invoice." },
+            { icon: '🔄', title: 'Two-tier supply chain', body: 'See what your supplier is paying their vendor. Understand cost pressure before it hits your invoice.' },
             { icon: '📄', title: 'Invoice scanning', body: 'Upload a PDF delivery note. Line items extracted, matched, and reconciled automatically.' },
-            { icon: '💬', title: 'B2B messaging', body: 'All supplier communication in one auditable thread. No lost emails. No WhatsApp chains.' },
+            { icon: '💬', title: 'Supplier messaging', body: 'All supplier communication in one auditable thread. No lost emails. No missed price changes.' },
           ].map(c => (
             <div key={c.title} style={{ display: 'flex', gap: 8, padding: '7px 10px', background: '#f8fafc', borderRadius: 7, border: '1px solid #e2e8f0' }}>
               <span style={{ fontSize: 12, lineHeight: 1, flexShrink: 0 }}>{c.icon}</span>
@@ -322,10 +436,7 @@ function Page3() {
           ))}
         </div>
 
-        {/* Right — mocks */}
         <div style={{ background: '#f1f5f9', padding: '16px 28px 14px 12px', display: 'flex', flexDirection: 'column', gap: 9 }}>
-
-          {/* Live costing table */}
           <MockWindow title="recipe costing — all dishes" live>
             <div style={{ padding: '4px 11px', display: 'grid', gridTemplateColumns: '1fr 40px 40px 36px', gap: 6 }}>
               {['Dish', 'Cost', 'Sell', 'GP'].map(h => (
@@ -357,7 +468,6 @@ function Page3() {
             </div>
           </MockWindow>
 
-          {/* Supplier price update */}
           <MockWindow title="supplier portal — Coastal Fresh Ltd">
             <div style={{ padding: '8px 11px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -381,8 +491,7 @@ function Page3() {
             </div>
           </MockWindow>
 
-          {/* B2B message */}
-          <MockWindow title="messages — Coastal Fresh Ltd">
+          <MockWindow title="supplier messages — Coastal Fresh Ltd">
             <div style={{ padding: '8px 11px' }}>
               {[
                 { msg: 'Any flexibility on sea trout this week?', mine: true, time: '08:12' },
@@ -403,22 +512,19 @@ function Page3() {
 
 /* ───────────────────────────────────────────────────────────────────────────
    PAGE 4 — COMPLIANCE, TRAINING & FRONT OF HOUSE
-   Shows: briefings, task tracker, training certs, FOH knowledge
 ─────────────────────────────────────────────────────────────────────────── */
 function Page4() {
   return (
     <Page n={4}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
-        {/* Left — mocks */}
         <div style={{ background: '#f1f5f9', padding: '16px 12px 14px 28px', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: 9 }}>
-          <Badge text="Compliance Lead · Training Manager · FOH Specialist" />
+          <Badge text="Compliance · Training · Front of House" />
           <h2 style={{ color: '#0f172a', fontSize: 20, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 4px' }}>
             Audit-ready every day.<br />
-            <span style={{ color: T }}>Staff always current.</span>
+            <span style={{ color: T }}>Always current. Always evidenced.</span>
           </h2>
 
-          {/* Pre-service briefing */}
           <MockWindow title="pre-service briefing — lunch service">
             <div style={{ padding: '7px 11px' }}>
               <div style={{ color: '#64748b', fontSize: 8, marginBottom: 5 }}>Staff sign-in — 11:45</div>
@@ -440,7 +546,6 @@ function Page4() {
             </div>
           </MockWindow>
 
-          {/* Compliance tracker */}
           <MockWindow title="compliance tasks — this week">
             <div style={{ padding: '7px 11px' }}>
               {[
@@ -462,7 +567,6 @@ function Page4() {
             </div>
           </MockWindow>
 
-          {/* Training certs */}
           <MockWindow title="training — staff certifications">
             <div style={{ padding: '7px 11px' }}>
               {[
@@ -488,45 +592,38 @@ function Page4() {
           </MockWindow>
         </div>
 
-        {/* Right — callouts */}
         <div style={{ padding: '16px 28px 14px 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
           <p style={{ color: '#475569', fontSize: 10.5, lineHeight: 1.6, margin: '0 0 4px' }}>
-            Every task timestamped. Every signature captured. Every briefing recorded. Inspectors don't care about intentions — they want evidence. This creates it automatically, as work happens.
+            Every task timestamped. Every signature captured. Every briefing recorded. Inspectors don't care about intentions — they want evidence. The platform creates it automatically, as work happens.
           </p>
 
           {[
             {
               heading: 'Compliance',
-              colour: '#0284c7',
-              bg: '#f0f9ff',
-              border: '#bae6fd',
+              colour: '#0284c7', bg: '#f0f9ff', border: '#bae6fd',
               points: [
-                'Evidence captured in real time — photos, forms, signatures, timestamps',
-                'Pre-service allergen briefings with digital staff sign-off, every service',
-                'Temperature logs, HACCP records, and delivery checks in one place',
+                'Evidence captured in real time — forms, signatures, timestamps',
+                'Pre-service allergen briefings with digital sign-off, every service',
+                'Temperature logs, HACCP records, delivery checks in one place',
                 'One-click FSA, HSE, and local authority inspection reports',
               ],
             },
             {
               heading: 'Training',
-              colour: '#7c3aed',
-              bg: '#faf5ff',
-              border: '#ddd6fe',
+              colour: '#7c3aed', bg: '#faf5ff', border: '#ddd6fe',
               points: [
-                'Training generated from your real menu and operational procedures',
+                'Training content generated from your real menu and procedures',
                 'Certifications tracked with automatic expiry alerts',
                 'Onboarding content that mirrors how your kitchen actually works',
-                'Auto-updates when menus or processes change — staff always current',
+                'Auto-updates when menus or processes change',
               ],
             },
             {
               heading: 'Front of House',
-              colour: '#0d9488',
-              bg: '#f0fdfa',
-              border: '#99f6e4',
+              colour: '#0d9488', bg: '#f0fdfa', border: '#99f6e4',
               points: [
-                'FOH always knows exactly what\'s on — specials, sold-out items, allergen notes',
-                'Allergen questions answered without "I\'ll just check in the kitchen"',
+                'FOH always knows exactly what\'s on — specials, allergens, 86\'d items',
+                'Allergen answers without "I\'ll just check in the kitchen"',
                 'Dish descriptions and wine pairings generated and kept current',
                 'Fewer errors, fewer complaints, better guest experience',
               ],
@@ -561,14 +658,13 @@ function Page4() {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   PAGE 5 — THE FULL PICTURE: WHO IT'S FOR, MULTI-SITE, PRICING & CLOSE
+   PAGE 5 — WHO IT'S FOR, MULTI-SITE, PRICING & CLOSE
 ─────────────────────────────────────────────────────────────────────────── */
 function Page5() {
   return (
     <Page n={5}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
-        {/* Left — who it's for + comparison + pricing */}
         <div style={{ padding: '16px 12px 14px 28px', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <Badge text="Who It's For · Pricing · Why Us" />
           <h2 style={{ color: '#0f172a', fontSize: 20, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 6px' }}>
@@ -576,16 +672,15 @@ function Page5() {
             <span style={{ color: T }}>carrying everything themselves.</span>
           </h2>
 
-          {/* Who */}
           <div style={{ padding: '9px 11px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8 }}>
             <div style={{ fontSize: 8.5, fontWeight: 800, color: '#475569', textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 5 }}>This is for you if you're</div>
             {[
               'Managing GP on spreadsheets and catching problems too late',
-              'Dealing with high turnover and training that relies on one person',
+              'Dealing with high turnover and operational knowledge walking out the door',
               'Spending more time on compliance than on running the business',
               'Running multiple sites and losing visibility as you scale',
               'Relying on one experienced person who holds everything together',
-              'Paying for software your team doesn\'t actually fully use',
+              'Paying for software that your operation doesn\'t actually use fully',
             ].map((t, i) => (
               <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
                 <span style={{ color: T, fontSize: 9, flexShrink: 0 }}>→</span>
@@ -594,7 +689,6 @@ function Page5() {
             ))}
           </div>
 
-          {/* Comparison */}
           <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: MID }}>
               <div style={{ padding: '5px 10px', color: '#2dd4bf', fontSize: 8.5, fontWeight: 800 }}>HospitalitySupport.uk</div>
@@ -607,7 +701,7 @@ function Page5() {
               ['HACCP built per dish', 'Generic template, copied'],
               ['Suppliers update themselves', 'You manually enter prices'],
               ['Live GP on every price change', 'Recalculated monthly (maybe)'],
-              ['Interface: WhatsApp', 'Interface: complex software'],
+              ['Simple, intuitive interface', 'Complex software, needs training'],
               ['Built by operators', 'Built by developers'],
             ].map((row, i) => (
               <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: i % 2 === 0 ? '#fff' : '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
@@ -618,10 +712,7 @@ function Page5() {
           </div>
         </div>
 
-        {/* Right — multi-site mock + pricing + close */}
         <div style={{ background: '#f1f5f9', padding: '16px 28px 14px 12px', display: 'flex', flexDirection: 'column', gap: 9 }}>
-
-          {/* Multi-site dashboard */}
           <MockWindow title="group dashboard — all sites" live>
             <div style={{ padding: '7px 11px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5, marginBottom: 8 }}>
@@ -650,7 +741,6 @@ function Page5() {
             </div>
           </MockWindow>
 
-          {/* Pricing */}
           <div style={{ background: UI, borderRadius: 9, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ background: '#0d1a26', padding: '5px 11px' }}>
               <span style={{ color: '#475569', fontSize: 7.5, fontFamily: 'monospace' }}>pricing — per kitchen, not per user</span>
@@ -659,9 +749,9 @@ function Page5() {
               {[
                 { tier: 'Standard Venue', price: '£100/mo', sub: 'Pubs, restaurants, cafés', tag: '£3.30/day' },
                 { tier: 'Dark Kitchen', price: '£250/mo', sub: 'Dark kitchens, production kitchens', tag: '' },
-                { tier: 'Multi-Site', price: '£100/site', sub: 'Same price, every site, always', tag: 'Group reporting incl.' },
+                { tier: 'Multi-Site', price: '£100/site', sub: 'Same price, every site, always', tag: 'Group reporting included' },
               ].map((p, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 9px', background: i === 0 ? `rgba(13,148,136,0.1)` : 'rgba(255,255,255,0.04)', border: `1px solid ${i === 0 ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.06)'}`, borderRadius: 6 }}>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 9px', background: i === 0 ? 'rgba(13,148,136,0.1)' : 'rgba(255,255,255,0.04)', border: `1px solid ${i === 0 ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.06)'}`, borderRadius: 6 }}>
                   <div>
                     <div style={{ color: '#e2e8f0', fontSize: 9, fontWeight: 700 }}>{p.tier}</div>
                     <div style={{ color: '#64748b', fontSize: 7.5 }}>{p.sub}</div>
@@ -676,9 +766,8 @@ function Page5() {
             </div>
           </div>
 
-          {/* Closing CTA */}
           <div style={{ background: MID, borderRadius: 9, padding: '14px 15px', border: '1px solid rgba(13,148,136,0.3)', marginTop: 'auto' }}>
-            <div style={{ color: '#fff', fontWeight: 900, fontSize: 14.5, lineHeight: 1.2, marginBottom: 5 }}>
+            <div style={{ color: '#fff', fontWeight: 900, fontSize: 14, lineHeight: 1.2, marginBottom: 6 }}>
               It doesn't change what hospitality is.
             </div>
             <div style={{ color: '#94a3b8', fontSize: 9.5, lineHeight: 1.6, marginBottom: 12 }}>
@@ -702,7 +791,6 @@ export default function Print5Page() {
   return (
     <div className="min-h-full bg-slate-950 p-6">
       <div className="max-w-3xl mx-auto">
-
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">5-Pager — A4 Printable</h1>
