@@ -3,11 +3,11 @@ import { ArrowRight } from 'lucide-react';
 const capabilities = [
   { label: 'Menu creation', sub: 'Full menu in under an hour' },
   { label: 'Live GP & costing', sub: 'Every dish, every day' },
-  { label: 'Allergen compliance', sub: "Natasha's Law, handled" },
+  { label: 'Allergens & nutrition', sub: "Natasha's Law + full nutritional values" },
   { label: 'HACCP & food safety', sub: 'Audit-ready automatically' },
   { label: 'Staff training', sub: 'Built from your real ops' },
   { label: 'Supplier pricing', sub: 'Real-time, zero spreadsheets' },
-  { label: 'Bar & wine', sub: 'Margins behind the bar, protected' },
+  { label: 'Ordering & delivery', sub: 'POs, reconciliation, discrepancies caught' },
   { label: 'Multi-site control', sub: 'Every site, one dashboard' },
 ];
 
