@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Cal, { getCalApi } from '@calcom/embed-react';
 import {
   X, ArrowRight, CheckCircle, Loader2, Mail, Phone,
   Building2, Users, AlertCircle, Video,
@@ -47,28 +48,13 @@ export default function BookingModal() {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Mount Cal.com inline embed once the cal step renders
+  // Wire up bookingSuccessful event via getCalApi
   useEffect(() => {
     if (step !== 'cal') return;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-
-    // Wait one tick for the #cal-inline-embed div to be in the DOM
-    const timer = setTimeout(() => {
-      w.Cal.ns['30mins']('inline', {
-        elementOrSelector: '#cal-inline-embed',
-        config: { layout: 'month_view', useSlotsViewOnSmallScreen: 'true' },
-        calLink: CAL_LINK,
-      });
-      w.Cal.ns['30mins']('ui', { hideEventTypeDetails: false, layout: 'month_view' });
-      w.Cal.ns['30mins']('on', {
-        action: 'bookingSuccessful',
-        callback: () => saveBooking(),
-      });
-    }, 50);
-
-    return () => clearTimeout(timer);
+    (async () => {
+      const cal = await getCalApi({ namespace: '30mins' });
+      cal('on', { action: 'bookingSuccessful', callback: () => saveBooking() });
+    })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
@@ -265,12 +251,11 @@ export default function BookingModal() {
               </div>
             )}
 
-            {/* Cal.com mounts the iframe into this div */}
-            <div
-              id="cal-inline-embed"
-            data-cal-namespace="30mins"
-              className="flex-1 overflow-y-auto"
-              style={{ minHeight: '520px' }}
+            <Cal
+              namespace="30mins"
+              calLink={CAL_LINK}
+              config={{ layout: 'month_view' }}
+              style={{ width: '100%', height: '100%', minHeight: '520px', overflow: 'scroll' }}
             />
 
             <div className="px-7 py-3 border-t border-white/5 flex-shrink-0">
