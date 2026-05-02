@@ -55,10 +55,6 @@ export default function HeroSection() {
           <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-5 leading-relaxed">
             One platform that runs your entire operation — from building a menu to protecting your margins, keeping compliance watertight, training your team, and tracking every supplier price in real time.
           </p>
-          <p className="text-base text-slate-500 max-w-2xl mx-auto mb-14 leading-relaxed">
-            Connect your suppliers once. Upload your recipes and staff. Everything else — recosting, allergens, HACCP, training, multi-site visibility — happens automatically, every day.
-          </p>
-
           {/* Full capability grid */}
           <div className="mb-14">
             <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Everything it covers</p>
