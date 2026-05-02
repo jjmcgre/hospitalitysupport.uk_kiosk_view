@@ -1,6 +1,9 @@
 import { ArrowRight } from 'lucide-react';
+import { useBooking } from '../context/BookingContext';
 
 export default function ClosingSection() {
+  const { openBooking } = useBooking();
+
   return (
     <section className="py-20 md:py-28 bg-[#080f1a] px-4 border-t border-white/5 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -33,10 +36,20 @@ export default function ClosingSection() {
           ))}
         </div>
 
-        <div className="inline-block bg-teal-500 hover:bg-teal-400 transition-colors rounded-2xl px-10 py-4 cursor-pointer mb-5">
+        <button
+          onClick={openBooking}
+          className="bg-teal-500 hover:bg-teal-400 transition-colors rounded-2xl px-10 py-4 mb-5 cursor-pointer"
+        >
           <span className="text-white font-black text-xl">Request Your Demo</span>
+        </button>
+
+        <div className="text-slate-600 text-sm mb-3">Built by operators. No 6-week onboarding. No consultants. No contract lock-in.</div>
+        <div className="text-slate-600 text-sm">
+          Or email us:{' '}
+          <a href="mailto:james@servicesupportgroup.uk" className="text-teal-500 hover:text-teal-400 transition-colors">
+            james@servicesupportgroup.uk
+          </a>
         </div>
-        <div className="text-slate-600 text-sm">Built by operators. No 6-week onboarding. No consultants. No contract lock-in.</div>
       </div>
     </section>
   );

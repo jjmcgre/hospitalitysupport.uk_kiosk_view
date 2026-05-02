@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react';
+import { useBooking } from '../context/BookingContext';
 
 const tiers = [
   {
@@ -48,6 +49,8 @@ const tiers = [
 ];
 
 export default function PricingSection() {
+  const { openBooking } = useBooking();
+
   return (
     <section className="py-20 md:py-28 bg-[#080f1a] px-4 border-t border-white/5">
       <div className="container mx-auto max-w-6xl">
@@ -73,9 +76,12 @@ export default function PricingSection() {
           <p className="text-slate-400 text-base leading-relaxed mb-4">
             We hear this a lot. The platforms you're paying thousands for right now aren't better — they just got there first, locked you in, and charged accordingly. We built this from scratch, for how kitchens actually work, and we've priced it so cost is never the reason you don't try it.
           </p>
-          <p className="text-teal-400 font-bold text-base">
-            Don't take our word for it. Book a 30-minute demo and see your own operation running on it live.
-          </p>
+          <button
+            onClick={openBooking}
+            className="text-teal-400 font-bold text-base hover:text-teal-300 transition-colors underline underline-offset-2"
+          >
+            Book a 30-minute demo and see your own operation running on it live.
+          </button>
         </div>
 
         <div className="grid md:grid-cols-3 gap-5">
@@ -122,9 +128,15 @@ export default function PricingSection() {
 
         <div className="mt-8 bg-teal-500/8 border border-teal-500/20 rounded-3xl p-6 text-center">
           <p className="text-white font-black text-lg mb-1">The cost of one bad month pays for a year.</p>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto">
+          <p className="text-slate-400 text-sm max-w-xl mx-auto mb-4">
             Margin erosion, allergen errors, failed inspections, staff retraining — any one of these costs more than the annual subscription. This prevents all of them.
           </p>
+          <button
+            onClick={openBooking}
+            className="bg-teal-500 hover:bg-teal-400 transition-colors text-white font-black text-sm px-6 py-3 rounded-xl"
+          >
+            Book your demo →
+          </button>
         </div>
       </div>
     </section>
