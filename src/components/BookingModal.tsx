@@ -19,7 +19,7 @@ const EMPTY: FormData = {
   name: '', email: '', phone: '', business_name: '', num_sites: '1', message: '',
 };
 
-const CAL_LINK = 'james-mcgregor-6cvfzq';
+const CAL_LINK = 'james-mcgregor-6cvfzq/30mins';
 
 type Step = 'details' | 'cal' | 'confirmed';
 
