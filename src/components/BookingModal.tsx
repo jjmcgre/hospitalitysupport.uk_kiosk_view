@@ -486,6 +486,3 @@ function ErrorBox({ msg }: { msg: string }) {
     </div>
   );
 }
-
-
-export default BookingModal
