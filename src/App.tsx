@@ -17,8 +17,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/marketing" element={<MarketingLayout />}>
+        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/" element={<MarketingLayout />}>
           <Route index element={<OverviewPage />} />
           <Route path="instagram" element={<InstagramPage />} />
           <Route path="tiktok" element={<TikTokPage />} />

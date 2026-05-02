@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { ArrowLeft, Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files } from 'lucide-react';
+import { ExternalLink, Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files } from 'lucide-react';
 
 const navItems = [
-  { to: '/marketing', label: 'Overview', icon: LayoutDashboard, end: true },
-  { to: '/marketing/instagram', label: 'Instagram', icon: Instagram },
-  { to: '/marketing/tiktok', label: 'TikTok', icon: Video },
-  { to: '/marketing/facebook', label: 'Facebook', icon: Facebook },
-  { to: '/marketing/linkedin', label: 'LinkedIn', icon: Linkedin },
-  { to: '/marketing/email', label: 'Email Campaign', icon: Mail },
-  { to: '/marketing/sales', label: 'Sales & Talking Points', icon: MessageSquare },
-  { to: '/marketing/brand', label: 'Brand & Positioning', icon: Palette },
-  { to: '/marketing/brochure', label: 'Brochure / Sales Deck', icon: BookOpen },
-  { to: '/marketing/print-1', label: '1-Pager (Print)', icon: FileText },
-  { to: '/marketing/print-5', label: '5-Pager (Print)', icon: Files },
+  { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: '/instagram', label: 'Instagram', icon: Instagram },
+  { to: '/tiktok', label: 'TikTok', icon: Video },
+  { to: '/facebook', label: 'Facebook', icon: Facebook },
+  { to: '/linkedin', label: 'LinkedIn', icon: Linkedin },
+  { to: '/email', label: 'Email Campaign', icon: Mail },
+  { to: '/sales', label: 'Sales & Talking Points', icon: MessageSquare },
+  { to: '/brand', label: 'Brand & Positioning', icon: Palette },
+  { to: '/brochure', label: 'Brochure / Sales Deck', icon: BookOpen },
+  { to: '/print-1', label: '1-Pager (Print)', icon: FileText },
+  { to: '/print-5', label: '5-Pager (Print)', icon: Files },
 ];
 
 export default function MarketingLayout() {
@@ -28,15 +28,22 @@ export default function MarketingLayout() {
         lg:relative lg:translate-x-0 lg:flex
       `}>
         <div className="p-6 border-b border-slate-800">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors text-sm mb-5 group"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to site
-          </Link>
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-white font-black text-base tracking-tight">
+              HospitalitySupport<span className="text-teal-400">.uk</span>
+            </span>
+            <Link
+              to="/landing"
+              className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 transition-colors text-xs"
+              title="View public landing page"
+            >
+              <ExternalLink size={13} />
+              Public site
+            </Link>
+          </div>
           <div>
             <h1 className="text-white font-bold text-lg leading-tight">Campaign Book</h1>
+            <p className="text-slate-500 text-xs mt-1">Internal use only</p>
             <div className="mt-2 inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/30 rounded-full px-3 py-1">
               <span className="w-2 h-2 rounded-full bg-teal-400"></span>
               <span className="text-teal-300 text-xs font-semibold">£3.30 / day</span>
@@ -66,7 +73,7 @@ export default function MarketingLayout() {
         </nav>
 
         <div className="p-4 border-t border-slate-800">
-          <p className="text-slate-600 text-xs text-center">HospitalitySupport.uk</p>
+          <p className="text-slate-600 text-xs text-center">HospitalitySupport.uk · Internal</p>
         </div>
       </aside>
 
