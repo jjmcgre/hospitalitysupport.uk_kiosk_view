@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   X, ArrowRight, CheckCircle, Loader2, Mail, Phone,
-  Building2, Users, ChevronLeft, ChevronRight, Clock, AlertCircle,
+  Building2, Users, AlertCircle, Video,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { supabase } from '../lib/supabase';
@@ -15,36 +15,13 @@ interface FormData {
   message: string;
 }
 
-interface Slot {
-  id: string;
-  slot_date: string;
-  slot_time: string;
-}
-
 const EMPTY: FormData = {
   name: '', email: '', phone: '', business_name: '', num_sites: '1', message: '',
 };
 
-function isoDate(d: Date) { return d.toISOString().slice(0, 10); }
-function addDays(d: Date, n: number) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+const CAL_LINK = 'james-mcgregor-6cvfzq';
 
-function groupByDate(slots: Slot[]): Record<string, Slot[]> {
-  return slots.reduce((acc, s) => {
-    (acc[s.slot_date] = acc[s.slot_date] ?? []).push(s);
-    return acc;
-  }, {} as Record<string, Slot[]>);
-}
-
-function friendlyDate(ds: string) {
-  const d = new Date(ds + 'T00:00:00');
-  const today = isoDate(new Date());
-  const tomorrow = isoDate(addDays(new Date(), 1));
-  if (ds === today) return 'Today';
-  if (ds === tomorrow) return 'Tomorrow';
-  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-}
-
-type Step = 'details' | 'slots' | 'confirmed';
+type Step = 'details' | 'cal' | 'confirmed';
 
 export default function BookingModal() {
   const { isOpen, closeBooking } = useBooking();
@@ -52,22 +29,14 @@ export default function BookingModal() {
   const [step, setStep] = useState<Step>('details');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-
-  const [slots, setSlots] = useState<Slot[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [bookingId, setBookingId] = useState<string | null>(null);
+  const calContainerRef = useRef<HTMLDivElement>(null);
+  const calScriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
       setForm(EMPTY);
       setStep('details');
       setError('');
-      setSelectedSlot(null);
-      setSelectedDate(null);
-      setSlots([]);
-      setBookingId(null);
     }
   }, [isOpen]);
 
@@ -80,21 +49,76 @@ export default function BookingModal() {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  async function loadSlots() {
-    setSlotsLoading(true);
-    const from = isoDate(new Date());
-    const to = isoDate(addDays(new Date(), 60));
-    const { data } = await supabase
-      .from('demo_availability')
-      .select('id, slot_date, slot_time')
-      .eq('booked', false)
-      .gte('slot_date', from)
-      .lte('slot_date', to)
-      .order('slot_date')
-      .order('slot_time');
-    setSlots(data ?? []);
-    if (data && data.length > 0) setSelectedDate(data[0].slot_date);
-    setSlotsLoading(false);
+  // Load Cal.com embed script once when moving to cal step
+  useEffect(() => {
+    if (step !== 'cal') return;
+
+    // Inline Cal.com loader
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    if (!w.Cal) {
+      (function (C: string, A: string, L: string) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const p = function (...args: any[]) { p.q.push(args); };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (p as any).q = [];
+        w[C] = p;
+        const d = document;
+        const s = d.createElement('script') as HTMLScriptElement;
+        s.src = A;
+        s.id = 'cal-embed-script';
+        s.async = true;
+        d.body.appendChild(s);
+        s.onload = function () {
+          w[C](L, { origin: 'https://cal.com' });
+          calScriptRef.current = s;
+        };
+      })('Cal', 'https://app.cal.com/embed/embed.js', 'init');
+    }
+
+    const interval = setInterval(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (w.Cal) {
+        clearInterval(interval);
+        w.Cal('inline', {
+          elementOrSelector: '#cal-booking-container',
+          calLink: CAL_LINK,
+          config: {
+            name: form.name,
+            email: form.email,
+            notes: `Phone: ${form.phone}\nBusiness: ${form.business_name}\nSites: ${form.num_sites}\nMessage: ${form.message}`,
+            theme: 'dark',
+          },
+        });
+
+        w.Cal('on', {
+          action: 'bookingSuccessful',
+          callback: () => {
+            saveBooking();
+          },
+        });
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  async function saveBooking() {
+    setSubmitting(true);
+    const { error: dbError } = await supabase
+      .from('demo_bookings')
+      .insert([{
+        id: crypto.randomUUID(),
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        business_name: form.business_name.trim(),
+        num_sites: form.num_sites,
+        message: form.message.trim(),
+      }]);
+    setSubmitting(false);
+    if (!dbError) setStep('confirmed');
   }
 
   if (!isOpen) return null;
@@ -110,57 +134,16 @@ export default function BookingModal() {
       setError('Please fill in your name, email, and business name.');
       return;
     }
-    await loadSlots();
-    setStep('slots');
+    setStep('cal');
   }
-
-  async function handleConfirm() {
-    if (!selectedSlot) return;
-    setError('');
-    setSubmitting(true);
-
-    const bookingUuid = crypto.randomUUID();
-
-    const { error: dbError } = await supabase
-      .from('demo_bookings')
-      .insert([{
-        id: bookingUuid,
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        business_name: form.business_name.trim(),
-        num_sites: form.num_sites,
-        message: form.message.trim(),
-      }]);
-
-    if (dbError) {
-      setError('Something went wrong saving your details. Please try again.');
-      setSubmitting(false);
-      return;
-    }
-
-    await supabase
-      .from('demo_availability')
-      .update({ booked: true, booked_by_booking_id: bookingUuid })
-      .eq('id', selectedSlot.id);
-
-    setBookingId(bookingUuid);
-    setSubmitting(false);
-    setStep('confirmed');
-  }
-
-  const grouped = groupByDate(slots);
-  const dates = Object.keys(grouped).sort();
-  const slotsForDate = selectedDate ? (grouped[selectedDate] ?? []) : [];
-
-  // Date navigation
-  const dateIndex = selectedDate ? dates.indexOf(selectedDate) : 0;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={closeBooking} />
 
-      <div className="relative w-full max-w-lg bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <div className={`relative w-full bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+        step === 'cal' ? 'max-w-2xl max-h-[96vh]' : 'max-w-lg max-h-[92vh]'
+      }`}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-7 py-5 border-b border-white/8 flex-shrink-0">
@@ -171,10 +154,10 @@ export default function BookingModal() {
                 <div className="text-slate-500 text-xs mt-0.5">Live platform walkthrough. No slides, no sales pitch.</div>
               </>
             )}
-            {step === 'slots' && (
+            {step === 'cal' && (
               <>
                 <div className="text-white font-black text-lg leading-tight">Pick a time</div>
-                <div className="text-slate-500 text-xs mt-0.5">Choose a slot that works for you.</div>
+                <div className="text-slate-500 text-xs mt-0.5">Choose a slot — a video call link is sent automatically.</div>
               </>
             )}
             {step === 'confirmed' && (
@@ -195,12 +178,12 @@ export default function BookingModal() {
         {/* Step indicator */}
         {step !== 'confirmed' && (
           <div className="flex px-7 pt-4 pb-0 gap-2 flex-shrink-0">
-            {(['details', 'slots'] as Step[]).map((s, i) => (
+            {(['details', 'cal'] as Step[]).map((s, i) => (
               <div key={s} className="flex items-center gap-2">
                 <div className={`w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center border transition-colors ${
                   step === s
                     ? 'bg-teal-500 border-teal-500 text-white'
-                    : s === 'details' && step === 'slots'
+                    : s === 'details' && step === 'cal'
                     ? 'bg-teal-500/20 border-teal-500/40 text-teal-400'
                     : 'bg-slate-800 border-slate-700 text-slate-600'
                 }`}>{i + 1}</div>
@@ -295,132 +278,47 @@ export default function BookingModal() {
           </form>
         )}
 
-        {/* ── Step 2: Slot picker ── */}
-        {step === 'slots' && (
-          <div className="overflow-y-auto flex-1 flex flex-col">
-            <div className="px-7 py-5 flex-1">
-              {slotsLoading ? (
-                <div className="py-16 flex flex-col items-center gap-3 text-slate-500">
-                  <Loader2 size={24} className="animate-spin text-teal-400" />
-                  <span className="text-sm">Loading available times…</span>
-                </div>
-              ) : dates.length === 0 ? (
-                <div className="py-12 flex flex-col items-center gap-3 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center">
-                    <AlertCircle size={20} className="text-amber-400" />
-                  </div>
-                  <div className="text-white font-bold text-base">No slots available right now</div>
-                  <p className="text-slate-400 text-sm max-w-xs leading-relaxed">
-                    We don't have any open times at the moment. Drop us an email and we'll find something that works.
-                  </p>
-                  <a href="mailto:james@servicesupportgroup.uk"
-                    className="mt-2 bg-teal-500 hover:bg-teal-400 transition-colors text-white font-bold rounded-xl px-6 py-2.5 text-sm">
-                    Email us directly
-                  </a>
-                </div>
-              ) : (
-                <>
-                  {/* Date carousel */}
-                  <div className="flex items-center gap-2 mb-5">
-                    <button
-                      onClick={() => setSelectedDate(dates[Math.max(0, dateIndex - 1)])}
-                      disabled={dateIndex === 0}
-                      className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-slate-400 hover:text-white transition-colors flex-shrink-0"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-
-                    <div className="flex-1 overflow-x-auto flex gap-2 pb-1 scrollbar-none">
-                      {dates.map(d => (
-                        <button
-                          key={d}
-                          onClick={() => setSelectedDate(d)}
-                          className={`flex-shrink-0 rounded-xl px-3 py-2 text-center transition-all border ${
-                            selectedDate === d
-                              ? 'bg-teal-500 border-teal-500 text-white'
-                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-teal-500/40 hover:text-white'
-                          }`}
-                        >
-                          <div className="text-[10px] font-bold uppercase tracking-widest leading-none mb-0.5">
-                            {friendlyDate(d).split(' ')[0]}
-                          </div>
-                          <div className="text-sm font-black leading-none">
-                            {new Date(d + 'T00:00:00').getDate()}
-                          </div>
-                          <div className="text-[10px] leading-none mt-0.5">
-                            {new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { month: 'short' })}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={() => setSelectedDate(dates[Math.min(dates.length - 1, dateIndex + 1)])}
-                      disabled={dateIndex === dates.length - 1}
-                      className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-slate-400 hover:text-white transition-colors flex-shrink-0"
-                    >
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  {/* Selected date label */}
-                  {selectedDate && (
-                    <div className="text-slate-400 text-xs mb-3 font-semibold">
-                      {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </div>
-                  )}
-
-                  {/* Time slots grid */}
-                  <div className="grid grid-cols-3 gap-2">
-                    {slotsForDate.map(slot => (
-                      <button
-                        key={slot.id}
-                        onClick={() => setSelectedSlot(s => s?.id === slot.id ? null : slot)}
-                        className={`rounded-xl border px-3 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                          selectedSlot?.id === slot.id
-                            ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
-                            : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
-                        }`}
-                      >
-                        <Clock size={12} />
-                        {slot.slot_time}
-                      </button>
-                    ))}
-                  </div>
-
-                  {error && <div className="mt-4"><ErrorBox msg={error} /></div>}
-                </>
-              )}
+        {/* ── Step 2: Cal.com embed ── */}
+        {step === 'cal' && (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="px-4 pt-3 pb-1 flex-shrink-0">
+              <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2">
+                <Video size={13} className="text-teal-400 flex-shrink-0" />
+                <span className="text-teal-300 text-xs font-semibold">
+                  A Google Meet link will be sent to <span className="text-teal-200">{form.email}</span> once you confirm.
+                </span>
+              </div>
             </div>
 
-            {dates.length > 0 && (
-              <div className="px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0 space-y-2">
-                {selectedSlot && (
-                  <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm text-teal-300 font-semibold">
-                    <Clock size={13} />
-                    {friendlyDate(selectedSlot.slot_date)} at {selectedSlot.slot_time}
-                  </div>
-                )}
-                <button
-                  onClick={handleConfirm}
-                  disabled={!selectedSlot || submitting}
-                  className="w-full bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 flex items-center justify-center gap-2 font-black text-white text-base"
-                >
-                  {submitting ? <><Loader2 size={16} className="animate-spin" /> Confirming…</> : 'Confirm booking'}
-                </button>
-                <button
-                  onClick={() => setStep('details')}
-                  className="w-full bg-transparent text-slate-500 hover:text-slate-300 text-sm py-2 transition-colors"
-                >
-                  ← Back to your details
-                </button>
+            {submitting && (
+              <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center z-10 rounded-3xl">
+                <div className="flex flex-col items-center gap-3 text-slate-400">
+                  <Loader2 size={28} className="animate-spin text-teal-400" />
+                  <span className="text-sm">Confirming your booking…</span>
+                </div>
               </div>
             )}
+
+            <div
+              ref={calContainerRef}
+              id="cal-booking-container"
+              className="flex-1 overflow-y-auto min-h-0"
+              style={{ minHeight: '500px' }}
+            />
+
+            <div className="px-7 py-3 border-t border-white/5 flex-shrink-0">
+              <button
+                onClick={() => setStep('details')}
+                className="w-full bg-transparent text-slate-500 hover:text-slate-300 text-sm py-1.5 transition-colors"
+              >
+                ← Back to your details
+              </button>
+            </div>
           </div>
         )}
 
         {/* ── Step 3: Confirmed ── */}
-        {step === 'confirmed' && selectedSlot && (
+        {step === 'confirmed' && (
           <div className="flex-1 flex flex-col px-7 py-10 text-center items-center justify-center gap-6">
             <div className="w-20 h-20 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
               <CheckCircle size={40} className="text-teal-400" />
@@ -428,14 +326,14 @@ export default function BookingModal() {
             <div>
               <div className="text-white font-black text-2xl mb-2">You're booked in!</div>
               <div className="text-slate-400 text-sm leading-relaxed max-w-xs mx-auto mb-4">
-                We'll see you on{' '}
-                <span className="text-white font-semibold">
-                  {new Date(selectedSlot.slot_date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
-                </span>{' '}
-                at <span className="text-white font-semibold">{selectedSlot.slot_time}</span>.
+                Check your inbox — a calendar invite and video call link are on their way to{' '}
+                <span className="text-white font-semibold">{form.email}</span>.
               </div>
               <div className="bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 text-left max-w-xs mx-auto">
-                <div className="text-slate-500 text-[10px] uppercase tracking-widest mb-2">Confirmation sent to</div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Video size={13} className="text-teal-400" />
+                  <span className="text-slate-500 text-[10px] uppercase tracking-widest">Video call included</span>
+                </div>
                 <div className="text-teal-400 text-sm font-semibold">{form.email}</div>
                 <div className="text-slate-400 text-xs mt-1">{form.business_name}</div>
               </div>
