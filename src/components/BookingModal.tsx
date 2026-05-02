@@ -119,20 +119,21 @@ export default function BookingModal() {
     setError('');
     setSubmitting(true);
 
-    const { data: inserted, error: dbError } = await supabase
+    const bookingUuid = crypto.randomUUID();
+
+    const { error: dbError } = await supabase
       .from('demo_bookings')
       .insert([{
+        id: bookingUuid,
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
         business_name: form.business_name.trim(),
         num_sites: form.num_sites,
         message: form.message.trim(),
-      }])
-      .select('id')
-      .single();
+      }]);
 
-    if (dbError || !inserted) {
+    if (dbError) {
       setError('Something went wrong saving your details. Please try again.');
       setSubmitting(false);
       return;
@@ -140,10 +141,10 @@ export default function BookingModal() {
 
     await supabase
       .from('demo_availability')
-      .update({ booked: true, booked_by_booking_id: inserted.id })
+      .update({ booked: true, booked_by_booking_id: bookingUuid })
       .eq('id', selectedSlot.id);
 
-    setBookingId(inserted.id);
+    setBookingId(bookingUuid);
     setSubmitting(false);
     setStep('confirmed');
   }
