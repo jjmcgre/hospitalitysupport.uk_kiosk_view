@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   X, ArrowRight, CheckCircle, Loader2, Mail, Phone,
   Building2, Users, AlertCircle, Video,
@@ -29,14 +29,14 @@ export default function BookingModal() {
   const [step, setStep] = useState<Step>('details');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const calContainerRef = useRef<HTMLDivElement>(null);
-  const calScriptRef = useRef<HTMLScriptElement | null>(null);
+  const [calLoaded, setCalLoaded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
       setForm(EMPTY);
       setStep('details');
       setError('');
+      setCalLoaded(false);
     }
   }, [isOpen]);
 
@@ -49,60 +49,19 @@ export default function BookingModal() {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Load Cal.com embed script once when moving to cal step
+  // Listen for Cal.com booking success posted from the iframe
   useEffect(() => {
-    if (step !== 'cal') return;
-
-    // Inline Cal.com loader
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-    if (!w.Cal) {
-      (function (C: string, A: string, L: string) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const p = function (...args: any[]) { p.q.push(args); };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (p as any).q = [];
-        w[C] = p;
-        const d = document;
-        const s = d.createElement('script') as HTMLScriptElement;
-        s.src = A;
-        s.id = 'cal-embed-script';
-        s.async = true;
-        d.body.appendChild(s);
-        s.onload = function () {
-          w[C](L, { origin: 'https://cal.com' });
-          calScriptRef.current = s;
-        };
-      })('Cal', 'https://app.cal.com/embed/embed.js', 'init');
-    }
-
-    const interval = setInterval(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (w.Cal) {
-        clearInterval(interval);
-        w.Cal('inline', {
-          elementOrSelector: '#cal-booking-container',
-          calLink: CAL_LINK,
-          config: {
-            name: form.name,
-            email: form.email,
-            notes: `Phone: ${form.phone}\nBusiness: ${form.business_name}\nSites: ${form.num_sites}\nMessage: ${form.message}`,
-            theme: 'dark',
-          },
-        });
-
-        w.Cal('on', {
-          action: 'bookingSuccessful',
-          callback: () => {
-            saveBooking();
-          },
-        });
+    function handleMessage(e: MessageEvent) {
+      if (typeof e.data !== 'object' || !e.data) return;
+      const action = e.data?.type ?? e.data?.action;
+      if (action === 'bookingSuccessful' || action === '__bookingSuccessful') {
+        saveBooking();
       }
-    }, 100);
-
-    return () => clearInterval(interval);
+    }
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
+  }, [form]);
 
   async function saveBooking() {
     setSubmitting(true);
@@ -278,14 +237,14 @@ export default function BookingModal() {
           </form>
         )}
 
-        {/* ── Step 2: Cal.com embed ── */}
+        {/* ── Step 2: Cal.com iframe ── */}
         {step === 'cal' && (
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-4 pt-3 pb-1 flex-shrink-0">
               <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2">
                 <Video size={13} className="text-teal-400 flex-shrink-0" />
                 <span className="text-teal-300 text-xs font-semibold">
-                  A Google Meet link will be sent to <span className="text-teal-200">{form.email}</span> once you confirm.
+                  A video call link will be sent to <span className="text-teal-200">{form.email}</span> once you confirm.
                 </span>
               </div>
             </div>
@@ -299,16 +258,28 @@ export default function BookingModal() {
               </div>
             )}
 
-            <div
-              ref={calContainerRef}
-              id="cal-booking-container"
-              className="flex-1 overflow-y-auto min-h-0"
-              style={{ minHeight: '500px' }}
-            />
+            <div className="relative flex-1 min-h-0">
+              {!calLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
+                  <div className="flex flex-col items-center gap-3 text-slate-500">
+                    <Loader2 size={24} className="animate-spin text-teal-400" />
+                    <span className="text-sm">Loading scheduler…</span>
+                  </div>
+                </div>
+              )}
+              <iframe
+                src={`https://cal.com/${CAL_LINK}?embed=true&theme=dark&name=${encodeURIComponent(form.name)}&email=${encodeURIComponent(form.email)}`}
+                className="w-full h-full border-0"
+                style={{ minHeight: '520px' }}
+                onLoad={() => setCalLoaded(true)}
+                title="Book a demo"
+                allow="camera; microphone"
+              />
+            </div>
 
             <div className="px-7 py-3 border-t border-white/5 flex-shrink-0">
               <button
-                onClick={() => setStep('details')}
+                onClick={() => { setStep('details'); setCalLoaded(false); }}
                 className="w-full bg-transparent text-slate-500 hover:text-slate-300 text-sm py-1.5 transition-colors"
               >
                 ← Back to your details
