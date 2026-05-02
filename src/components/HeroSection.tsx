@@ -1,13 +1,15 @@
-export default function HeroSection() {
-  const crossed = [
-    'Chasing supplier price lists',
-    'Stale recipe costings',
-    'Allergen spreadsheets',
-    'Compliance paperwork',
-    'Training from scratch',
-    'GP guesswork',
-  ];
+import { ArrowRight } from 'lucide-react';
 
+const eliminated = [
+  'Chasing supplier price lists',
+  'Stale recipe costings',
+  'Allergen spreadsheets',
+  'Compliance paperwork',
+  'Training from scratch',
+  'GP guesswork',
+];
+
+export default function HeroSection() {
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#080f1a] text-white relative overflow-hidden px-4 md:px-6">
       {/* Background grid */}
@@ -19,19 +21,16 @@ export default function HeroSection() {
           backgroundSize: '48px 48px',
         }}
       />
-      {/* Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto relative z-10 py-24">
         <div className="max-w-5xl mx-auto text-center">
 
-          {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 border border-teal-500/30 bg-teal-500/10 rounded-full px-4 py-1.5 mb-10">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
             <span className="text-teal-300 text-xs font-bold tracking-widest uppercase">HospitalitySupport.uk</span>
           </div>
 
-          {/* Main headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-8">
             Stop doing<br />
             <span className="text-teal-400">the admin.</span><br />
@@ -42,19 +41,17 @@ export default function HeroSection() {
             Connect your suppliers once. We track every price movement, recost every dish, and keep your margins protected — automatically, every day.
           </p>
 
-          {/* Crossed-out tasks */}
+          {/* Eliminated tasks — no strikethrough */}
           <div className="mb-14">
-            <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Things you'll never do again</p>
+            <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Handled automatically from day one</p>
             <div className="flex flex-wrap justify-center gap-3">
-              {crossed.map((item) => (
+              {eliminated.map((item) => (
                 <span
                   key={item}
-                  className="relative inline-flex items-center gap-2 bg-red-500/8 border border-red-500/20 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-400"
+                  className="inline-flex items-center gap-2 bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-300"
                 >
-                  <span className="absolute inset-0 flex items-center px-4">
-                    <span className="w-full h-px bg-red-400/60" />
-                  </span>
-                  <span className="relative line-through decoration-red-400">{item}</span>
+                  <ArrowRight size={13} className="text-teal-400 flex-shrink-0" />
+                  {item}
                 </span>
               ))}
             </div>

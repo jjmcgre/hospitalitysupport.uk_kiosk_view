@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
+import { TrendingDown, TrendingUp, Minus, X, ArrowRight } from 'lucide-react';
 
 const dishes = [
   { name: 'Pan-Seared Salmon', gp: 71, cost: '£4.20', sell: '£14.50', trend: 'up', delta: '+0.30' },
@@ -17,7 +17,7 @@ const tasks = [
   { before: 'Chase a supplier for their latest catalogue', after: 'Supplier updates their own portal — you just see it' },
 ];
 
-function GpBar({ gp, trend }: { gp: number; trend: string }) {
+function GpBar({ gp }: { gp: number }) {
   const [width, setWidth] = useState(0);
   useEffect(() => {
     const t = setTimeout(() => setWidth(gp), 200);
@@ -43,7 +43,6 @@ export default function ProblemsSection() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-            {/* Left — copy */}
             <div>
               <div className="inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-6">
                 Live Price Intelligence
@@ -63,18 +62,15 @@ export default function ProblemsSection() {
                   'Supplier manages their own pricing — you just see the result',
                 ].map((pt) => (
                   <div key={pt} className="flex items-center gap-3">
-                    <span className="w-5 h-5 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center flex-shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                    </span>
+                    <ArrowRight size={14} className="text-teal-400 flex-shrink-0" />
                     <span className="text-slate-300 text-sm">{pt}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right — mock live dashboard */}
+            {/* Mock live dashboard */}
             <div className="bg-slate-900/80 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-              {/* Dashboard header */}
               <div className="bg-slate-950/80 px-5 py-3.5 flex items-center justify-between border-b border-white/8">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
@@ -88,14 +84,12 @@ export default function ProblemsSection() {
                 </div>
               </div>
 
-              {/* Column headers */}
               <div className="px-5 pt-4 pb-2 grid grid-cols-4 gap-2">
                 {['Dish', 'Cost', 'GP %', 'Movement'].map((h) => (
                   <div key={h} className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">{h}</div>
                 ))}
               </div>
 
-              {/* Rows */}
               <div className="px-5 pb-5 space-y-3">
                 {dishes.map((d) => (
                   <div key={d.name} className="bg-white/4 border border-white/6 rounded-2xl p-3.5">
@@ -112,12 +106,11 @@ export default function ProblemsSection() {
                         <span>{d.delta}</span>
                       </div>
                     </div>
-                    <GpBar gp={d.gp} trend={d.trend} />
+                    <GpBar gp={d.gp} />
                   </div>
                 ))}
               </div>
 
-              {/* Footer note */}
               <div className="border-t border-white/5 px-5 py-3 flex items-center justify-between">
                 <span className="text-slate-600 text-[10px]">Prices last synced: just now</span>
                 <span className="text-teal-500 text-[10px] font-semibold">4 suppliers connected</span>
@@ -127,13 +120,13 @@ export default function ProblemsSection() {
         </div>
       </section>
 
-      {/* SECTION 2 — Before / After task list */}
+      {/* SECTION 2 — Before / After task list — no strikethroughs */}
       <section className="py-20 md:py-28 bg-slate-950 px-4 border-t border-white/5">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-14">
             <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
               The work it takes<br />
-              <span className="text-red-400">off your plate.</span>
+              <span className="text-teal-400">off your plate.</span>
             </h2>
             <p className="text-slate-400 text-lg max-w-xl mx-auto">
               Every row below is something you used to do manually. You don't any more.
@@ -141,10 +134,9 @@ export default function ProblemsSection() {
           </div>
 
           <div className="space-y-2">
-            {/* Header row */}
             <div className="grid grid-cols-2 gap-4 px-5 pb-2">
-              <div className="text-xs font-bold text-red-400/70 uppercase tracking-widest">Before</div>
-              <div className="text-xs font-bold text-teal-400/70 uppercase tracking-widest">Now</div>
+              <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Manual task removed</div>
+              <div className="text-xs font-bold text-teal-400/70 uppercase tracking-widest">What happens instead</div>
             </div>
             {tasks.map((t, i) => (
               <div
@@ -152,15 +144,13 @@ export default function ProblemsSection() {
                 className="grid grid-cols-2 gap-4 bg-white/3 border border-white/6 rounded-2xl p-4 sm:p-5 group hover:border-teal-500/20 transition-colors"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                  <div className="w-5 h-5 rounded-full bg-slate-700/60 border border-slate-600/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <X size={9} className="text-slate-500" />
                   </div>
-                  <span className="text-slate-400 text-sm leading-snug line-through decoration-red-400/50">{t.before}</span>
+                  <span className="text-slate-500 text-sm leading-snug">{t.before}</span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                  </div>
+                  <ArrowRight size={14} className="text-teal-400 flex-shrink-0 mt-0.5" />
                   <span className="text-white text-sm leading-snug font-medium">{t.after}</span>
                 </div>
               </div>
