@@ -1,4 +1,4 @@
-import { ChefHat, TrendingUp, Shield, GraduationCap, ClipboardCheck, Wine, Users, Eye, Truck, BarChart3 } from 'lucide-react';
+import { ChefHat, TrendingUp, Shield, GraduationCap, ClipboardCheck, Wine, Users, Eye, BarChart3, PackageCheck } from 'lucide-react';
 
 const areas = [
   {
@@ -21,9 +21,9 @@ const areas = [
   },
   {
     icon: Shield,
-    area: 'Allergens',
-    headline: "Natasha's Law. Handled.",
-    points: ['14 allergens auto-generated from ingredients', 'Matrix updates when a recipe changes', 'Zero manual checks. Zero copy-paste errors'],
+    area: 'Allergens & Nutrition',
+    headline: "Natasha's Law. Full nutrition. Handled.",
+    points: ['14 allergens auto-generated from ingredients', 'Full nutritional breakdown per portion — calories, protein, fat, carbs, salt', 'Matrix and nutrition update automatically when a recipe changes'],
   },
   {
     icon: ClipboardCheck,
@@ -50,10 +50,10 @@ const areas = [
     points: ["FOH always knows what's on the menu today", 'Allergen answers without "I\'ll just check"', 'Fewer errors, better guest experience'],
   },
   {
-    icon: Truck,
-    area: 'Procurement',
-    headline: 'Buy smarter. Every order.',
-    points: ['Supplier-managed catalogues, always current', 'Invoice scanning and reconciliation automatic', 'Spend visibility by supplier, site, and category'],
+    icon: PackageCheck,
+    area: 'Ordering & Delivery',
+    headline: 'Orders placed. Deliveries checked. Discrepancies caught.',
+    points: ['Raise POs directly from your live supplier catalogues', 'Delivery reconciliation against the original order — quantity and price', 'Discrepancies flagged instantly, not discovered at month end'],
   },
   {
     icon: BarChart3,
