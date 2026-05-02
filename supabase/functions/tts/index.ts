@@ -17,8 +17,6 @@ const corsHeaders = {
   Set ELEVENLABS_API_KEY in Supabase edge function secrets.
 */
 
-const DEFAULT_VOICE_ID = "onwK4e9ZLuTAKqWW03F9"; // Daniel — British English male
-
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -33,6 +31,8 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const configuredVoiceId = Deno.env.get("ELEVENLABS_VOICE_ID");
+
     const { text, voiceId } = await req.json();
     if (!text || typeof text !== "string") {
       return new Response(
@@ -41,7 +41,8 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const voice = voiceId ?? DEFAULT_VOICE_ID;
+    // Priority: request body → ELEVENLABS_VOICE_ID secret → Daniel fallback
+    const voice = voiceId ?? configuredVoiceId ?? "onwK4e9ZLuTAKqWW03F9";
 
     const elRes = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}/stream`,
