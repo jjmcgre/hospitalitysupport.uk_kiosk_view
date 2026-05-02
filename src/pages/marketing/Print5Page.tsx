@@ -54,316 +54,296 @@ function MockWindow({ title, live, children }: { title: string; live?: boolean; 
    Centre: Menu Development → branches to every capability area
 ─────────────────────────────────────────────────────────────────────────── */
 
-// SVG mind map
-// Viewbox 760 × 560 — gives plenty of breathing room for 8 branches + sub-pills
-// Centre node at (380, 280). Branches at 130px radius, sub-pills at 90px beyond that.
+// SVG mind map — fully hardcoded coordinates so nothing can overflow or overlap.
+// Canvas: 900 × 620. Centre: (450, 310). Branch nodes at ~185px radius.
+// Sub-pills positioned manually to sit cleanly in each quadrant.
 function MindMap() {
-  const cx = 380;
-  const cy = 278;
-  const branchR = 130;   // core → branch node centre
-  const subDist = 95;    // branch node centre → sub-pill centre
-  const nodeR = 34;      // branch circle radius
-  const coreR = 52;      // core circle radius
+  const cx = 450;
+  const cy = 310;
+  const coreR = 62;
+  const nodeR = 38;
+  const PH = 13; // pill half-height
 
-  const branches = [
+  type Sub = { text: string; x: number; y: number };
+  type Branch = { bx: number; by: number; colour: string; label: string[]; subs: Sub[] };
+
+  const branches: Branch[] = [
+    // TOP — Recipe & Spec
     {
-      angle: -90,
-      colour: '#0d9488',
-      label: ['Recipe', '& Spec'],
+      bx: 450, by: 125,
+      colour: '#0d9488', label: ['Recipe', '& Spec'],
       subs: [
-        { text: 'Full recipe & method', w: 82 },
-        { text: 'Portions & mise en place', w: 96 },
-        { text: 'Batch & scaling notes', w: 84 },
+        { text: 'Full recipe & method',    x: 310, y: 52 },
+        { text: 'Portions & mise en place',x: 450, y: 38 },
+        { text: 'Batch & scaling notes',   x: 590, y: 52 },
       ],
     },
+    // TOP-RIGHT — Cost & GP
     {
-      angle: -38,
-      colour: '#0284c7',
-      label: ['Cost', '& GP'],
+      bx: 635, by: 175,
+      colour: '#0284c7', label: ['Cost', '& GP'],
       subs: [
-        { text: 'Live ingredient costs', w: 78 },
-        { text: 'GP calculation', w: 62 },
-        { text: 'Sell-price guidance', w: 76 },
+        { text: 'Live ingredient costs', x: 755, y: 100 },
+        { text: 'GP calculation',        x: 800, y: 148 },
+        { text: 'Sell-price guidance',   x: 790, y: 196 },
       ],
     },
+    // RIGHT — Supplier Pricing
     {
-      angle: 14,
-      colour: '#7c3aed',
-      label: ['Supplier', 'Pricing'],
+      bx: 720, by: 310,
+      colour: '#7c3aed', label: ['Supplier', 'Pricing'],
       subs: [
-        { text: 'Auto-recost on change', w: 86 },
-        { text: 'Invoice scanning', w: 68 },
-        { text: 'Supplier messaging', w: 74 },
+        { text: 'Auto-recost on change', x: 843, y: 258 },
+        { text: 'Invoice scanning',      x: 856, y: 310 },
+        { text: 'Supplier messaging',    x: 843, y: 362 },
       ],
     },
+    // BOTTOM-RIGHT — Allergens
     {
-      angle: 65,
-      colour: '#dc2626',
-      label: ['Allergens', '& Nutrition'],
+      bx: 635, by: 445,
+      colour: '#dc2626', label: ['Allergens', '& Nutrition'],
       subs: [
-        { text: '14 allergens auto-gen.', w: 84 },
-        { text: "Natasha's Law compliant", w: 92 },
-        { text: 'Nutrition per portion', w: 80 },
+        { text: '14 allergens auto-gen.', x: 790, y: 424 },
+        { text: "Natasha's Law compliant",x: 800, y: 472 },
+        { text: 'Nutrition per portion',  x: 755, y: 520 },
       ],
     },
+    // BOTTOM — HACCP & Safety
     {
-      angle: 115,
-      colour: '#d97706',
-      label: ['HACCP', '& Safety'],
+      bx: 450, by: 495,
+      colour: '#d97706', label: ['HACCP', '& Safety'],
       subs: [
-        { text: 'CCPs per dish', w: 60 },
-        { text: 'Critical limits', w: 62 },
-        { text: 'Corrective actions', w: 72 },
+        { text: 'CCPs per dish',        x: 316, y: 568 },
+        { text: 'Critical limits',      x: 450, y: 582 },
+        { text: 'Corrective actions',   x: 584, y: 568 },
       ],
     },
+    // BOTTOM-LEFT — Training
     {
-      angle: 166,
-      colour: '#059669',
-      label: ['Training'],
+      bx: 265, by: 445,
+      colour: '#059669', label: ['Training'],
       subs: [
-        { text: 'Generated from your ops', w: 90 },
-        { text: 'Cert expiry tracking', w: 76 },
-        { text: 'Auto-updates on change', w: 88 },
+        { text: 'Generated from your ops', x: 100, y: 520 },
+        { text: 'Cert expiry tracking',    x: 100, y: 472 },
+        { text: 'Auto-updates on change',  x: 100, y: 424 },
       ],
     },
+    // LEFT — Front of House
     {
-      angle: -167,
-      colour: '#0891b2',
-      label: ['Front of', 'House'],
+      bx: 180, by: 310,
+      colour: '#0891b2', label: ['Front of', 'House'],
       subs: [
-        { text: 'Live menu knowledge', w: 78 },
-        { text: 'Allergen answers FOH', w: 82 },
-        { text: 'Dish descriptions & pairings', w: 104 },
+        { text: 'Live menu knowledge',       x: 44, y: 258 },
+        { text: 'Allergen answers FOH',       x: 44, y: 310 },
+        { text: 'Dish descriptions & pairings', x: 44, y: 362 },
       ],
     },
+    // TOP-LEFT — Compliance
     {
-      angle: -141,
-      colour: '#9333ea',
-      label: ['Compliance'],
+      bx: 265, by: 175,
+      colour: '#9333ea', label: ['Compliance'],
       subs: [
-        { text: 'Evidence as it happens', w: 86 },
-        { text: 'Signed briefings', w: 68 },
-        { text: 'One-click FSA reports', w: 82 },
+        { text: 'Evidence as it happens', x: 100, y: 196 },
+        { text: 'Signed briefings',       x: 100, y: 148 },
+        { text: 'One-click FSA reports',  x: 100, y: 100 },
       ],
     },
   ];
 
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const PH = 16; // pill half-height
-
   return (
-    <svg viewBox="0 0 760 556" style={{ width: '100%', display: 'block' }}>
+    <svg viewBox="0 0 900 620" style={{ width: '100%', display: 'block' }}>
       <defs>
-        <radialGradient id="core-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.25" />
+        <radialGradient id="core-glow2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.2" />
           <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      <ellipse cx={cx} cy={cy} rx={145} ry={145} fill="url(#core-glow)" />
+      <ellipse cx={cx} cy={cy} rx={200} ry={200} fill="url(#core-glow2)" />
 
-      {branches.map((b) => {
-        const rad = toRad(b.angle);
-        const bx = cx + branchR * Math.cos(rad);
-        const by = cy + branchR * Math.sin(rad);
+      {branches.map((b) => (
+        <g key={b.label.join('')}>
+          {/* Core → branch connector */}
+          <line
+            x1={cx + coreR * ((b.bx - cx) / Math.hypot(b.bx - cx, b.by - cy))}
+            y1={cy + coreR * ((b.by - cy) / Math.hypot(b.bx - cx, b.by - cy))}
+            x2={b.bx - nodeR * ((b.bx - cx) / Math.hypot(b.bx - cx, b.by - cy))}
+            y2={b.by - nodeR * ((b.by - cy) / Math.hypot(b.bx - cx, b.by - cy))}
+            stroke={b.colour} strokeWidth="2" strokeOpacity="0.5"
+          />
 
-        return (
-          <g key={b.label.join('')}>
-            {/* Connector line */}
+          {/* Branch → sub-pill connectors */}
+          {b.subs.map((s) => (
             <line
-              x1={cx + coreR * Math.cos(rad)}
-              y1={cy + coreR * Math.sin(rad)}
-              x2={bx - nodeR * Math.cos(rad)}
-              y2={by - nodeR * Math.sin(rad)}
-              stroke={b.colour} strokeWidth="1.8" strokeOpacity="0.55"
+              key={s.text + 'l'}
+              x1={b.bx} y1={b.by}
+              x2={s.x} y2={s.y}
+              stroke={b.colour} strokeWidth="1.2" strokeOpacity="0.28"
+              strokeDasharray="4,3"
             />
+          ))}
 
-            {/* Branch circle */}
-            <circle cx={bx} cy={by} r={nodeR + 2} fill={DARK} stroke={b.colour} strokeWidth="1.6" />
-            <circle cx={bx} cy={by} r={nodeR} fill={MID} />
+          {/* Branch circle */}
+          <circle cx={b.bx} cy={b.by} r={nodeR + 2.5} fill={DARK} stroke={b.colour} strokeWidth="1.8" />
+          <circle cx={b.bx} cy={b.by} r={nodeR} fill={MID} />
 
-            {/* Branch label */}
-            {b.label.map((line, li) => (
-              <text
-                key={li}
-                x={bx} y={by + (b.label.length === 1 ? 3.5 : li === 0 ? -3.5 : 7.5)}
-                textAnchor="middle"
-                fill={b.colour}
-                fontSize="8.5"
-                fontWeight="800"
-                fontFamily="Inter, system-ui, sans-serif"
-              >
-                {line}
-              </text>
-            ))}
+          {/* Branch label */}
+          {b.label.map((line, li) => (
+            <text
+              key={li}
+              x={b.bx}
+              y={b.by + (b.label.length === 1 ? 4 : li === 0 ? -4 : 9)}
+              textAnchor="middle"
+              fill={b.colour}
+              fontSize="9.5"
+              fontWeight="800"
+              fontFamily="Inter, system-ui, sans-serif"
+            >
+              {line}
+            </text>
+          ))}
 
-            {/* Sub-pills — spread in a tight fan along the branch direction */}
-            {b.subs.map((sub, si) => {
-              const count = b.subs.length;
-              const fanTotal = 30; // degrees total spread for all subs
-              const fanStep = count > 1 ? fanTotal / (count - 1) : 0;
-              const subAngle = b.angle - fanTotal / 2 + si * fanStep;
-              const subRad = toRad(subAngle);
-              const sx = bx + subDist * Math.cos(subRad);
-              const sy = by + subDist * Math.sin(subRad);
-              const hw = sub.w / 2;
+          {/* Sub-pills */}
+          {b.subs.map((s) => {
+            const charW = 5.8;
+            const pw = Math.max(s.text.length * charW + 16, 60);
+            const hw = pw / 2;
+            return (
+              <g key={s.text}>
+                <rect x={s.x - hw} y={s.y - PH} width={pw} height={PH * 2} rx={PH}
+                  fill={DARK} stroke={b.colour} strokeWidth="0.9" strokeOpacity="0.5" />
+                <text x={s.x} y={s.y + 4.5} textAnchor="middle"
+                  fill="#94a3b8" fontSize="7.2" fontFamily="Inter, system-ui, sans-serif">
+                  {s.text}
+                </text>
+              </g>
+            );
+          })}
+        </g>
+      ))}
 
-              return (
-                <g key={sub.text}>
-                  <line
-                    x1={bx + (nodeR + 2) * Math.cos(subRad)}
-                    y1={by + (nodeR + 2) * Math.sin(subRad)}
-                    x2={sx} y2={sy}
-                    stroke={b.colour} strokeWidth="1" strokeOpacity="0.3"
-                    strokeDasharray="3,2"
-                  />
-                  <rect
-                    x={sx - hw} y={sy - PH}
-                    width={sub.w} height={PH * 2}
-                    rx={PH}
-                    fill={DARK}
-                    stroke={b.colour}
-                    strokeWidth="0.9"
-                    strokeOpacity="0.45"
-                  />
-                  <text
-                    x={sx} y={sy + 4}
-                    textAnchor="middle"
-                    fill="#94a3b8"
-                    fontSize="6.8"
-                    fontFamily="Inter, system-ui, sans-serif"
-                  >
-                    {sub.text}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
-        );
-      })}
-
-      {/* Core node — rendered last so it sits on top */}
-      <circle cx={cx} cy={cy} r={coreR + 3} fill={DARK} stroke={T} strokeWidth="2.5" />
+      {/* Core node — on top */}
+      <circle cx={cx} cy={cy} r={coreR + 4} fill={DARK} stroke={T} strokeWidth="2.8" />
       <circle cx={cx} cy={cy} r={coreR} fill={MID} />
-      <text x={cx} y={cy - 10} textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Menu</text>
-      <text x={cx} y={cy + 4}  textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Development</text>
-      <text x={cx} y={cy + 17} textAnchor="middle" fill="#2dd4bf" fontSize="7.5" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">· everything starts here ·</text>
+      <text x={cx} y={cy - 12} textAnchor="middle" fill="#fff" fontSize="13.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Menu</text>
+      <text x={cx} y={cy + 4}  textAnchor="middle" fill="#fff" fontSize="13.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Development</text>
+      <text x={cx} y={cy + 19} textAnchor="middle" fill="#2dd4bf" fontSize="8" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">· everything starts here ·</text>
     </svg>
   );
 }
 
 function Page1() {
-
   return (
     <Page n={1}>
-      {/* ACT 1 — The chef's reality: split left/right */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', flex: '0 0 auto' }}>
+      {/* ── TOP BAND: Two-column emotional hook ─────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', flexShrink: 0 }}>
 
-        {/* Left — the emotional hook */}
-        <div style={{ background: '#060d16', padding: '20px 20px 18px 28px', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div style={{ fontSize: 8, fontWeight: 800, color: '#f87171', textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 10 }}>
-            The reality of running a kitchen
+        {/* Left — chef's truth */}
+        <div style={{ background: '#060d16', padding: '18px 18px 16px 28px', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontSize: 7.5, fontWeight: 800, color: '#f87171', textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 8 }}>
+              Built by chefs · for chefs
+            </div>
+            <p style={{ color: '#fff', fontSize: 18, fontWeight: 900, lineHeight: 1.12, letterSpacing: '-0.02em', margin: '0 0 9px', maxWidth: 280 }}>
+              You became a chef<br />because you love to cook.
+            </p>
+            <p style={{ color: '#64748b', fontSize: 9.5, lineHeight: 1.65, margin: '0 0 10px', maxWidth: 290 }}>
+              Somewhere along the way, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The supplier calls that never end.
+            </p>
+            <p style={{ color: '#cbd5e1', fontSize: 10, fontWeight: 700, lineHeight: 1.5, fontStyle: 'italic', borderLeft: `3px solid ${T}`, paddingLeft: 10, margin: 0 }}>
+              "I didn't go to catering college to update an allergen spreadsheet at midnight."
+            </p>
           </div>
-          <p style={{ color: '#fff', fontSize: 19, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '0 0 10px' }}>
-            You became a chef<br />
-            because you love to cook.
-          </p>
-          <p style={{ color: '#94a3b8', fontSize: 10, lineHeight: 1.65, margin: '0 0 12px' }}>
-            Somewhere between the first job and running your own kitchen, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The training. The supplier calls.
-          </p>
-          <p style={{ color: '#e2e8f0', fontSize: 11, fontWeight: 700, lineHeight: 1.5, fontStyle: 'italic', borderLeft: `3px solid ${T}`, paddingLeft: 11, margin: 0 }}>
-            "I didn't go to catering college to update an allergen spreadsheet at midnight."
-          </p>
+          {/* Built by chefs credentials */}
+          <div style={{ display: 'flex', gap: 10, marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            {[
+              { stat: '20+ yrs', label: 'kitchen experience behind this' },
+              { stat: '5 min', label: 'to go live — no training needed' },
+              { stat: 'plain English', label: 'interface — just describe the dish' },
+            ].map(s => (
+              <div key={s.stat} style={{ flex: 1 }}>
+                <div style={{ color: '#2dd4bf', fontSize: 11, fontWeight: 900, lineHeight: 1 }}>{s.stat}</div>
+                <div style={{ color: '#475569', fontSize: 7.5, marginTop: 2, lineHeight: 1.3 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Right — the noise cloud */}
-        <div style={{ background: '#090f1a', padding: '16px 20px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ fontSize: 8, fontWeight: 800, color: '#475569', textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 10 }}>
+        <div style={{ background: '#08101a', padding: '14px 16px 12px', overflow: 'hidden' }}>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#334155', textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 9 }}>
             What actually fills the day
           </div>
-          {/* Noise pills — scattered layout using absolute positioning within a relative container */}
-          <div style={{ position: 'relative', height: 148 }}>
-            {[
-              { text: 'allergen spreadsheets', top: 0, left: 4, col: '#f87171' },
-              { text: 'HACCP paperwork', top: 0, left: 140, col: '#f87171' },
-              { text: 'GP that\'s never right', top: 0, left: 256, col: '#f87171' },
-              { text: 'staff no-shows', top: 24, left: 60, col: '#fbbf24' },
-              { text: 'supplier invoice queries', top: 24, left: 184, col: '#fbbf24' },
-              { text: 'training records', top: 48, left: 0, col: '#94a3b8' },
-              { text: 'price increases you missed', top: 48, left: 108, col: '#f87171' },
-              { text: 'FOH asking what\'s in the dish', top: 48, left: 258, col: '#94a3b8' },
-              { text: 'compliance checklists', top: 72, left: 40, col: '#fbbf24' },
-              { text: 'menu costing', top: 72, left: 192, col: '#94a3b8' },
-              { text: 'certification renewals', top: 96, left: 8, col: '#94a3b8' },
-              { text: 'delivery discrepancies', top: 96, left: 156, col: '#fbbf24' },
-              { text: 'portion drift', top: 120, left: 50, col: '#94a3b8' },
-              { text: 'last-minute menu changes', top: 120, left: 148, col: '#f87171' },
-              { text: 'food safety audits', top: 120, left: 300, col: '#f87171' },
-            ].map((item, i) => (
+          <div style={{ position: 'relative', height: 158 }}>
+            {([
+              { text: 'allergen spreadsheets',         top: 0,   left: 0,   col: '#f87171' },
+              { text: 'HACCP paperwork',               top: 0,   left: 130, col: '#f87171' },
+              { text: 'GP that\'s never right',        top: 22,  left: 55,  col: '#f87171' },
+              { text: 'staff no-shows',                top: 22,  left: 190, col: '#fbbf24' },
+              { text: 'supplier invoice queries',      top: 44,  left: 0,   col: '#fbbf24' },
+              { text: 'training records',              top: 44,  left: 152, col: '#94a3b8' },
+              { text: 'price increases you missed',    top: 66,  left: 20,  col: '#f87171' },
+              { text: 'FOH asking about allergens',    top: 66,  left: 172, col: '#94a3b8' },
+              { text: 'compliance checklists',         top: 88,  left: 0,   col: '#fbbf24' },
+              { text: 'menu costing',                  top: 88,  left: 148, col: '#94a3b8' },
+              { text: 'certification renewals',        top: 110, left: 40,  col: '#94a3b8' },
+              { text: 'delivery discrepancies',        top: 110, left: 162, col: '#fbbf24' },
+              { text: 'portion drift',                 top: 132, left: 0,   col: '#94a3b8' },
+              { text: 'last-minute menu changes',      top: 132, left: 92,  col: '#f87171' },
+            ] as { text: string; top: number; left: number; col: string }[]).map((item, i) => (
               <span
                 key={i}
                 style={{
-                  position: 'absolute',
-                  top: item.top,
-                  left: item.left,
-                  fontSize: 8.5,
-                  fontWeight: 600,
+                  position: 'absolute', top: item.top, left: item.left,
+                  fontSize: 8, fontWeight: 600,
                   color: item.col,
-                  background: `${item.col}12`,
-                  border: `1px solid ${item.col}30`,
-                  borderRadius: 20,
-                  padding: '2px 8px',
+                  background: `${item.col}10`,
+                  border: `1px solid ${item.col}28`,
+                  borderRadius: 20, padding: '2px 7px',
                   whiteSpace: 'nowrap' as const,
-                  opacity: 0.75 + (i % 4) * 0.07,
                 }}
               >
                 {item.text}
               </span>
             ))}
           </div>
-          {/* Strike-through the noise */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 9, marginTop: 4 }}>
-            <span style={{ color: '#334155', fontSize: 9, fontStyle: 'italic' }}>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8, marginTop: 2 }}>
+            <span style={{ color: '#334155', fontSize: 8.5, fontStyle: 'italic' }}>
               None of this is why you got into hospitality.
             </span>
           </div>
         </div>
       </div>
 
-      {/* ACT 2 — The solution: full-width dark band then mind map */}
-      <div style={{ background: MID, borderTop: `2px solid ${T}`, padding: '10px 24px 6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexShrink: 0 }}>
-        <div>
-          <div style={{ fontSize: 8, fontWeight: 800, color: '#2dd4bf', textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 4 }}>
-            HospitalitySupport.uk
-          </div>
-          <p style={{ color: '#fff', fontSize: 15, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '0 0 3px' }}>
+      {/* ── PIVOT BAND ───────────────────────────────────────────────────── */}
+      <div style={{ background: DARK, borderTop: `2px solid ${T}`, borderBottom: '1px solid rgba(45,212,191,0.15)', padding: '9px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, gap: 20 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#2dd4bf', textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 3 }}>HospitalitySupport.uk</div>
+          <p style={{ color: '#fff', fontSize: 14, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.02em', margin: '0 0 2px' }}>
             Every area of your operation.{' '}
             <span style={{ color: '#2dd4bf' }}>All connected. Always live.</span>
           </p>
-          <p style={{ color: '#64748b', fontSize: 9, lineHeight: 1.5, margin: 0, maxWidth: 400 }}>
-            It starts with menu development — and everything else follows automatically. Costs. Allergens. HACCP. Training. Compliance. Supplier pricing. All of it, built from one source of truth.
+          <p style={{ color: '#475569', fontSize: 8.5, lineHeight: 1.5, margin: 0 }}>
+            Describe a dish in plain English. The platform builds the recipe, costs it, generates the allergen matrix, creates the HACCP controls, and keeps everything live as supplier prices change — automatically.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
           {[
             { val: '3 min', label: 'Dish live' },
-            { val: '14', label: 'Allergens' },
+            { val: '14', label: 'Allergens tracked' },
             { val: '0', label: 'Spreadsheets' },
+            { val: '£3.30', label: 'per kitchen / day', teal: true },
           ].map(s => (
-            <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, padding: '5px 8px', textAlign: 'center' as const }}>
-              <div style={{ color: '#2dd4bf', fontSize: 12, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-              <div style={{ color: '#475569', fontSize: 7, marginTop: 1 }}>{s.label}</div>
+            <div key={s.label} style={{ background: (s as any).teal ? T : 'rgba(255,255,255,0.05)', border: `1px solid ${(s as any).teal ? T : 'rgba(255,255,255,0.08)'}`, borderRadius: 7, padding: '6px 9px', textAlign: 'center' as const }}>
+              <div style={{ color: (s as any).teal ? '#fff' : '#2dd4bf', fontSize: 12, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+              <div style={{ color: (s as any).teal ? 'rgba(255,255,255,0.7)' : '#475569', fontSize: 6.5, marginTop: 2, lineHeight: 1.2 }}>{s.label}</div>
             </div>
           ))}
-          <div style={{ background: T, borderRadius: 6, padding: '5px 10px', textAlign: 'center' as const }}>
-            <div style={{ color: '#fff', fontSize: 12, fontWeight: 900, lineHeight: 1 }}>£3.30</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 7, marginTop: 1 }}>per day</div>
-          </div>
         </div>
       </div>
 
-      {/* Mind map — fills remaining page */}
-      <div style={{ background: MID, flex: 1, minHeight: 0, padding: '0 8px 6px' }}>
+      {/* ── MIND MAP — fills all remaining space ─────────────────────────── */}
+      <div style={{ background: MID, flex: 1, minHeight: 0 }}>
         <MindMap />
       </div>
     </Page>
