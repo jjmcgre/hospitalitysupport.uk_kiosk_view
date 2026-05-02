@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { ExternalLink, Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Monitor } from 'lucide-react';
 
-const navItems = [
+const campaignItems = [
   { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/instagram', label: 'Instagram', icon: Instagram },
   { to: '/tiktok', label: 'TikTok', icon: Video },
@@ -28,22 +28,12 @@ export default function MarketingLayout() {
         lg:relative lg:translate-x-0 lg:flex
       `}>
         <div className="p-6 border-b border-slate-800">
-          <div className="flex items-center justify-between mb-5">
-            <span className="text-white font-black text-base tracking-tight">
-              HospitalitySupport<span className="text-teal-400">.uk</span>
-            </span>
-            <Link
-              to="/landing"
-              className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 transition-colors text-xs"
-              title="View public landing page"
-            >
-              <ExternalLink size={13} />
-              Public site
-            </Link>
-          </div>
-          <div>
+          <span className="text-white font-black text-base tracking-tight">
+            HospitalitySupport<span className="text-teal-400">.uk</span>
+          </span>
+          <div className="mt-3">
             <h1 className="text-white font-bold text-lg leading-tight">Campaign Book</h1>
-            <p className="text-slate-500 text-xs mt-1">Internal use only</p>
+            <p className="text-slate-500 text-xs mt-0.5">Internal use only</p>
             <div className="mt-2 inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/30 rounded-full px-3 py-1">
               <span className="w-2 h-2 rounded-full bg-teal-400"></span>
               <span className="text-teal-300 text-xs font-semibold">£3.30 / day</span>
@@ -52,24 +42,40 @@ export default function MarketingLayout() {
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
+          {/* Kiosk Overview — the public-facing product page */}
+          <div className="mb-2">
+            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1">Public</p>
+            <Link
+              to="/landing"
               onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`
-              }
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800"
             >
-              <item.icon size={16} className="flex-shrink-0" />
-              {item.label}
-            </NavLink>
-          ))}
+              <Monitor size={16} className="flex-shrink-0" />
+              Kiosk Overview
+            </Link>
+          </div>
+
+          <div className="border-t border-slate-800 pt-2">
+            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Campaign</p>
+            {campaignItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`
+                }
+              >
+                <item.icon size={16} className="flex-shrink-0" />
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
