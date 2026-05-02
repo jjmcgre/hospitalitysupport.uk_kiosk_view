@@ -23,9 +23,6 @@ const CAL_LINK = 'james-mcgregor-6cvfzq/30mins';
 
 type Step = 'details' | 'cal' | 'confirmed';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const Cal: any;
-
 export default function BookingModal() {
   const { isOpen, closeBooking } = useBooking();
   const [form, setForm] = useState<FormData>(EMPTY);
@@ -54,9 +51,12 @@ export default function BookingModal() {
   useEffect(() => {
     if (step !== 'cal') return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+
     function initCal() {
-      Cal('init', { origin: 'https://cal.com' });
-      Cal('inline', {
+      w.Cal('init', { origin: 'https://cal.com' });
+      w.Cal('inline', {
         elementOrSelector: '#cal-inline-embed',
         calLink: CAL_LINK,
         config: {
@@ -70,58 +70,38 @@ export default function BookingModal() {
           ].filter(Boolean).join('\n'),
         },
       });
-      Cal('ui', {
+      w.Cal('ui', {
         styles: { branding: { brandColor: '#14b8a6' } },
         hideEventTypeDetails: false,
         layout: 'month_view',
       });
-      Cal('on', {
+      w.Cal('on', {
         action: 'bookingSuccessful',
         callback: () => saveBooking(),
       });
     }
 
-    // If already loaded from a previous open, just init
-    if (typeof Cal !== 'undefined') {
+    if (w.Cal && w.Cal.loaded) {
       initCal();
       return;
     }
 
-    // Bootstrap snippet from cal.com docs
-    (function (C: Window & typeof globalThis, A: string, L: string) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const w = C as any;
-      const p = function (a: IArguments | unknown[], ar: IArguments | unknown[]) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (a as any).q.push(ar);
-      };
-      const d = document;
-      w.Cal =
-        w.Cal ||
-        function () {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const cal = w.Cal as any;
-          const ar = arguments;
-          if (!cal.loaded) {
-            cal.ns = {};
-            cal.q = cal.q || [];
-            const s = d.createElement('script');
-            s.src = A;
-            s.async = true;
-            s.onload = initCal;
-            d.head.appendChild(s);
-            cal.loaded = true;
-          }
-          if (ar[0] === L) {
-            return;
-          }
-          p(cal, ar);
-        };
-    })(window, 'https://app.cal.com/embed/embed.js', 'init');
+    // Bootstrap the Cal.com embed script
+    const script = document.createElement('script');
+    script.src = 'https://app.cal.com/embed/embed.js';
+    script.async = true;
+    script.onload = initCal;
 
-    // Trigger the script load
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).Cal('init', { origin: 'https://cal.com' });
+    // Stub Cal so queued calls don't error before script loads
+    if (!w.Cal) {
+      const q: unknown[][] = [];
+      const stub = (...args: unknown[]) => q.push(args);
+      stub.q = q;
+      stub.loaded = false;
+      w.Cal = stub;
+    }
+
+    document.head.appendChild(script);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
