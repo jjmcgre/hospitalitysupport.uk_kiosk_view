@@ -54,54 +54,63 @@ export default function BookingModal() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
 
-    function initCal() {
-      w.Cal('init', { origin: 'https://cal.com' });
-      w.Cal('inline', {
+    function runEmbed() {
+      // Matches the official snippet exactly, using the "30mins" namespace
+      w.Cal('init', '30mins', { origin: 'https://app.cal.com' });
+      w.Cal.ns['30mins']('inline', {
         elementOrSelector: '#cal-inline-embed',
+        config: { layout: 'month_view', useSlotsViewOnSmallScreen: 'true' },
         calLink: CAL_LINK,
-        config: {
-          name: form.name,
-          email: form.email,
-          notes: [
-            form.phone && `Phone: ${form.phone}`,
-            `Business: ${form.business_name}`,
-            `Sites: ${form.num_sites}`,
-            form.message && `Message: ${form.message}`,
-          ].filter(Boolean).join('\n'),
-        },
       });
-      w.Cal('ui', {
-        styles: { branding: { brandColor: '#14b8a6' } },
-        hideEventTypeDetails: false,
-        layout: 'month_view',
-      });
-      w.Cal('on', {
+      w.Cal.ns['30mins']('ui', { hideEventTypeDetails: false, layout: 'month_view' });
+      w.Cal.ns['30mins']('on', {
         action: 'bookingSuccessful',
         callback: () => saveBooking(),
       });
     }
 
     if (w.Cal && w.Cal.loaded) {
-      initCal();
+      runEmbed();
       return;
     }
 
-    // Bootstrap the Cal.com embed script
-    const script = document.createElement('script');
-    script.src = 'https://app.cal.com/embed/embed.js';
-    script.async = true;
-    script.onload = initCal;
+    // Official Cal.com bootstrap IIFE
+    (function (C: Window & typeof globalThis, A: string, L: string) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ww = C as any;
+      const p = (a: any, ar: any) => a.q.push(ar);
+      const d = C.document;
+      ww.Cal = ww.Cal || function (...args: any[]) {
+        const cal = ww.Cal;
+        if (!cal.loaded) {
+          cal.ns = {};
+          cal.q = cal.q || [];
+          const s = d.createElement('script');
+          s.src = A;
+          s.async = true;
+          s.onload = runEmbed;
+          d.head.appendChild(s);
+          cal.loaded = true;
+        }
+        if (args[0] === L) {
+          const api = (...a: any[]) => p(api, a);
+          const ns = args[1];
+          (api as any).q = (api as any).q || [];
+          if (typeof ns === 'string') {
+            cal.ns[ns] = cal.ns[ns] || api;
+            p(cal.ns[ns], args);
+            p(cal, ['initNamespace', ns]);
+          } else {
+            p(cal, args);
+          }
+          return;
+        }
+        p(cal, args);
+      };
+    })(window, 'https://app.cal.com/embed/embed.js', 'init');
 
-    // Stub Cal so queued calls don't error before script loads
-    if (!w.Cal) {
-      const q: unknown[][] = [];
-      const stub = (...args: unknown[]) => q.push(args);
-      stub.q = q;
-      stub.loaded = false;
-      w.Cal = stub;
-    }
-
-    document.head.appendChild(script);
+    // Kick off the script load
+    w.Cal('init', '30mins', { origin: 'https://app.cal.com' });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
@@ -301,6 +310,7 @@ export default function BookingModal() {
             {/* Cal.com mounts the iframe into this div */}
             <div
               id="cal-inline-embed"
+            data-cal-namespace="30mins"
               className="flex-1 overflow-y-auto"
               style={{ minHeight: '520px' }}
             />
