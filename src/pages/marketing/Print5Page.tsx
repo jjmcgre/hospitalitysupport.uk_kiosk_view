@@ -54,180 +54,151 @@ function MockWindow({ title, live, children }: { title: string; live?: boolean; 
    Centre: Menu Development → branches to every capability area
 ─────────────────────────────────────────────────────────────────────────── */
 
-// SVG mind map — fully hardcoded coordinates so nothing can overflow or overlap.
-// Canvas: 900 × 620. Centre: (450, 310). Branch nodes at ~185px radius.
-// Sub-pills positioned manually to sit cleanly in each quadrant.
+// Spoke diagram — rectangular cards radiating from a typographic centre.
+// No circles. Cards sized to their content, placed on a 1000 × 680 canvas.
+// Centre anchor at (500, 340). Each spoke connects to the nearest card edge.
 function MindMap() {
-  const cx = 450;
-  const cy = 310;
-  const coreR = 62;
-  const nodeR = 38;
-  const PH = 13; // pill half-height
+  const cx = 500;
+  const cy = 340;
+  const F = 'Inter, system-ui, sans-serif';
 
-  type Sub = { text: string; x: number; y: number };
-  type Branch = { bx: number; by: number; colour: string; label: string[]; subs: Sub[] };
+  // Card: x,y = top-left corner, w/h = dimensions
+  // lx,ly = the spoke attachment point on the card edge (nearest centre)
+  type Card = {
+    colour: string;
+    label: string;
+    items: string[];
+    x: number; y: number; w: number; h: number;
+    lx: number; ly: number; // line attaches here on card side
+  };
 
-  const branches: Branch[] = [
-    // TOP — Recipe & Spec
+  const cards: Card[] = [
+    // ── TOP ──────────────────────────────────────────────────────────────
     {
-      bx: 450, by: 125,
-      colour: '#0d9488', label: ['Recipe', '& Spec'],
-      subs: [
-        { text: 'Full recipe & method',    x: 310, y: 52 },
-        { text: 'Portions & mise en place',x: 450, y: 38 },
-        { text: 'Batch & scaling notes',   x: 590, y: 52 },
-      ],
+      colour: '#0d9488', label: 'Recipe & Spec',
+      items: ['Full recipe, method & mise en place', 'Portions, yield & scaling', 'Batch notes & allergen flags'],
+      x: 335, y: 14, w: 200, h: 72,
+      lx: 435, ly: 86,
     },
-    // TOP-RIGHT — Cost & GP
+    // ── TOP-RIGHT ─────────────────────────────────────────────────────────
     {
-      bx: 635, by: 175,
-      colour: '#0284c7', label: ['Cost', '& GP'],
-      subs: [
-        { text: 'Live ingredient costs', x: 755, y: 100 },
-        { text: 'GP calculation',        x: 800, y: 148 },
-        { text: 'Sell-price guidance',   x: 790, y: 196 },
-      ],
+      colour: '#0284c7', label: 'Cost & GP',
+      items: ['Live ingredient costs', 'GP auto-calculated per dish', 'Sell-price guidance & margin alerts'],
+      x: 670, y: 42, w: 188, h: 72,
+      lx: 670, ly: 78,
     },
-    // RIGHT — Supplier Pricing
+    // ── RIGHT ─────────────────────────────────────────────────────────────
     {
-      bx: 720, by: 310,
-      colour: '#7c3aed', label: ['Supplier', 'Pricing'],
-      subs: [
-        { text: 'Auto-recost on change', x: 843, y: 258 },
-        { text: 'Invoice scanning',      x: 856, y: 310 },
-        { text: 'Supplier messaging',    x: 843, y: 362 },
-      ],
+      colour: '#7c3aed', label: 'Supplier Pricing',
+      items: ['Live price tracking', 'Invoice scan & match', 'Auto-recost when prices change', 'Direct supplier messaging'],
+      x: 742, y: 242, w: 192, h: 86,
+      lx: 742, ly: 285,
     },
-    // BOTTOM-RIGHT — Allergens
+    // ── BOTTOM-RIGHT ──────────────────────────────────────────────────────
     {
-      bx: 635, by: 445,
-      colour: '#dc2626', label: ['Allergens', '& Nutrition'],
-      subs: [
-        { text: '14 allergens auto-gen.', x: 790, y: 424 },
-        { text: "Natasha's Law compliant",x: 800, y: 472 },
-        { text: 'Nutrition per portion',  x: 755, y: 520 },
-      ],
+      colour: '#dc2626', label: 'Allergens & Nutrition',
+      items: ['14 allergens auto-generated per dish', "Natasha's Law compliant matrix", 'Nutrition calculated per portion', 'Auto-updates when recipes change'],
+      x: 670, y: 518, w: 210, h: 88,
+      lx: 670, ly: 518,
     },
-    // BOTTOM — HACCP & Safety
+    // ── BOTTOM ────────────────────────────────────────────────────────────
     {
-      bx: 450, by: 495,
-      colour: '#d97706', label: ['HACCP', '& Safety'],
-      subs: [
-        { text: 'CCPs per dish',        x: 316, y: 568 },
-        { text: 'Critical limits',      x: 450, y: 582 },
-        { text: 'Corrective actions',   x: 584, y: 568 },
-      ],
+      colour: '#d97706', label: 'HACCP & Safety',
+      items: ['CCPs generated per dish', 'Critical limits & corrective actions', 'Temp logs & evidence capture', 'Inspection-ready one-click reports'],
+      x: 338, y: 578, w: 200, h: 88,
+      lx: 438, ly: 578,
     },
-    // BOTTOM-LEFT — Training
+    // ── BOTTOM-LEFT ───────────────────────────────────────────────────────
     {
-      bx: 265, by: 445,
-      colour: '#059669', label: ['Training'],
-      subs: [
-        { text: 'Generated from your ops', x: 100, y: 520 },
-        { text: 'Cert expiry tracking',    x: 100, y: 472 },
-        { text: 'Auto-updates on change',  x: 100, y: 424 },
-      ],
+      colour: '#059669', label: 'Training & Compliance',
+      items: ['Bespoke training built from your own menus & ops', 'Level 2 food hygiene already included', 'All legal compliance checks built in', 'Cert tracking & auto-renewal alerts', 'Signed briefings — evidence as it happens'],
+      x: 66, y: 510, w: 218, h: 106,
+      lx: 284, ly: 543,
     },
-    // LEFT — Front of House
+    // ── LEFT ──────────────────────────────────────────────────────────────
     {
-      bx: 180, by: 310,
-      colour: '#0891b2', label: ['Front of', 'House'],
-      subs: [
-        { text: 'Live menu knowledge',       x: 44, y: 258 },
-        { text: 'Allergen answers FOH',       x: 44, y: 310 },
-        { text: 'Dish descriptions & pairings', x: 44, y: 362 },
-      ],
+      colour: '#0891b2', label: 'Front of House',
+      items: ['Live menu knowledge for all staff', 'Instant allergen answers', 'Dish descriptions & wine pairings', 'Auto-updates when menu changes'],
+      x: 64, y: 258, w: 200, h: 88,
+      lx: 264, ly: 302,
     },
-    // TOP-LEFT — Compliance
+    // ── TOP-LEFT ──────────────────────────────────────────────────────────
     {
-      bx: 265, by: 175,
-      colour: '#9333ea', label: ['Compliance'],
-      subs: [
-        { text: 'Evidence as it happens', x: 100, y: 196 },
-        { text: 'Signed briefings',       x: 100, y: 148 },
-        { text: 'One-click FSA reports',  x: 100, y: 100 },
-      ],
+      colour: '#ea580c', label: 'Ordering & Deliveries',
+      items: ['Shopping list auto-built from menu', 'One-click purchase orders to suppliers', 'Delivery checker — scan vs PO', 'Discrepancy alerts & records'],
+      x: 66, y: 42, w: 200, h: 88,
+      lx: 266, ly: 86,
     },
   ];
 
+  const CH = 14; // card header height
+  const IR = 3;  // item row height base
+  const FS = 7;  // item font size
+
   return (
-    <svg viewBox="0 0 900 620" style={{ width: '100%', display: 'block' }}>
+    <svg viewBox="0 0 1000 680" style={{ width: '100%', display: 'block' }}>
       <defs>
-        <radialGradient id="core-glow2" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.2" />
+        <radialGradient id="core-glow3" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0d9488" stopOpacity="0.15" />
           <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      <ellipse cx={cx} cy={cy} rx={200} ry={200} fill="url(#core-glow2)" />
+      <ellipse cx={cx} cy={cy} rx={240} ry={220} fill="url(#core-glow3)" />
 
-      {branches.map((b) => (
-        <g key={b.label.join('')}>
-          {/* Core → branch connector */}
-          <line
-            x1={cx + coreR * ((b.bx - cx) / Math.hypot(b.bx - cx, b.by - cy))}
-            y1={cy + coreR * ((b.by - cy) / Math.hypot(b.bx - cx, b.by - cy))}
-            x2={b.bx - nodeR * ((b.bx - cx) / Math.hypot(b.bx - cx, b.by - cy))}
-            y2={b.by - nodeR * ((b.by - cy) / Math.hypot(b.bx - cx, b.by - cy))}
-            stroke={b.colour} strokeWidth="2" strokeOpacity="0.5"
-          />
-
-          {/* Branch → sub-pill connectors */}
-          {b.subs.map((s) => (
-            <line
-              key={s.text + 'l'}
-              x1={b.bx} y1={b.by}
-              x2={s.x} y2={s.y}
-              stroke={b.colour} strokeWidth="1.2" strokeOpacity="0.28"
-              strokeDasharray="4,3"
-            />
-          ))}
-
-          {/* Branch circle */}
-          <circle cx={b.bx} cy={b.by} r={nodeR + 2.5} fill={DARK} stroke={b.colour} strokeWidth="1.8" />
-          <circle cx={b.bx} cy={b.by} r={nodeR} fill={MID} />
-
-          {/* Branch label */}
-          {b.label.map((line, li) => (
-            <text
-              key={li}
-              x={b.bx}
-              y={b.by + (b.label.length === 1 ? 4 : li === 0 ? -4 : 9)}
-              textAnchor="middle"
-              fill={b.colour}
-              fontSize="9.5"
-              fontWeight="800"
-              fontFamily="Inter, system-ui, sans-serif"
-            >
-              {line}
-            </text>
-          ))}
-
-          {/* Sub-pills */}
-          {b.subs.map((s) => {
-            const charW = 5.8;
-            const pw = Math.max(s.text.length * charW + 16, 60);
-            const hw = pw / 2;
-            return (
-              <g key={s.text}>
-                <rect x={s.x - hw} y={s.y - PH} width={pw} height={PH * 2} rx={PH}
-                  fill={DARK} stroke={b.colour} strokeWidth="0.9" strokeOpacity="0.5" />
-                <text x={s.x} y={s.y + 4.5} textAnchor="middle"
-                  fill="#94a3b8" fontSize="7.2" fontFamily="Inter, system-ui, sans-serif">
-                  {s.text}
-                </text>
-              </g>
-            );
-          })}
-        </g>
+      {/* Spokes — drawn behind cards */}
+      {cards.map((c) => (
+        <line
+          key={c.label + 'spoke'}
+          x1={cx} y1={cy}
+          x2={c.lx} y2={c.ly}
+          stroke={c.colour} strokeWidth="1.5" strokeOpacity="0.35"
+          strokeDasharray="5,4"
+        />
       ))}
 
-      {/* Core node — on top */}
-      <circle cx={cx} cy={cy} r={coreR + 4} fill={DARK} stroke={T} strokeWidth="2.8" />
-      <circle cx={cx} cy={cy} r={coreR} fill={MID} />
-      <text x={cx} y={cy - 12} textAnchor="middle" fill="#fff" fontSize="13.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Menu</text>
-      <text x={cx} y={cy + 4}  textAnchor="middle" fill="#fff" fontSize="13.5" fontWeight="900" fontFamily="Inter, system-ui, sans-serif">Development</text>
-      <text x={cx} y={cy + 19} textAnchor="middle" fill="#2dd4bf" fontSize="8" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">· everything starts here ·</text>
+      {/* Cards */}
+      {cards.map((c) => {
+        const rowH = 13;
+        const cardH = CH + 7 + c.items.length * rowH + 4;
+        return (
+          <g key={c.label}>
+            {/* Card body */}
+            <rect x={c.x} y={c.y} width={c.w} height={cardH} rx={5}
+              fill={DARK} stroke={c.colour} strokeWidth="1.2" strokeOpacity="0.6" />
+            {/* Coloured header bar */}
+            <rect x={c.x} y={c.y} width={c.w} height={CH} rx={5}
+              fill={c.colour} fillOpacity="0.18" />
+            <rect x={c.x} y={c.y + CH - 3} width={c.w} height={3}
+              fill={c.colour} fillOpacity="0.18" />
+            {/* Header label */}
+            <text x={c.x + 8} y={c.y + CH - 3.5}
+              fill={c.colour} fontSize="8.5" fontWeight="800" fontFamily={F}>
+              {c.label}
+            </text>
+            {/* Items */}
+            {c.items.map((item, ii) => (
+              <g key={item}>
+                <circle cx={c.x + 10} cy={c.y + CH + 8 + ii * rowH} r={1.6}
+                  fill={c.colour} fillOpacity="0.7" />
+                <text x={c.x + 16} y={c.y + CH + 11.5 + ii * rowH}
+                  fill="#94a3b8" fontSize={FS} fontFamily={F}>
+                  {item}
+                </text>
+              </g>
+            ))}
+          </g>
+        );
+      })}
+
+      {/* Centre anchor — typographic, no circle */}
+      <rect x={cx - 78} y={cy - 38} width={156} height={76} rx={8}
+        fill={DARK} stroke={T} strokeWidth="2" />
+      <rect x={cx - 78} y={cy - 38} width={156} height={76} rx={8}
+        fill={T} fillOpacity="0.06" />
+      <text x={cx} y={cy - 14} textAnchor="middle" fill="#fff" fontSize="15" fontWeight="900" fontFamily={F}>Menu</text>
+      <text x={cx} y={cy + 4}  textAnchor="middle" fill="#fff" fontSize="15" fontWeight="900" fontFamily={F}>Development</text>
+      <text x={cx} y={cy + 20} textAnchor="middle" fill={T} fontSize="8" fontWeight="700" fontFamily={F}>· everything starts here ·</text>
     </svg>
   );
 }
