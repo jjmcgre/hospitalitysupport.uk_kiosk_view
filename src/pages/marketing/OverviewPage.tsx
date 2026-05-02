@@ -1,120 +1,410 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Inbox, CalendarDays, TrendingUp, Users, Clock,
+  Building2, ArrowRight, RefreshCw, PoundSterling,
+  AlertCircle, CheckCircle2, CalendarCheck,
+} from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
-import { Monitor, Smartphone, Tablet, PoundSterling, Users, TrendingUp, Shield } from 'lucide-react';
 
-const platforms = [
-  { icon: Smartphone, label: 'Instagram' },
-  { icon: Smartphone, label: 'TikTok' },
-  { icon: Monitor, label: 'Facebook' },
-  { icon: Monitor, label: 'LinkedIn' },
-  { icon: Tablet, label: 'Email' },
-];
+interface Enquiry {
+  id: string;
+  name: string;
+  email: string;
+  business_name: string;
+  num_sites: string;
+  created_at: string;
+}
 
-const pillars = [
-  {
-    icon: Users,
-    title: 'People',
-    description: 'Skill levels are eroding. This solves the consistency problem that comes with high turnover and lower-experience teams.',
-    stat: 'No reliance on one experienced person',
-  },
-  {
-    icon: Shield,
-    title: 'Process',
-    description: 'Compliance, training, and records handled as work happens — not in a panic before an inspection.',
-    stat: 'Evidence created automatically',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Profit',
-    description: 'GP monitored live. Supplier price changes caught and acted on before they erode margin.',
-    stat: 'Margin protected continuously',
-  },
-];
+interface Slot {
+  id: string;
+  slot_date: string;
+  slot_time: string;
+  booked: boolean;
+}
+
+function timeAgo(dateStr: string) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+function isoDate(d: Date) {
+  return d.toISOString().slice(0, 10);
+}
+
+const sitesLabel: Record<string, string> = {
+  '1': '1 site', '2-5': '2–5 sites', '6-15': '6–15 sites', '16+': '16+ sites',
+};
+
+// Estimate MRR from num_sites
+function estimateMrr(enqs: Enquiry[]) {
+  return enqs.reduce((acc, e) => {
+    if (e.num_sites === '1') return acc + 100;
+    if (e.num_sites === '2-5') return acc + 300;
+    if (e.num_sites === '6-15') return acc + 900;
+    if (e.num_sites === '16+') return acc + 1600;
+    return acc + 100;
+  }, 0);
+}
+
+function Stat({
+  label, value, sub, icon: Icon, accent = false, warn = false,
+}: {
+  label: string; value: string | number; sub?: string;
+  icon: React.ElementType; accent?: boolean; warn?: boolean;
+}) {
+  return (
+    <div className={`rounded-2xl border p-5 flex flex-col gap-2 ${
+      accent ? 'bg-teal-500/8 border-teal-500/25' :
+      warn ? 'bg-amber-500/8 border-amber-500/25' :
+      'bg-slate-800 border-slate-700'
+    }`}>
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+        accent ? 'bg-teal-500/20 border border-teal-500/30' :
+        warn ? 'bg-amber-500/20 border border-amber-500/30' :
+        'bg-slate-700 border border-slate-600'
+      }`}>
+        <Icon size={16} className={accent ? 'text-teal-400' : warn ? 'text-amber-400' : 'text-slate-400'} />
+      </div>
+      <div>
+        <div className={`text-3xl font-black leading-none ${
+          accent ? 'text-teal-400' : warn ? 'text-amber-400' : 'text-white'
+        }`}>{value}</div>
+        <div className="text-slate-400 text-xs mt-1 font-medium">{label}</div>
+        {sub && <div className="text-slate-600 text-[10px] mt-0.5">{sub}</div>}
+      </div>
+    </div>
+  );
+}
+
+function ActivityBar({ label, count, max }: { label: string; count: number; max: number }) {
+  const pct = max === 0 ? 0 : Math.round((count / max) * 100);
+  return (
+    <div className="flex items-center gap-3">
+      <div className="text-slate-400 text-xs w-20 flex-shrink-0">{label}</div>
+      <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-teal-500 rounded-full transition-all duration-700"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <div className="text-white text-xs font-bold w-5 text-right">{count}</div>
+    </div>
+  );
+}
 
 export default function OverviewPage() {
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastRefreshed, setLastRefreshed] = useState(new Date());
+
+  async function load() {
+    setLoading(true);
+    const today = isoDate(new Date());
+    const [enqRes, slotRes] = await Promise.all([
+      supabase.from('demo_bookings').select('id,name,email,business_name,num_sites,created_at').order('created_at', { ascending: false }),
+      supabase.from('demo_availability').select('id,slot_date,slot_time,booked').gte('slot_date', today),
+    ]);
+    setEnquiries(enqRes.data ?? []);
+    setSlots(slotRes.data ?? []);
+    setLastRefreshed(new Date());
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  const today = isoDate(new Date());
+  const sevenDaysAgo = isoDate(new Date(Date.now() - 7 * 86400000));
+  const thirtyDaysAgo = isoDate(new Date(Date.now() - 30 * 86400000));
+
+  const last7 = enquiries.filter(e => e.created_at.slice(0, 10) >= sevenDaysAgo).length;
+  const last30 = enquiries.filter(e => e.created_at.slice(0, 10) >= thirtyDaysAgo).length;
+  const bookedSlots = slots.filter(s => s.booked).length;
+  const availableSlots = slots.filter(s => !s.booked).length;
+  const potentialMrr = estimateMrr(enquiries);
+
+  const siteCounts: Record<string, number> = {};
+  enquiries.forEach(e => { siteCounts[e.num_sites] = (siteCounts[e.num_sites] ?? 0) + 1; });
+  const maxSiteCount = Math.max(1, ...Object.values(siteCounts));
+
+  const nextSlot = slots
+    .filter(s => !s.booked && s.slot_date >= today)
+    .sort((a, b) => a.slot_date.localeCompare(b.slot_date) || a.slot_time.localeCompare(b.slot_time))[0];
+
+  const recentEnquiries = enquiries.slice(0, 5);
+
+  // Pipeline value card colours
+  const pipelineColour = potentialMrr >= 1000 ? 'accent' : potentialMrr > 0 ? '' : '';
+
   return (
     <div className="min-h-full">
       <PageHeader
-        title="Campaign Overview"
-        subtitle="Everything you need to run a full marketing campaign for HospitalitySupport.uk — across social, email, and sales."
-        badge="Campaign Foundation"
+        title="Marketing Dashboard"
+        subtitle="Live pipeline, enquiries, and demo diary at a glance."
+        badge="Live"
       />
 
-      <div className="p-8 space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 bg-slate-800 border border-slate-700 rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
-                <PoundSterling size={18} className="text-teal-400" />
-              </div>
-              <h2 className="text-white font-bold text-lg">Pricing Model</h2>
-            </div>
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-5xl font-bold text-white">£3.30</span>
-              <span className="text-slate-400 text-lg">per day</span>
-            </div>
-            <p className="text-slate-300 text-sm mb-6">Annual billing. Priced per kitchen, not per user. No headcount pricing. No seat licences.</p>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { tier: 'Standard Venue', price: '£100/mo', desc: 'Pubs, restaurants, cafés' },
-                { tier: 'High-Intensity Kitchen', price: '£250/mo', desc: 'Dark kitchens, high churn' },
-                { tier: 'Multi-Site & Groups', price: '£100/mo per kitchen', desc: 'Same price. More clarity.' },
-              ].map((t) => (
-                <div key={t.tier} className="bg-slate-900/60 rounded-xl p-4 border border-slate-700">
-                  <div className="text-teal-300 font-bold text-base mb-1">{t.price}</div>
-                  <div className="text-white text-xs font-semibold mb-1">{t.tier}</div>
-                  <div className="text-slate-500 text-xs">{t.desc}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div className="p-8 space-y-8">
 
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between">
-            <div>
-              <h2 className="text-white font-bold text-lg mb-4">Cross-Platform Reach</h2>
-              <div className="space-y-2">
-                {platforms.map((p) => (
-                  <div key={p.label} className="flex items-center gap-3 text-slate-300 text-sm">
-                    <p.icon size={14} className="text-teal-400" />
-                    {p.label}
+        {/* Refresh row */}
+        <div className="flex items-center justify-between -mt-2">
+          <p className="text-slate-600 text-xs flex items-center gap-1.5">
+            <Clock size={11} />
+            Refreshed {timeAgo(lastRefreshed.toISOString())}
+          </p>
+          <button
+            onClick={load}
+            className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 text-xs transition-colors"
+          >
+            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
+        </div>
+
+        {/* KPI row */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Stat icon={Inbox} label="Total enquiries" value={enquiries.length} sub="all time" accent />
+          <Stat icon={TrendingUp} label="Last 7 days" value={last7} sub={`${last30} in 30 days`} accent={last7 > 0} />
+          <Stat icon={CalendarCheck} label="Demos booked" value={bookedSlots} sub={`${availableSlots} slots open`} warn={bookedSlots > 0} />
+          <Stat
+            icon={PoundSterling}
+            label="Pipeline MRR"
+            value={potentialMrr > 0 ? `£${potentialMrr.toLocaleString()}` : '—'}
+            sub="if all enquiries convert"
+            accent={potentialMrr > 0}
+          />
+        </div>
+
+        {/* Main grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* Recent enquiries */}
+          <div className="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+              <div className="flex items-center gap-2">
+                <Inbox size={15} className="text-teal-400" />
+                <h2 className="text-white font-bold text-sm">Recent enquiries</h2>
+              </div>
+              <Link
+                to="/enquiries"
+                className="flex items-center gap-1 text-teal-400 hover:text-teal-300 text-xs transition-colors font-semibold"
+              >
+                View all <ArrowRight size={11} />
+              </Link>
+            </div>
+
+            {loading ? (
+              <div className="py-12 text-center text-slate-600 text-sm">
+                <RefreshCw size={18} className="animate-spin mx-auto mb-2" />Loading...
+              </div>
+            ) : recentEnquiries.length === 0 ? (
+              <div className="py-12 text-center text-slate-600 text-sm">
+                No enquiries yet — share the landing page to get started.
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-700">
+                {recentEnquiries.map(eq => (
+                  <div key={eq.id} className="px-6 py-3.5 flex items-center gap-3 hover:bg-slate-700/30 transition-colors">
+                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/20 flex items-center justify-center flex-shrink-0 text-teal-400 font-black text-xs">
+                      {eq.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-white text-sm font-semibold">{eq.name}</span>
+                        <span className="text-slate-500 text-xs truncate">{eq.business_name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-slate-500 text-xs">{eq.email}</span>
+                        {eq.num_sites && (
+                          <span className="text-[10px] font-bold bg-teal-500/15 text-teal-300 border border-teal-500/20 rounded-full px-2 py-px">
+                            {sitesLabel[eq.num_sites] ?? eq.num_sites}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-slate-600 text-[10px] flex-shrink-0 flex items-center gap-1">
+                      <Clock size={9} />{timeAgo(eq.created_at)}
+                    </div>
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+
+          {/* Right column */}
+          <div className="space-y-4">
+
+            {/* Next open slot */}
+            <div className={`rounded-2xl border p-5 ${
+              nextSlot
+                ? 'bg-teal-500/5 border-teal-500/20'
+                : 'bg-slate-800 border-slate-700'
+            }`}>
+              <div className="flex items-center gap-2 mb-3">
+                <CalendarDays size={15} className="text-teal-400" />
+                <h2 className="text-white font-bold text-sm">Next open slot</h2>
+              </div>
+              {nextSlot ? (
+                <>
+                  <div className="text-white font-black text-base mb-0.5">
+                    {new Date(nextSlot.slot_date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </div>
+                  <div className="text-teal-400 font-bold text-sm">{nextSlot.slot_time}</div>
+                  <Link
+                    to="/diary"
+                    className="mt-3 flex items-center gap-1 text-xs text-teal-400 hover:text-teal-300 transition-colors font-semibold"
+                  >
+                    Manage diary <ArrowRight size={11} />
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 text-amber-400 text-sm font-semibold mb-1">
+                    <AlertCircle size={14} />No open slots
+                  </div>
+                  <p className="text-slate-500 text-xs leading-snug">Add availability in the diary so enquiries can book a time.</p>
+                  <Link
+                    to="/diary"
+                    className="mt-3 flex items-center gap-1 text-xs text-teal-400 hover:text-teal-300 transition-colors font-semibold"
+                  >
+                    Open diary <ArrowRight size={11} />
+                  </Link>
+                </>
+              )}
             </div>
-            <div className="mt-6 pt-6 border-t border-slate-700">
-              <p className="text-slate-400 text-xs">9 chapters of ready-to-use campaign material. Everything copy-pasteable.</p>
+
+            {/* Diary summary */}
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <CalendarCheck size={15} className="text-teal-400" />
+                <h2 className="text-white font-bold text-sm">Diary status</h2>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 text-xs flex items-center gap-1.5">
+                    <CheckCircle2 size={11} className="text-teal-400" />Available slots
+                  </span>
+                  <span className="text-white font-bold text-sm">{availableSlots}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 text-xs flex items-center gap-1.5">
+                    <CalendarCheck size={11} className="text-amber-400" />Booked demos
+                  </span>
+                  <span className="text-amber-400 font-bold text-sm">{bookedSlots}</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 text-xs">Conversion rate</span>
+                  <span className="text-white font-bold text-sm">
+                    {enquiries.length === 0 ? '—' : `${Math.round((bookedSlots / enquiries.length) * 100)}%`}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div>
-          <h2 className="text-white font-bold text-xl mb-6">Core Positioning Pillars</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pillars.map((p) => (
-              <div key={p.title} className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
-                    <p.icon size={18} className="text-teal-400" />
-                  </div>
-                  <h3 className="text-white font-bold text-base">{p.title}</h3>
-                </div>
-                <p className="text-slate-300 text-sm leading-relaxed mb-4">{p.description}</p>
-                <div className="bg-slate-900/60 rounded-lg px-3 py-2 border border-slate-700">
-                  <p className="text-teal-300 text-xs font-semibold">{p.stat}</p>
+        {/* Site-size breakdown */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <Building2 size={15} className="text-teal-400" />
+              <h2 className="text-white font-bold text-sm">Enquiries by site size</h2>
+            </div>
+            {enquiries.length === 0 ? (
+              <p className="text-slate-600 text-sm">No data yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {[
+                  { key: '1', label: '1 site' },
+                  { key: '2-5', label: '2–5 sites' },
+                  { key: '6-15', label: '6–15 sites' },
+                  { key: '16+', label: '16+ sites' },
+                ].map(({ key, label }) => (
+                  <ActivityBar key={key} label={label} count={siteCounts[key] ?? 0} max={maxSiteCount} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Pipeline value breakdown */}
+          <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <PoundSterling size={15} className="text-teal-400" />
+              <h2 className="text-white font-bold text-sm">Pipeline value by tier</h2>
+            </div>
+            {enquiries.length === 0 ? (
+              <p className="text-slate-600 text-sm">No data yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {[
+                  { key: '1', label: '1 site', mrr: 100 },
+                  { key: '2-5', label: '2–5 sites', mrr: 300 },
+                  { key: '6-15', label: '6–15 sites', mrr: 900 },
+                  { key: '16+', label: '16+ sites', mrr: 1600 },
+                ].map(({ key, label, mrr }) => {
+                  const count = siteCounts[key] ?? 0;
+                  const val = count * mrr;
+                  return (
+                    <div key={key} className="flex items-center justify-between">
+                      <span className="text-slate-400 text-xs w-24 flex-shrink-0">{label}</span>
+                      <div className="flex-1 mx-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-teal-500 rounded-full transition-all duration-700"
+                          style={{ width: potentialMrr === 0 ? '0%' : `${(val / potentialMrr) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-white text-xs font-bold w-16 text-right">
+                        {val > 0 ? `£${val.toLocaleString()}/mo` : '—'}
+                      </span>
+                    </div>
+                  );
+                })}
+                <div className="pt-2 border-t border-slate-700 flex items-center justify-between">
+                  <span className="text-slate-400 text-xs font-bold">Total pipeline</span>
+                  <span className="text-teal-400 text-sm font-black">
+                    {potentialMrr > 0 ? `£${potentialMrr.toLocaleString()}/mo` : '—'}
+                  </span>
                 </div>
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Campaign channels quick-nav */}
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-5">
+            <Users size={15} className="text-teal-400" />
+            <h2 className="text-white font-bold text-sm">Campaign channels</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { to: '/instagram', label: 'Instagram' },
+              { to: '/tiktok', label: 'TikTok' },
+              { to: '/facebook', label: 'Facebook' },
+              { to: '/linkedin', label: 'LinkedIn' },
+              { to: '/email', label: 'Email' },
+              { to: '/sales', label: 'Sales' },
+            ].map(ch => (
+              <Link
+                key={ch.to}
+                to={ch.to}
+                className="bg-slate-900/60 border border-slate-700 hover:border-teal-500/40 hover:bg-teal-500/5 rounded-xl p-3 text-center text-xs font-semibold text-slate-400 hover:text-teal-300 transition-all duration-200"
+              >
+                {ch.label}
+              </Link>
             ))}
           </div>
         </div>
 
-        <div className="bg-teal-500/5 border border-teal-500/20 rounded-2xl p-6">
-          <h2 className="text-white font-bold text-lg mb-3">The Core Message</h2>
-          <blockquote className="text-slate-200 text-lg leading-relaxed border-l-4 border-teal-500 pl-5">
-            "A team of experts in your pocket — built around how hospitality actually works."
-          </blockquote>
-          <p className="text-slate-400 text-sm mt-4">
-            Every campaign asset should reinforce this. Not a tool. Not software. A team member that never leaves, never gets sick, and never has a bad shift.
-          </p>
-        </div>
       </div>
     </div>
   );
