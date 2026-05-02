@@ -8,7 +8,7 @@ const liveItems = [
 ];
 
 const campaignItems = [
-  { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/instagram', label: 'Instagram', icon: Instagram },
   { to: '/tiktok', label: 'TikTok', icon: Video },
   { to: '/facebook', label: 'Facebook', icon: Facebook },
