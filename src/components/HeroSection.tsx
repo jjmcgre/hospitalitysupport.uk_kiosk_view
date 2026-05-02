@@ -7,6 +7,19 @@ const eliminated = [
   'Compliance paperwork',
   'Training from scratch',
   'GP guesswork',
+  'Menu builds that take weeks',
+  'Calling sites to check compliance',
+];
+
+const capabilities = [
+  { label: 'Menu creation', sub: 'Full spec in under an hour' },
+  { label: 'Live GP', sub: 'Every dish, every day' },
+  { label: 'Allergen compliance', sub: "Natasha's Law, handled" },
+  { label: 'HACCP & food safety', sub: 'Audit-ready automatically' },
+  { label: 'Staff training', sub: 'Generated from your real ops' },
+  { label: 'Supplier pricing', sub: 'Real-time, zero spreadsheets' },
+  { label: 'Bar & wine', sub: 'Margins behind the bar, protected' },
+  { label: 'Multi-site control', sub: 'Every site, one dashboard' },
 ];
 
 export default function HeroSection() {
@@ -21,9 +34,9 @@ export default function HeroSection() {
           backgroundSize: '48px 48px',
         }}
       />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="container mx-auto relative z-10 py-24">
+      <div className="container mx-auto relative z-10 py-28">
         <div className="max-w-5xl mx-auto text-center">
 
           <div className="inline-flex items-center gap-2 border border-teal-500/30 bg-teal-500/10 rounded-full px-4 py-1.5 mb-10">
@@ -31,26 +44,50 @@ export default function HeroSection() {
             <span className="text-teal-300 text-xs font-bold tracking-widest uppercase">HospitalitySupport.uk</span>
           </div>
 
+          {/* Main headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-8">
             Stop doing<br />
             <span className="text-teal-400">the admin.</span><br />
             <span className="text-white/50 text-4xl sm:text-5xl md:text-6xl font-black">Start running the kitchen.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-14 leading-relaxed">
-            Connect your suppliers once. We track every price movement, recost every dish, and keep your margins protected — automatically, every day.
+          {/* Expanded sub-copy covering full capability */}
+          <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-5 leading-relaxed">
+            One platform that runs your entire operation — from building a menu to protecting your margins, keeping compliance watertight, training your team, and tracking every supplier price in real time.
+          </p>
+          <p className="text-base text-slate-500 max-w-2xl mx-auto mb-14 leading-relaxed">
+            Connect your suppliers once. Upload your recipes and staff. Everything else — recosting, allergens, HACCP, training, multi-site visibility — happens automatically, every day.
           </p>
 
-          {/* Eliminated tasks — no strikethrough */}
+          {/* Full capability grid */}
+          <div className="mb-14">
+            <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Everything it covers</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto">
+              {capabilities.map((c) => (
+                <div
+                  key={c.label}
+                  className="bg-teal-500/8 border border-teal-500/20 rounded-2xl px-4 py-3 text-left"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <ArrowRight size={12} className="text-teal-400 flex-shrink-0" />
+                    <span className="text-white text-sm font-bold leading-tight">{c.label}</span>
+                  </div>
+                  <span className="text-slate-500 text-xs leading-snug pl-5">{c.sub}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Eliminated tasks */}
           <div className="mb-14">
             <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Handled automatically from day one</p>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2.5">
               {eliminated.map((item) => (
                 <span
                   key={item}
-                  className="inline-flex items-center gap-2 bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-300"
+                  className="inline-flex items-center gap-2 bg-white/4 border border-white/8 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-400"
                 >
-                  <ArrowRight size={13} className="text-teal-400 flex-shrink-0" />
+                  <ArrowRight size={12} className="text-teal-400 flex-shrink-0" />
                   {item}
                 </span>
               ))}
@@ -71,6 +108,7 @@ export default function HeroSection() {
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </section>
