@@ -1,22 +1,11 @@
 import { ArrowRight } from 'lucide-react';
 
-const eliminated = [
-  'Chasing supplier price lists',
-  'Stale recipe costings',
-  'Allergen spreadsheets',
-  'Compliance paperwork',
-  'Training from scratch',
-  'GP guesswork',
-  'Menu builds that take weeks',
-  'Calling sites to check compliance',
-];
-
 const capabilities = [
-  { label: 'Menu creation', sub: 'Full spec in under an hour' },
-  { label: 'Live GP', sub: 'Every dish, every day' },
+  { label: 'Menu creation', sub: 'Full menu in under an hour' },
+  { label: 'Live GP & costing', sub: 'Every dish, every day' },
   { label: 'Allergen compliance', sub: "Natasha's Law, handled" },
   { label: 'HACCP & food safety', sub: 'Audit-ready automatically' },
-  { label: 'Staff training', sub: 'Generated from your real ops' },
+  { label: 'Staff training', sub: 'Built from your real ops' },
   { label: 'Supplier pricing', sub: 'Real-time, zero spreadsheets' },
   { label: 'Bar & wine', sub: 'Margins behind the bar, protected' },
   { label: 'Multi-site control', sub: 'Every site, one dashboard' },
@@ -25,7 +14,6 @@ const capabilities = [
 export default function HeroSection() {
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#080f1a] text-white relative overflow-hidden px-4 md:px-6">
-      {/* Background grid */}
       <div
         className="absolute inset-0 opacity-[0.04]"
         style={{
@@ -44,18 +32,17 @@ export default function HeroSection() {
             <span className="text-teal-300 text-xs font-bold tracking-widest uppercase">HospitalitySupport.uk</span>
           </div>
 
-          {/* Main headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-8">
             Stop doing<br />
             <span className="text-teal-400">the admin.</span><br />
             <span className="text-white/50 text-4xl sm:text-5xl md:text-6xl font-black">Start running the kitchen.</span>
           </h1>
 
-          {/* Expanded sub-copy covering full capability */}
-          <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-5 leading-relaxed">
-            One platform that runs your entire operation — from building a menu to protecting your margins, keeping compliance watertight, training your team, and tracking every supplier price in real time.
+          <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-14 leading-relaxed">
+            One platform that runs your entire operation — menus, margins, allergens, compliance, training, and supplier pricing. All connected. All live. All automatic.
           </p>
-          {/* Full capability grid */}
+
+          {/* Capability grid */}
           <div className="mb-14">
             <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Everything it covers</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto">
@@ -70,22 +57,6 @@ export default function HeroSection() {
                   </div>
                   <span className="text-slate-500 text-xs leading-snug pl-5">{c.sub}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Eliminated tasks */}
-          <div className="mb-14">
-            <p className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-5">Handled automatically from day one</p>
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {eliminated.map((item) => (
-                <span
-                  key={item}
-                  className="inline-flex items-center gap-2 bg-white/4 border border-white/8 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-400"
-                >
-                  <ArrowRight size={12} className="text-teal-400 flex-shrink-0" />
-                  {item}
-                </span>
               ))}
             </div>
           </div>

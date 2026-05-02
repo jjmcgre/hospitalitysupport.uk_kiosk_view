@@ -230,14 +230,14 @@ export default function DishJourneySection() {
         {/* Header */}
         <div className="text-center mb-14">
           <div className="inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-5">
-            From concept to live in minutes
+            A dish live in under 3 minutes
           </div>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4">
             <span className="text-white">Type a dish idea.</span><br />
             <span className="text-teal-400">Get everything. Instantly.</span>
           </h2>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
-            Recipe. Costings. Allergens. HACCP controls. Nutrition. FOH copy. Wine pairing. Live GP tracking. All in under 3 minutes.
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Recipe. Costings. Allergens. HACCP. Nutrition. FOH copy. Wine pairing. Live GP tracking — all generated in a single conversation. A full menu in under an hour.
           </p>
         </div>
 
@@ -305,9 +305,11 @@ export default function DishJourneySection() {
         </div>
 
         {/* Bottom summary bar */}
-        <div className="mt-12 bg-gradient-to-r from-teal-900/30 via-slate-900/50 to-teal-900/30 border border-teal-500/20 rounded-3xl p-6 text-center">
-          <p className="text-white font-black text-xl mb-2">From idea to fully compliant, priced, live dish: under 3 minutes.</p>
-          <p className="text-slate-400 text-sm">A head chef used to spend 2-3 hours on this per dish. Now it's a conversation.</p>
+        <div className="mt-12 bg-teal-500/8 border border-teal-500/20 rounded-3xl p-8 text-center">
+          <p className="text-white font-black text-2xl mb-3">From idea to fully compliant, priced, live dish: under 3 minutes.</p>
+          <p className="text-slate-400 text-base max-w-2xl mx-auto">
+            What used to take a chef the best part of a day — recipe, costing, allergens, HACCP, nutrition, FOH notes — is now a single conversation. Businesses running this are saving weeks of admin every month.
+          </p>
         </div>
       </div>
     </section>

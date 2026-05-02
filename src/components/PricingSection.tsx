@@ -1,100 +1,117 @@
+import { ArrowRight } from 'lucide-react';
+
+const tiers = [
+  {
+    name: 'Standard Venue',
+    price: '£100',
+    period: 'per month',
+    for: 'Pubs, restaurants, cafés',
+    pitch: 'Less than the cost of one wasted delivery. More than enough to protect every margin, every day.',
+    features: [
+      'Full menu creation & live GP control',
+      'Allergen compliance — Natasha\'s Law handled',
+      'HACCP & food safety documentation',
+      'Staff training generated from your ops',
+      'Supplier price monitoring & auto-recosting',
+      'Unlimited staff access — no per-user fees',
+    ],
+    highlight: false,
+  },
+  {
+    name: 'High-Intensity Kitchen',
+    price: '£250',
+    period: 'per month',
+    for: 'Dark kitchens & production kitchens',
+    pitch: 'Priced for operational load, not headcount. Built for kitchens where margins move daily and errors cost thousands.',
+    features: [
+      'Everything in Standard Venue',
+      'Multiple menus and brands per kitchen',
+      'Higher-volume training & compliance throughput',
+      'Larger teams and higher staff turnover supported',
+    ],
+    highlight: true,
+  },
+  {
+    name: 'Multi-Site & Groups',
+    price: '£100',
+    period: 'per kitchen / month',
+    for: 'Groups, estates, franchise operators',
+    pitch: "Same per-kitchen price as Standard. You don't pay more to see more — you just get full visibility across your estate.",
+    features: [
+      'Everything in Standard Venue',
+      'Group-level compliance and spend reporting',
+      'Central oversight with local execution',
+      'Consistent standards without micromanagement',
+    ],
+    highlight: false,
+  },
+];
+
 export default function PricingSection() {
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 px-4">
-      <div className="container mx-auto">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 md:mb-16 lg:mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 text-white tracking-tight">
-              Pricing
-            </h2>
-            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 leading-relaxed">
-              Annual billing. Priced per kitchen, not per user.
-            </p>
+    <section className="py-20 md:py-28 bg-[#080f1a] px-4 border-t border-white/5">
+      <div className="container mx-auto max-w-6xl">
+
+        <div className="text-center mb-14">
+          <div className="inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-5">
+            Pricing
           </div>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+            Priced per kitchen.<br />
+            <span className="text-teal-400">Not per user.</span>
+          </h2>
+          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+            Annual billing. Your whole team, one flat fee. No add-ons for compliance, training, or multi-user access.
+          </p>
+        </div>
 
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-teal-900/50 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
-                <h3 className="text-xl md:text-2xl font-bold">Standard Venue</h3>
-              </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          {tiers.map((t) => (
+            <div
+              key={t.name}
+              className={`rounded-3xl p-7 flex flex-col ${
+                t.highlight
+                  ? 'bg-teal-500/15 border-2 border-teal-500/50 shadow-xl shadow-teal-900/30'
+                  : 'bg-slate-900/60 border border-white/8'
+              }`}
+            >
+              {t.highlight && (
+                <div className="inline-block self-start bg-teal-500/20 border border-teal-500/40 text-teal-300 text-[10px] font-black tracking-widest uppercase rounded-full px-3 py-1 mb-5">
+                  High volume
+                </div>
+              )}
 
-              <div className="mb-6">
-                <div className="text-4xl md:text-5xl font-bold mb-2">£100</div>
-                <div className="text-lg text-gray-300">per month</div>
-              </div>
-
-              <p className="text-gray-300 mb-6 text-sm md:text-base border-l-4 border-blue-500/50 pl-4">
-                For pubs, restaurants, cafés.
-              </p>
-
-              <div className="space-y-3 mb-6 bg-white/5 rounded-xl p-4 md:p-5">
-                <p className="text-gray-300 text-sm md:text-base">Live menu creation & GP control</p>
-                <p className="text-gray-300 text-sm md:text-base">Training & compliance management</p>
-                <p className="text-gray-300 text-sm md:text-base">Supplier price monitoring</p>
-                <p className="text-gray-300 text-sm md:text-base">Unlimited staff access</p>
-                <p className="text-gray-300 text-sm md:text-base">No per-user pricing</p>
-              </div>
-
-              <p className="text-sm md:text-base text-gray-400 italic">
-                For about the price of a coffee a day, it stops the mistakes that cost far more.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-teal-600 to-teal-700 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-teal-900/50 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-teal-300 rounded-sm"></div>
-                <h3 className="text-xl md:text-2xl font-bold">High-Intensity Kitchen (Dark Kitchens)</h3>
-              </div>
+              <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">{t.for}</div>
+              <h3 className="text-white font-black text-xl mb-5">{t.name}</h3>
 
               <div className="mb-6">
-                <div className="text-4xl md:text-5xl font-bold mb-2">£250</div>
-                <div className="text-lg text-teal-100">per month</div>
+                <span className="text-5xl font-black text-white">{t.price}</span>
+                <span className="text-slate-400 text-base ml-2">{t.period}</span>
               </div>
 
-              <p className="text-teal-100 mb-6 text-sm md:text-base border-l-4 border-teal-300/50 pl-4">
-                For dark kitchens, production kitchens, high-churn operations.
-              </p>
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {t.features.map((f, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <ArrowRight size={13} className="text-teal-400 flex-shrink-0 mt-0.5" />
+                    <span className={`text-sm leading-snug ${t.highlight ? 'text-slate-200' : 'text-slate-400'}`}>{f}</span>
+                  </li>
+                ))}
+              </ul>
 
-              <div className="space-y-3 mb-6 bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-white/20">
-                <p className="text-teal-50 text-sm md:text-base">Everything in Standard Venue</p>
-                <p className="text-teal-50 text-sm md:text-base">Larger teams & higher turnover supported</p>
-                <p className="text-teal-50 text-sm md:text-base">Multiple menus / brands per kitchen</p>
-                <p className="text-teal-50 text-sm md:text-base">Higher training & compliance throughput</p>
-              </div>
-
-              <p className="text-sm md:text-base text-teal-200 italic">
-                Priced for operational load — not headcount.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-gray-900/50 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
-                <h3 className="text-xl md:text-2xl font-bold">Multi-Site & Groups</h3>
-              </div>
-
-              <div className="mb-6">
-                <div className="text-4xl md:text-5xl font-bold mb-2">£100</div>
-                <div className="text-lg text-gray-300">per kitchen / month</div>
-              </div>
-
-              <p className="text-gray-300 mb-6 text-sm md:text-base border-l-4 border-gray-500/50 pl-4">
-                Same price as Standard Venue. Priced per kitchen, always.
-              </p>
-
-              <div className="space-y-3 mb-6 bg-white/5 rounded-xl p-4 md:p-5">
-                <p className="text-gray-300 text-sm md:text-base">Central compliance visibility</p>
-                <p className="text-gray-300 text-sm md:text-base">Group-level reporting & oversight</p>
-                <p className="text-gray-300 text-sm md:text-base">Shared admin access</p>
-                <p className="text-gray-300 text-sm md:text-base">Consistent standards without micromanagement</p>
-              </div>
-
-              <p className="text-sm md:text-base text-gray-400 italic">
-                You don't get it cheaper. You get it clearer.
+              <p className={`text-xs leading-relaxed italic border-t pt-5 ${
+                t.highlight ? 'text-teal-300/80 border-teal-500/30' : 'text-slate-500 border-white/8'
+              }`}>
+                {t.pitch}
               </p>
             </div>
-          </div>
+          ))}
+        </div>
+
+        <div className="mt-8 bg-teal-500/8 border border-teal-500/20 rounded-3xl p-6 text-center">
+          <p className="text-white font-black text-lg mb-1">The cost of one bad month pays for a year.</p>
+          <p className="text-slate-400 text-sm max-w-xl mx-auto">
+            Margin erosion, allergen errors, failed inspections, staff retraining — any one of these costs more than the annual subscription. This prevents all of them.
+          </p>
         </div>
       </div>
     </section>
