@@ -93,8 +93,8 @@ export default function BookingModal() {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={closeBooking} />
 
-      <div className={`relative w-full bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
-        step === 'cal' ? 'max-w-2xl max-h-[96vh]' : 'max-w-lg max-h-[92vh]'
+      <div className={`relative w-full bg-slate-900 border border-white/10 rounded-3xl shadow-2xl flex flex-col transition-all duration-300 ${
+        step === 'cal' ? 'max-w-2xl' : 'max-w-lg max-h-[92vh] overflow-hidden'
       }`}>
 
         {/* Header */}
@@ -232,7 +232,7 @@ export default function BookingModal() {
 
         {/* ── Step 2: Cal.com inline embed ── */}
         {step === 'cal' && (
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex flex-col" style={{ height: '680px', maxHeight: 'calc(96vh - 120px)' }}>
             <div className="px-4 pt-3 pb-1 flex-shrink-0">
               <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2">
                 <Video size={13} className="text-teal-400 flex-shrink-0" />
@@ -251,12 +251,15 @@ export default function BookingModal() {
               </div>
             )}
 
-            <Cal
-              namespace="30mins"
-              calLink={CAL_LINK}
-              config={{ layout: 'month_view' }}
-              style={{ width: '100%', height: '100%', minHeight: '520px', overflow: 'scroll' }}
-            />
+            <div className="flex-1 overflow-y-auto">
+              <Cal
+                namespace="30mins"
+                calLink={CAL_LINK}
+                calOrigin="https://app.cal.com"
+                config={{ layout: 'month_view' }}
+                style={{ width: '100%', height: '580px' }}
+              />
+            </div>
 
             <div className="px-7 py-3 border-t border-white/5 flex-shrink-0">
               <button
