@@ -8,6 +8,33 @@ const EL_VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID as string | undefin
 // Free built-in voices available on all ElevenLabs plans (en-GB male)
 const FREE_VOICE_IDS = ['onwK4e9ZLuTAKqWW03F9', 'N2lVS1w4EtoT3dr4eOWO']; // Daniel, Callum
 
+// Module-level singleton queue — prevents concurrent requests across all VoiceControllers
+let elInFlight = false;
+const elQueue: Array<() => void> = [];
+
+function drainQueue() {
+  if (elInFlight || elQueue.length === 0) return;
+  const next = elQueue.shift()!;
+  next();
+}
+
+function withQueue<T>(fn: () => Promise<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const run = () => {
+      elInFlight = true;
+      fn().then(resolve, reject).finally(() => {
+        elInFlight = false;
+        drainQueue();
+      });
+    };
+    if (elInFlight) {
+      elQueue.push(run);
+    } else {
+      run();
+    }
+  });
+}
+
 function webSpeechFallback(script: string, onEnd: () => void): () => void {
   if (!('speechSynthesis' in window)) { onEnd(); return () => {}; }
   window.speechSynthesis.cancel();
@@ -47,6 +74,43 @@ function webSpeechFallback(script: string, onEnd: () => void): () => void {
   return () => window.speechSynthesis.cancel();
 }
 
+async function fetchElevenLabs(voiceId: string, script: string): Promise<Blob> {
+  const res = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
+    {
+      method: 'POST',
+      headers: {
+        'xi-api-key': EL_API_KEY!,
+        'Content-Type': 'application/json',
+        Accept: 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text: script,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: {
+          stability: 0.30,
+          similarity_boost: 0.75,
+          style: 0.55,
+          use_speaker_boost: true,
+        },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const body = await res.text();
+    if (res.status === 403 && body.includes('subscription_required')) {
+      throw Object.assign(new Error('subscription_required'), { code: 'subscription_required' });
+    }
+    if (res.status === 429) {
+      throw Object.assign(new Error('rate_limited'), { code: 'rate_limited', body });
+    }
+    throw new Error(`ElevenLabs ${res.status}: ${body}`);
+  }
+
+  return res.blob();
+}
+
 export function createVoiceController(): VoiceController {
   let audioEl: HTMLAudioElement | null = null;
   let cancelFallback: (() => void) | null = null;
@@ -56,6 +120,8 @@ export function createVoiceController(): VoiceController {
     if (audioEl) { audioEl.pause(); audioEl.src = ''; audioEl = null; }
     if (cancelFallback) { cancelFallback(); cancelFallback = null; }
     window.speechSynthesis?.cancel();
+    // Remove any pending queue entries for this controller
+    elQueue.length = 0;
   };
 
   return {
@@ -63,64 +129,39 @@ export function createVoiceController(): VoiceController {
       active = true;
       stopAll();
 
-      // Call ElevenLabs directly from the browser — server proxies trigger their abuse detection
       if (EL_API_KEY) {
-        // Build candidate voice list: configured voice first, then free fallbacks
         const voiceQueue = [
           ...(EL_VOICE_ID ? [EL_VOICE_ID] : []),
           ...FREE_VOICE_IDS,
         ];
 
+        let blob: Blob | null = null;
+
         for (const voiceId of voiceQueue) {
           try {
-            const res = await fetch(
-              `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
-              {
-                method: 'POST',
-                headers: {
-                  'xi-api-key': EL_API_KEY,
-                  'Content-Type': 'application/json',
-                  Accept: 'audio/mpeg',
-                },
-                body: JSON.stringify({
-                  text: script,
-                  // multilingual_v2 is significantly more expressive and natural than turbo
-                  model_id: 'eleven_multilingual_v2',
-                  voice_settings: {
-                    stability: 0.30,       // lower = more variation, less robotic
-                    similarity_boost: 0.75,
-                    style: 0.55,           // higher = more expressive, conversational
-                    use_speaker_boost: true,
-                  },
-                }),
-              }
-            );
-
-            if (!res.ok) {
-              const body = await res.text();
-              // subscription_required means this voice needs a higher plan — try next
-              if (res.status === 403 && body.includes('subscription_required')) {
-                console.warn(`[TTS] Voice ${voiceId} requires higher plan, trying next…`);
-                continue;
-              }
-              throw new Error(`ElevenLabs ${res.status}: ${body}`);
+            blob = await withQueue(() => fetchElevenLabs(voiceId, script));
+            break;
+          } catch (err: any) {
+            if (err?.code === 'subscription_required') {
+              console.warn(`[TTS] Voice ${voiceId} requires higher plan, trying next…`);
+              continue;
             }
-
-            const blob = await res.blob();
-            if (!active) return;
-
-            const url = URL.createObjectURL(blob);
-            audioEl = new Audio(url);
-            audioEl.onended = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
-            audioEl.onerror = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
-            await audioEl.play();
-            return;
-          } catch (err) {
             console.error(`[TTS] ElevenLabs voice ${voiceId} failed:`, err);
+            break;
           }
         }
 
-        console.warn('[TTS] All ElevenLabs voices failed, falling back to Web Speech');
+        if (blob && active) {
+          const url = URL.createObjectURL(blob);
+          audioEl = new Audio(url);
+          audioEl.onended = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
+          audioEl.onerror = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
+          await audioEl.play();
+          return;
+        }
+
+        if (!active) return;
+        console.warn('[TTS] ElevenLabs unavailable, falling back to Web Speech');
       }
 
       if (!active) return;
