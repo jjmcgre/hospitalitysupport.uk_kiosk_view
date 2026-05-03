@@ -13,133 +13,114 @@ interface Email {
 const emails: Email[] = [
   {
     id: 1,
-    subject: "The team you never had to hire",
-    preview: "For £3.30 a day, here's what's waiting for you.",
+    subject: "Your kitchens are costing more than your P&L shows",
+    preview: "Hidden margin loss across your sites — and how to close it without hiring anyone.",
     body: `Hi [First Name],
 
-Running a hospitality business is relentless.
+Most hospitality businesses lose 4–7 points of gross profit every quarter not through bad decisions — but through slow ones.
 
-Supplier prices changing weekly. Staff turning over every few months. Compliance records to maintain. Margins to protect. Menus to keep current.
+Ingredient prices change. No one catches it until month-end. A dish gets sold 300 times at the wrong margin. A new starter spends their first three shifts doing it wrong because no one had time to train them properly. Compliance records fall behind between audits.
 
-Most operators manage all of this manually. Spreadsheets. Paper records. Chases. Hope.
+None of this shows up as a line item. It shows up as underperformance that's hard to explain and harder to fix.
 
-HospitalitySupport.uk is different.
+HospitalitySupport.uk was built for exactly this.
 
-It's not software. It's a team — a full hospitality operations team in your pocket, built around how you already work.
+It's not a platform. It's an operational support team — Menu Development Chef, GP & Cost Controller, Allergen Specialist, Training Manager, Compliance Lead, Front-of-House Specialist — working from your live data, available via WhatsApp, 24 hours a day.
 
-Menu Development Chef. Cost & GP Controller. Allergen Specialist. Training Manager. Compliance Lead. Front-of-House Specialist.
+From £100 per kitchen per month. No per-user fees. No setup. No training required.
 
-All of them. Working from your real data. Available any time. No setup. No training.
-
-From £3.30 a day. Priced per kitchen, not per user.
-
-If you can use WhatsApp, you can use HospitalitySupport.uk.`,
-    cta: "See how it works →",
+If you'd like to see what it would look like across your business, I'd be glad to walk you through it.`,
+    cta: "Book a 20-minute walkthrough →",
   },
   {
     id: 2,
-    subject: "Your lamb just went up 8%",
-    preview: "Here's how operators using HospitalitySupport.uk dealt with it in under 60 seconds.",
+    subject: "What a 3-point GP swing is worth to your business",
+    preview: "The maths most commercial directors haven't run — but should.",
     body: `Hi [First Name],
 
-Last month, lamb prices went up 8% across most major suppliers.
+A single kitchen turning £40,000 a month at 68% GP is leaving roughly £1,200 on the table compared to a 71% target.
 
-For a dish selling at £24 with a 71% GP target, that's a 6-point drop — without anyone doing anything wrong.
+Across four sites, that's £4,800 a month. £57,600 a year. From margin drift alone — not volume, not pricing strategy, not anything visible on the surface.
 
-Most operators don't catch this until month-end. By then, they've sold the dish 200 times at the wrong margin.
+This is where most hospitality businesses are right now.
 
-HospitalitySupport.uk catches it the moment it happens.
+Ingredient costs move weekly. Portion consistency drifts. Menu pricing lags supplier changes by weeks or months. And the people responsible for catching it are already stretched.
 
-One WhatsApp message. Three options:
-→ Adjust portion (180g → 165g, back to 70% GP)
-→ Switch cut (lamb loin, similar price point)
-→ Adjust selling price (£24 → £26, 72% GP)
+HospitalitySupport.uk gives your business a dedicated Cost & GP Controller — available any time, working from your actual data, flagging issues the moment they happen, and presenting options you can act on immediately.
 
-One reply. Decision made. Spec updated. Team notified.
+One WhatsApp message. Decision made. Spec updated. GP protected.
 
-That's GP management that actually works in a busy kitchen.
+From £100 per kitchen per month.
 
-£100/month per kitchen. No per-user pricing. Always on.`,
-    cta: "Protect your margins →",
+Happy to run the numbers for your estate if it would be useful.`,
+    cta: "Let's look at your margins →",
   },
   {
     id: 3,
-    subject: "The inspection that wasn't a panic",
-    preview: "How one operator went from scrambling to confident — without changing anything about how they work.",
+    subject: "Compliance shouldn't depend on who's in that week",
+    preview: "How hospitality businesses are removing the liability without adding overhead.",
     body: `Hi [First Name],
 
-Most environmental health inspections in hospitality start the same way.
+In most hospitality businesses, compliance is a person. Or more accurately, it's the person who happens to be in when an inspector arrives.
 
-Someone gets an advance notice — sometimes not even that — and spends the next 48 hours printing records, checking training sheets, and hoping the allergen matrix is current.
+That's a structural risk — and for multi-site operators, it compounds quickly.
 
-HospitalitySupport.uk changes this.
+Training records incomplete at one site. Allergen documentation not updated since the last menu change. Temperature logs missing for a Tuesday that was short-staffed. These aren't failings — they're the natural result of operational pressure. But they carry real consequences.
 
-Because compliance is maintained every day, not prepared for.
+HospitalitySupport.uk treats compliance as a system, not a task.
 
-Food safety records: live.
-Training completions: tracked.
-Allergen information: updated automatically when menus change.
-Evidence: created as work happens.
+Food safety records are maintained continuously. Allergen information updates automatically when menus change. Training completions are tracked and evidenced as they happen. Every site, every day.
 
-When an inspector walks through the door, everything's already in order. Because it always is.
+When an environmental health officer walks in, everything is already in order. Because it always is.
 
-That's what we mean by compliance by design — not by panic.
+This isn't audit prep. It's how the business runs.
 
-From £3.30 a day. Priced per kitchen.`,
+From £3.30 a day per kitchen. Happy to show you how it works across multiple sites.`,
     cta: "See how compliance works →",
   },
   {
     id: 4,
-    subject: "Two new starters Monday. Fully trained before their first shift.",
-    preview: "Without a single briefing from you.",
+    subject: "The overhead your business is carrying that doesn't appear on a headcount",
+    preview: "Management time spent on operational repetition — and how to reclaim it.",
     body: `Hi [First Name],
 
-Two new starters on Monday morning.
+Here's a question worth putting to your senior team: how many hours a week are your managers spending on things that shouldn't require a manager?
 
-One message to HospitalitySupport.uk on Friday afternoon.
+Onboarding a new starter. Answering allergen queries. Chasing training completions. Recalculating dish costs after a supplier price change. Preparing records before a compliance visit.
 
-Training plans created for their specific roles — chef de partie and front of house.
+These are operational tasks. They're necessary. But they absorb management capacity that should be focused on performance, guest experience, and growth.
 
-Chef de partie: food safety, your current menu specs, allergen awareness. 80 minutes total.
-Front of house: allergen customer service, your service standards, live menu knowledge. 60 minutes total.
+HospitalitySupport.uk handles all of it — automatically, accurately, and without adding to your headcount.
 
-Both plans sent to their phones.
-Both completed before their first shift.
-You received the completion alerts.
+Training plans built for specific roles and sent directly to staff. Allergen queries resolved instantly. GP calculations updated as ingredient costs change. Compliance records maintained as work happens.
 
-You didn't brief anyone. You didn't print anything. You didn't repeat yourself.
+Your managers stop managing process. They start managing outcomes.
 
-That's what training without the burden looks like.
+From £100 per kitchen per month. Priced per kitchen, not per user — so there's no disincentive to roll it out across your estate.
 
-HospitalitySupport.uk — unlimited staff access, one flat monthly price.`,
-    cta: "See training in action →",
+I'd welcome the chance to show you what that looks like in practice.`,
+    cta: "Request a walkthrough →",
   },
   {
     id: 5,
-    subject: "Re: your multi-site question",
-    preview: "One price per kitchen. Central visibility. No extra overhead.",
+    subject: "Scaling without scaling your overhead",
+    preview: "How multi-site operators are growing without adding management layers.",
     body: `Hi [First Name],
 
-We get asked a lot about how HospitalitySupport.uk works for operators with multiple sites.
+The conventional model for growing a hospitality estate is well understood: more sites, more area managers, more oversight infrastructure, more cost.
 
-Here's the simple version:
+A number of operators are now doing it differently.
 
-Every kitchen gets the full team — menu development, GP control, compliance, training, allergen management. Priced per kitchen, not per group.
+HospitalitySupport.uk gives every kitchen in your estate access to a full operations team — GP control, menu development, allergen management, compliance, training — for a flat monthly fee per kitchen.
 
-You get central visibility across all sites from one place:
-→ Which kitchens are compliant
-→ Where training is complete or drifting
-→ GP performance per site
-→ Supplier price changes affecting any location
+Central visibility across all sites. Consistent standards enforced without a layer of area management. Compliance maintained at every location without manual oversight. Training completed before staff start, not after they've been doing it wrong for a fortnight.
 
-Same standards. Every site. One flat cost per kitchen.
+The commercial case is straightforward: you grow the number of sites. You don't grow the support infrastructure proportionally.
 
-You don't get it cheaper for having more sites. You get it clearer.
+We work with operators running 2 sites and operators running 20. The model is the same. The efficiency gains compound as you scale.
 
-No area manager overhead. No audit prep. No site-by-site chasing.
-
-If you're running 2 sites or 20, HospitalitySupport.uk scales without adding management weight.`,
-    cta: "Talk to us about multi-site →",
+If you're planning growth in the next 12 months and want to understand how this fits, I'd be glad to have that conversation.`,
+    cta: "Talk to us about your estate →",
   },
 ];
 
@@ -198,7 +179,7 @@ export default function EmailPage() {
     <div className="min-h-full">
       <PageHeader
         title="Email Campaign"
-        subtitle="Five fully written emails for a cold or warm outreach sequence. Subject line, preview text, full body, and CTA included."
+        subtitle="Five outreach emails targeting business owners and commercial directors. P&L-focused, ROI-led, written for decision-makers."
         badge="Email"
       />
       <div className="p-8 space-y-4">
