@@ -6,34 +6,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-/*
-  ElevenLabs TTS proxy.
-  Expects JSON body: { text: string, voiceId?: string }
-  Returns: audio/mpeg stream
-
-  Voice used: "Daniel" — ElevenLabs premade UK English male voice.
-  Voice ID: onwK4e9ZLuTAKqWW03F9  (Daniel, British English)
-
-  Set ELEVENLABS_API_KEY in Supabase edge function secrets.
-*/
-
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
   try {
-    const apiKey = Deno.env.get("ELEVENLABS_API_KEY");
-    if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: "ELEVENLABS_API_KEY not configured" }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    const body = await req.json();
+    const { text, apiKey: bodyApiKey, voiceId: bodyVoiceId } = body;
 
-    const configuredVoiceId = Deno.env.get("ELEVENLABS_VOICE_ID");
-
-    const { text, voiceId } = await req.json();
     if (!text || typeof text !== "string") {
       return new Response(
         JSON.stringify({ error: "text is required" }),
@@ -41,8 +22,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Priority: request body → ELEVENLABS_VOICE_ID secret → Daniel fallback
-    const voice = voiceId ?? configuredVoiceId ?? "onwK4e9ZLuTAKqWW03F9";
+    // Prefer key passed from client (from VITE env) over stale secret
+    const apiKey = bodyApiKey || Deno.env.get("ELEVENLABS_API_KEY");
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({ error: "ELEVENLABS_API_KEY not configured" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const voice = bodyVoiceId || Deno.env.get("ELEVENLABS_VOICE_ID") || "onwK4e9ZLuTAKqWW03F9";
 
     const elRes = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}/stream`,

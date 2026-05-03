@@ -5,6 +5,8 @@ export interface VoiceController {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const EL_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY as string | undefined;
+const EL_VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID as string | undefined;
 
 // Module-level singleton queue — prevents concurrent requests
 let elInFlight = false;
@@ -79,7 +81,7 @@ async function fetchTTS(script: string): Promise<Blob> {
       'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ text: script }),
+    body: JSON.stringify({ text: script, apiKey: EL_API_KEY, voiceId: EL_VOICE_ID }),
   });
 
   if (!res.ok) {

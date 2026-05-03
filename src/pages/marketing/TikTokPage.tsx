@@ -6,6 +6,8 @@ import { tiktokVideos, type TikTokVideo } from './tiktok/tiktokData';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const EL_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY as string | undefined;
+const EL_VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID as string | undefined;
 
 export default function TikTokPage() {
   const [activeId, setActiveId] = useState(tiktokVideos[0].id);
@@ -83,7 +85,7 @@ function VoiceoverPanel({ video }: { video: TikTokVideo }) {
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: video.voiceScript }),
+        body: JSON.stringify({ text: video.voiceScript, apiKey: EL_API_KEY, voiceId: EL_VOICE_ID }),
       });
       if (!res.ok) throw new Error(`TTS ${res.status}`);
       const blob = await res.blob();
