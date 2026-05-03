@@ -9,16 +9,19 @@ const liveItems = [
 
 const campaignItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/email', label: 'Email Campaign', icon: Mail },
+  { to: '/brochure', label: 'Brochure / Sales Deck', icon: BookOpen },
+  { to: '/print-1', label: '1-Pager (Print)', icon: FileText },
+  { to: '/print-5', label: '5-Pager (Print)', icon: Files },
+  { to: '/sales', label: 'Sales & Talking Points', icon: MessageSquare },
+  { to: '/brand', label: 'Brand & Positioning', icon: Palette },
+];
+
+const socialItems = [
   { to: '/instagram', label: 'Instagram', icon: Instagram },
   { to: '/tiktok', label: 'TikTok', icon: Video },
   { to: '/facebook', label: 'Facebook', icon: Facebook },
   { to: '/linkedin', label: 'LinkedIn', icon: Linkedin },
-  { to: '/email', label: 'Email Campaign', icon: Mail },
-  { to: '/sales', label: 'Sales & Talking Points', icon: MessageSquare },
-  { to: '/brand', label: 'Brand & Positioning', icon: Palette },
-  { to: '/brochure', label: 'Brochure / Sales Deck', icon: BookOpen },
-  { to: '/print-1', label: '1-Pager (Print)', icon: FileText },
-  { to: '/print-5', label: '5-Pager (Print)', icon: Files },
 ];
 
 export default function MarketingLayout() {
@@ -88,6 +91,27 @@ export default function MarketingLayout() {
                 key={item.to}
                 to={item.to}
                 end={item.end}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`
+                }
+              >
+                <item.icon size={16} className="flex-shrink-0" />
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+
+          <div className="border-t border-slate-800 pt-2">
+            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Social</p>
+            {socialItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
