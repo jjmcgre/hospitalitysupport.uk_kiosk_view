@@ -100,7 +100,7 @@ async function fetchElevenLabs(voiceId: string, script: string): Promise<Blob> {
   if (!res.ok) {
     const body = await res.text();
     console.error(`[TTS] ElevenLabs HTTP ${res.status} for voice ${voiceId}:`, body);
-    if (res.status === 403 && body.includes('subscription_required')) {
+    if (res.status === 403) {
       throw Object.assign(new Error('subscription_required'), { code: 'subscription_required' });
     }
     if (res.status === 429) {
