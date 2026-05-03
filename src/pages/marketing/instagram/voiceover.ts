@@ -84,11 +84,12 @@ export function createVoiceController(): VoiceController {
                 },
                 body: JSON.stringify({
                   text: script,
-                  model_id: 'eleven_turbo_v2_5',
+                  // multilingual_v2 is significantly more expressive and natural than turbo
+                  model_id: 'eleven_multilingual_v2',
                   voice_settings: {
-                    stability: 0.45,
-                    similarity_boost: 0.82,
-                    style: 0.28,
+                    stability: 0.30,       // lower = more variation, less robotic
+                    similarity_boost: 0.75,
+                    style: 0.55,           // higher = more expressive, conversational
                     use_speaker_boost: true,
                   },
                 }),

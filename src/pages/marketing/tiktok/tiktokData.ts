@@ -33,7 +33,7 @@ export const tiktokVideos: TikTokVideo[] = [
     accentColor: '#0d9488',
     bgImage: 'https://images.pexels.com/photos/2290070/pexels-photo-2290070.jpeg?auto=compress&cs=tinysrgb&w=800',
     hook: "POV: You're a chef-owner and your phone just sorted your GP before you even got to work.",
-    voiceScript: "POV. 6:45am. You're not even in yet. Your operations team already flagged that your chicken dish dropped 4 GP points overnight. They already recommended a portion adjustment. They already updated the spec. You walk in. Everything's sorted. That's HospitalitySupport dot UK. Three pounds thirty a day. Always on.",
+    voiceScript: "So it's quarter to seven in the morning, you're not even in the building yet — and your phone's already telling you the chicken dish dropped four GP points overnight. A portion adjustment's already been recommended. The spec's already been updated. You walk in and it's all sorted. That's what HospitalitySupport dot UK does. Three pounds thirty a day. It's just always on.",
     beats: [
       { headline: "POV: 6:45am.", sub: "You're not even in yet.", enter: 'slam-up', durationMs: 2600 },
       { tag: 'Overnight', headline: "Chicken dish dropped 4 GP points.", sub: "Caught. Flagged. While you slept.", enter: 'slam-left', durationMs: 2400 },
@@ -74,7 +74,7 @@ export const tiktokVideos: TikTokVideo[] = [
     accentColor: '#dc2626',
     bgImage: 'https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800',
     hook: "The maths quietly costing hospitality businesses thousands every month.",
-    voiceScript: "One dish drops 5 GP points. Sells 40 covers a week. That's six hundred pounds a month. Gone quietly. One new hire gets allergens wrong. One complaint. One inspection. That's not a fine. That's a closure. One chef leaves. Menu knowledge leaves with them. Retraining. Mistakes. Lost covers. HospitalitySupport dot UK stops all three. Every day. For three pounds thirty.",
+    voiceScript: "Here's some maths that nobody really talks about. One dish drops five GP points. Sells forty covers a week. That's six hundred quid a month, just quietly disappearing. One new hire gets the allergens wrong — one complaint, one inspection. And that's not just a fine, that could be a closure. One chef hands in their notice and takes all the menu knowledge with them. Now you're back to retraining, mistakes, lost covers. HospitalitySupport dot UK stops all three of those things, every single day. For three pounds thirty.",
     beats: [
       { tag: 'The maths', headline: "1 dish drops 5 GP points.", sub: "40 covers a week. £600/month. Gone quietly.", enter: 'slam-up', durationMs: 2800 },
       { tag: 'The risk', headline: "1 hire gets allergens wrong.", sub: "1 complaint. 1 inspection. That's not a fine.", enter: 'slam-left', durationMs: 2600 },
@@ -121,7 +121,7 @@ export const tiktokVideos: TikTokVideo[] = [
     accentColor: '#b45309',
     bgImage: 'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800',
     hook: "Two new starters Monday. Both on section by Wednesday. This is how.",
-    voiceScript: "Two new starters. Monday. You need both on section by Wednesday. Old way: shadow someone for three days. Print a menu. Hope for the best. New way: one message. Build me an onboarding plan for both. Structured plan — built from your live menu, your actual kitchen setup, role-specific, day by day. Menu changes? Training updates automatically. No chasing. No outdated PDFs. Both trained. Compliant. Ready. Three pounds thirty a day. Knowledge stays in the business — even when people don't.",
+    voiceScript: "Two new starters, Monday morning, and you need both of them on section by Wednesday. The old way — someone shadows a senior, you hand them a printed menu, you just hope for the best, and then you're sorting out the mess on Friday. The new way is one message: build me an onboarding plan for both of them. What comes back is a proper structured plan, built from your live menu and your actual kitchen setup, role-specific, broken down day by day. And if the menu changes, the training updates automatically — no chasing people, no outdated PDFs floating around. Both of them trained, compliant, ready for service. Three pounds thirty a day. The knowledge stays in the business even when the people don't.",
     beats: [
       { headline: "Monday morning.", sub: "Two new starters. On section by Wednesday.", enter: 'slam-up', durationMs: 2400 },
       { tag: 'Old way', headline: "Shadow someone. Print a menu.", sub: "Hope for the best. Fix mistakes on Friday.", enter: 'slam-left', durationMs: 2800 },
