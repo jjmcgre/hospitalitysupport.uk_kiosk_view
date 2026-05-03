@@ -3,12 +3,10 @@ export interface VoiceController {
   stop: () => void;
 }
 
-const EL_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY as string | undefined;
-const EL_VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID as string | undefined;
-// Free built-in voices available on all ElevenLabs plans (en-GB male)
-const FREE_VOICE_IDS = ['onwK4e9ZLuTAKqWW03F9', 'N2lVS1w4EtoT3dr4eOWO']; // Daniel, Callum
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-// Module-level singleton queue — prevents concurrent requests across all VoiceControllers
+// Module-level singleton queue — prevents concurrent requests
 let elInFlight = false;
 const elQueue: Array<() => void> = [];
 
@@ -74,39 +72,20 @@ function webSpeechFallback(script: string, onEnd: () => void): () => void {
   return () => window.speechSynthesis.cancel();
 }
 
-async function fetchElevenLabs(voiceId: string, script: string): Promise<Blob> {
-  const res = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
-    {
-      method: 'POST',
-      headers: {
-        'xi-api-key': EL_API_KEY!,
-        'Content-Type': 'application/json',
-        Accept: 'audio/mpeg',
-      },
-      body: JSON.stringify({
-        text: script,
-        model_id: 'eleven_multilingual_v2',
-        voice_settings: {
-          stability: 0.30,
-          similarity_boost: 0.75,
-          style: 0.55,
-          use_speaker_boost: true,
-        },
-      }),
-    }
-  );
+async function fetchTTS(script: string): Promise<Blob> {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/tts`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text: script }),
+  });
 
   if (!res.ok) {
     const body = await res.text();
-    console.error(`[TTS] ElevenLabs HTTP ${res.status} for voice ${voiceId}:`, body);
-    if (res.status === 403) {
-      throw Object.assign(new Error('subscription_required'), { code: 'subscription_required' });
-    }
-    if (res.status === 429) {
-      throw Object.assign(new Error('rate_limited'), { code: 'rate_limited', body });
-    }
-    throw new Error(`ElevenLabs ${res.status}: ${body}`);
+    console.error(`[TTS] Edge function HTTP ${res.status}:`, body);
+    throw new Error(`TTS ${res.status}: ${body}`);
   }
 
   return res.blob();
@@ -121,7 +100,6 @@ export function createVoiceController(): VoiceController {
     if (audioEl) { audioEl.pause(); audioEl.src = ''; audioEl = null; }
     if (cancelFallback) { cancelFallback(); cancelFallback = null; }
     window.speechSynthesis?.cancel();
-    // Remove any pending queue entries for this controller
     elQueue.length = 0;
   };
 
@@ -130,43 +108,18 @@ export function createVoiceController(): VoiceController {
       active = true;
       stopAll();
 
-      if (EL_API_KEY) {
-        const voiceQueue = [
-          ...(EL_VOICE_ID ? [EL_VOICE_ID] : []),
-          ...FREE_VOICE_IDS,
-        ];
-
-        console.log('[TTS] Voice queue:', voiceQueue);
-
-        let blob: Blob | null = null;
-
-        for (const voiceId of voiceQueue) {
-          try {
-            console.log('[TTS] Trying voice:', voiceId);
-            blob = await withQueue(() => fetchElevenLabs(voiceId, script));
-            console.log('[TTS] Success with voice:', voiceId);
-            break;
-          } catch (err: any) {
-            if (err?.code === 'subscription_required') {
-              console.warn(`[TTS] Voice ${voiceId} requires higher plan, trying next…`);
-              continue;
-            }
-            console.error(`[TTS] ElevenLabs voice ${voiceId} failed:`, err);
-            break;
-          }
-        }
-
-        if (blob && active) {
-          const url = URL.createObjectURL(blob);
-          audioEl = new Audio(url);
-          audioEl.onended = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
-          audioEl.onerror = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
-          await audioEl.play();
-          return;
-        }
-
+      try {
+        const blob = await withQueue(() => fetchTTS(script));
         if (!active) return;
-        console.warn('[TTS] ElevenLabs unavailable, falling back to Web Speech');
+
+        const url = URL.createObjectURL(blob);
+        audioEl = new Audio(url);
+        audioEl.onended = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
+        audioEl.onerror = () => { URL.revokeObjectURL(url); if (active) onEnd(); };
+        await audioEl.play();
+        return;
+      } catch (err) {
+        console.warn('[TTS] Edge function failed, falling back to Web Speech:', err);
       }
 
       if (!active) return;

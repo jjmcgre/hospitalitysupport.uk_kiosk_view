@@ -4,8 +4,8 @@ import PageHeader from './components/PageHeader';
 import TikTokPlayer from './tiktok/TikTokPlayer';
 import { tiktokVideos, type TikTokVideo } from './tiktok/tiktokData';
 
-const EL_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY as string | undefined;
-const EL_VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID as string | undefined;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 export default function TikTokPage() {
   const [activeId, setActiveId] = useState(tiktokVideos[0].id);
@@ -70,30 +70,22 @@ function VoiceoverPanel({ video }: { video: TikTokVideo }) {
   const [copied, setCopied] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const hasEL = !!(EL_API_KEY && EL_VOICE_ID);
+  const hasEL = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
   const downloadAudio = async () => {
     if (!hasEL) return;
     setDlState('loading');
     setErrMsg('');
     try {
-      const res = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${EL_VOICE_ID}`,
-        {
-          method: 'POST',
-          headers: {
-            'xi-api-key': EL_API_KEY!,
-            'Content-Type': 'application/json',
-            Accept: 'audio/mpeg',
-          },
-          body: JSON.stringify({
-            text: video.voiceScript,
-            model_id: 'eleven_turbo_v2_5',
-            voice_settings: { stability: 0.45, similarity_boost: 0.82, style: 0.28, use_speaker_boost: true },
-          }),
-        }
-      );
-      if (!res.ok) throw new Error(`ElevenLabs ${res.status}`);
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/tts`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: video.voiceScript }),
+      });
+      if (!res.ok) throw new Error(`TTS ${res.status}`);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -120,27 +112,21 @@ function VoiceoverPanel({ video }: { video: TikTokVideo }) {
       icon={<Download size={16} />}
       title="Voiceover"
       accent={video.accentColor}
-      badge={hasEL ? 'ElevenLabs AI' : 'Script only'}
+      badge="ElevenLabs AI"
     >
       <p className="text-white/50 text-sm leading-relaxed mb-4">{video.voiceScript}</p>
 
       <div className="flex gap-3 flex-wrap">
-        {hasEL ? (
-          <button
-            onClick={downloadAudio}
-            disabled={dlState === 'loading'}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
-            style={{ background: video.accentColor, boxShadow: `0 4px 16px ${video.accentColor}40` }}
-          >
-            {dlState === 'loading' ? <><Loader2 size={14} className="animate-spin" />Generating…</> :
-              dlState === 'done' ? <><Check size={14} />Downloaded!</> :
-                <><Download size={14} />Download MP3</>}
-          </button>
-        ) : (
-          <div className="text-xs text-white/30 px-3 py-2 rounded-lg border border-white/10 bg-white/5">
-            Add VITE_ELEVENLABS_API_KEY + VITE_ELEVENLABS_VOICE_ID to .env to enable MP3 download
-          </div>
-        )}
+        <button
+          onClick={downloadAudio}
+          disabled={dlState === 'loading'}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+          style={{ background: video.accentColor, boxShadow: `0 4px 16px ${video.accentColor}40` }}
+        >
+          {dlState === 'loading' ? <><Loader2 size={14} className="animate-spin" />Generating…</> :
+            dlState === 'done' ? <><Check size={14} />Downloaded!</> :
+              <><Download size={14} />Download MP3</>}
+        </button>
 
         <button
           onClick={copyScript}
