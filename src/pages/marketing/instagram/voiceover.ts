@@ -99,6 +99,7 @@ async function fetchElevenLabs(voiceId: string, script: string): Promise<Blob> {
 
   if (!res.ok) {
     const body = await res.text();
+    console.error(`[TTS] ElevenLabs HTTP ${res.status} for voice ${voiceId}:`, body);
     if (res.status === 403 && body.includes('subscription_required')) {
       throw Object.assign(new Error('subscription_required'), { code: 'subscription_required' });
     }
@@ -135,11 +136,15 @@ export function createVoiceController(): VoiceController {
           ...FREE_VOICE_IDS,
         ];
 
+        console.log('[TTS] Voice queue:', voiceQueue);
+
         let blob: Blob | null = null;
 
         for (const voiceId of voiceQueue) {
           try {
+            console.log('[TTS] Trying voice:', voiceId);
             blob = await withQueue(() => fetchElevenLabs(voiceId, script));
+            console.log('[TTS] Success with voice:', voiceId);
             break;
           } catch (err: any) {
             if (err?.code === 'subscription_required') {
