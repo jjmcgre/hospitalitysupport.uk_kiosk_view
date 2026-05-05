@@ -157,7 +157,8 @@ export default function BookingModal() {
     });
 
     if (rpcError || !rpcResult?.ok) {
-      setError(rpcResult?.error ?? rpcError?.message ?? 'Failed to confirm booking. Please try again.');
+      const msg = rpcError?.message ?? rpcResult?.error ?? 'Failed to confirm booking. Please try again.';
+      setError(`Booking error: ${msg} (slot: ${selectedSlot.id}, booking: ${bookingId})`);
       setSubmitting(false);
       return;
     }
