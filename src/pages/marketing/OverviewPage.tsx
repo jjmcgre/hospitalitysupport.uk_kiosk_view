@@ -132,6 +132,17 @@ export default function OverviewPage() {
     return acc + (isNaN(n) ? 0 : n);
   }, 0);
 
+  const siteCounts: Record<string, number> = { '1': 0, '2-5': 0, '6-15': 0, '16+': 0 };
+  enquiries.forEach(e => {
+    const n = parseInt(e.num_sites, 10);
+    if (isNaN(n)) return;
+    if (n === 1) siteCounts['1']++;
+    else if (n <= 5) siteCounts['2-5']++;
+    else if (n <= 15) siteCounts['6-15']++;
+    else siteCounts['16+']++;
+  });
+  const maxSiteCount = Math.max(1, ...Object.values(siteCounts));
+
   const nextSlot = slots
     .filter(s => !s.booked && s.slot_date >= today)
     .sort((a, b) => a.slot_date.localeCompare(b.slot_date) || a.slot_time.localeCompare(b.slot_time))[0];
