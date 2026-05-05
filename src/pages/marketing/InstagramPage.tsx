@@ -18,32 +18,38 @@ export default function InstagramPage() {
 
   return (
     <div className="min-h-full bg-slate-950">
-      <div className="border-b border-slate-800 px-8 py-6">
-        <span className="text-xs font-bold uppercase tracking-widest text-teal-400 bg-teal-500/10 border border-teal-500/20 px-3 py-1 rounded-full">
-          Instagram
-        </span>
-        <h1 className="text-white font-black text-3xl mt-3">Ad Previews</h1>
-        <p className="text-slate-400 text-sm mt-1">
-          Reel scripts and static post creatives — copy captions, brief a designer, or use as a direct reference.
-        </p>
+      <div className="border-b border-slate-800">
+        <div className="px-8 py-3 bg-teal-500/10 border-b border-teal-500/20 flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-teal-400 flex-shrink-0" />
+          <p className="text-teal-300 text-sm font-semibold">How to use: copy the caption, paste into Instagram, upload your video or image, post.</p>
+        </div>
+        <div className="px-8 py-6">
+          <span className="text-xs font-bold uppercase tracking-widest text-teal-400 bg-teal-500/10 border border-teal-500/20 px-3 py-1 rounded-full">
+            Instagram
+          </span>
+          <h1 className="text-white font-black text-3xl mt-3">Ad Previews</h1>
+          <p className="text-slate-400 text-sm mt-1">
+            Reel scripts and static post creatives — copy captions, brief a designer, or use as a direct reference.
+          </p>
 
-        <div className="flex gap-1 mt-5 bg-slate-900 border border-slate-800 rounded-xl p-1 w-fit">
-          {([
-            { id: 'reels', label: 'Reels (Video)' },
-            { id: 'static', label: 'Static Posts' },
-          ] as { id: Tab; label: string }[]).map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`px-5 py-2 rounded-lg text-sm font-bold transition-all duration-150 ${
-                tab === t.id
-                  ? 'bg-teal-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+          <div className="flex gap-1 mt-5 bg-slate-900 border border-slate-800 rounded-xl p-1 w-fit">
+            {([
+              { id: 'reels', label: 'Reels (Video)' },
+              { id: 'static', label: 'Static Posts' },
+            ] as { id: Tab; label: string }[]).map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`px-5 py-2 rounded-lg text-sm font-bold transition-all duration-150 ${
+                  tab === t.id
+                    ? 'bg-teal-500 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

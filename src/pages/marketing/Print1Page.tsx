@@ -17,14 +17,19 @@ const S6   = '#475569';
 const S8   = '#1e293b';
 const F    = "'Inter', system-ui, sans-serif";
 
-export default function Print1Page() {
+export default function Print1Page({ standalone = false }: { standalone?: boolean }) {
   return (
-    <div className="min-h-full bg-slate-950 p-6">
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
-            <h1 className="text-white font-black text-2xl">1-Page Summary</h1>
-            <p className="text-slate-400 text-sm mt-1">Single A4 page — save as PDF to email, or print for meetings</p>
+            {standalone
+              ? <p className="text-slate-400 text-sm">HospitalitySupport.uk · 1-Page Summary</p>
+              : <><h1 className="text-white font-black text-2xl">1-Page Summary</h1>
+                  <p className="text-slate-400 text-sm mt-1">Single A4 page — save as PDF to email, or print for meetings</p>
+                  <a href="/view/1-pager" target="_blank" className="inline-block mt-2 text-xs text-teal-400 hover:text-teal-300 underline underline-offset-2">Open standalone (clean for sharing) ↗</a>
+                </>
+            }
           </div>
           <button
             onClick={() => window.print()}

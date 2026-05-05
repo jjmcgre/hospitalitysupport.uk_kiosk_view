@@ -133,6 +133,7 @@ export default function LinkedInPage() {
       <PageHeader
         title="LinkedIn"
         subtitle="Three video scripts, ten post scripts, and ad copy — copy and deploy directly."
+        deployLabel="How to use: copy any post script and paste directly into LinkedIn. For video, copy the script and record to camera."
         badge="LinkedIn"
       />
       <div className="p-8 space-y-8">

@@ -18,6 +18,7 @@ export default function TikTokPage() {
       <PageHeader
         title="TikTok"
         subtitle="Three campaigns — copy the script, download the voiceover, and drop into CapCut."
+        deployLabel="How to use: copy the script, download the voiceover MP3, import both into CapCut, export and upload to TikTok."
         badge="Video"
       />
 

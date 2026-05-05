@@ -31,6 +31,7 @@ export default function FacebookPage() {
       <PageHeader
         title="Facebook"
         subtitle="Three video scripts — copy the script, brief a videographer, or record direct to camera."
+        deployLabel="How to use: expand a campaign, copy the script, record to camera or brief a videographer, upload to Facebook."
         badge="Social Video"
       />
       <div className="p-8 space-y-4">

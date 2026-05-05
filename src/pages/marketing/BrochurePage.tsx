@@ -851,15 +851,20 @@ function ClosePage() {
 /* ══════════════════════════════════════════════════════════════════════
    EXPORT
 ══════════════════════════════════════════════════════════════════════ */
-export default function BrochurePage() {
+export default function BrochurePage({ standalone = false }: { standalone?: boolean }) {
   return (
-    <div className="min-h-full bg-slate-950 p-6">
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
       <div style={{ maxWidth: PW + 48 }} className="mx-auto">
 
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
-            <h1 className="text-white font-black text-2xl">Brochure</h1>
-            <p className="text-slate-400 text-sm mt-1">8-page square sales brochure — send as PDF or print for meetings</p>
+            {standalone
+              ? <p className="text-slate-400 text-sm">HospitalitySupport.uk · Sales Brochure</p>
+              : <><h1 className="text-white font-black text-2xl">Brochure</h1>
+                  <p className="text-slate-400 text-sm mt-1">8-page square sales brochure — send as PDF or print for meetings</p>
+                  <a href="/view/brochure" target="_blank" className="inline-block mt-2 text-xs text-teal-400 hover:text-teal-300 underline underline-offset-2">Open standalone (clean for sharing) ↗</a>
+                </>
+            }
           </div>
           <button
             onClick={() => window.print()}

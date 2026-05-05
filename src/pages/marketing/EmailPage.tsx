@@ -411,6 +411,7 @@ export default function EmailPage() {
       <PageHeader
         title="Email Campaign"
         subtitle={`${totalEmails} emails across 5 stages — copy subject line and body, ready to send.`}
+        deployLabel="How to use: expand an email, copy the subject line into your email client, paste the body, send."
         badge="Email"
       />
       <div className="p-8 space-y-6">

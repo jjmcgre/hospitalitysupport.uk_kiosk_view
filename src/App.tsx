@@ -19,7 +19,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public-facing pages */}
         <Route path="/landing" element={<LandingPage />} />
+
+        {/* Standalone print/share assets — no sidebar, clean for sending */}
+        <Route path="/view/brochure" element={<BrochurePage standalone />} />
+        <Route path="/view/1-pager" element={<Print1Page standalone />} />
+        <Route path="/view/5-pager" element={<Print5Page standalone />} />
+
+        {/* Internal campaign tool */}
         <Route path="/" element={<MarketingLayout />}>
           <Route index element={<OverviewPage />} />
           <Route path="instagram" element={<InstagramPage />} />
