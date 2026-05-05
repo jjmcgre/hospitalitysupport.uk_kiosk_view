@@ -3,13 +3,13 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Inbox, CalendarDays, Copy, Check, ExternalLink, Share2 } from 'lucide-react';
 
 const liveItems = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/email', label: 'Email Campaign', icon: Mail },
   { to: '/enquiries', label: 'Enquiries', icon: Inbox },
   { to: '/diary', label: 'Demo Diary', icon: CalendarDays },
 ];
 
 const campaignItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/email', label: 'Email Campaign', icon: Mail },
   { to: '/brochure-tool', label: 'Brochure', icon: BookOpen },
   { to: '/print-1', label: '1-Page Summary', icon: FileText },
   { to: '/print-5', label: '5-Page Brochure', icon: Files },
@@ -141,6 +141,7 @@ export default function MarketingLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
+                end={'end' in item ? item.end : undefined}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
@@ -158,30 +159,11 @@ export default function MarketingLayout() {
 
           <div className="border-t border-slate-800 pt-2">
             <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Campaign</p>
-            {campaignItems.slice(0, 1).map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`
-                }
-              >
-                <item.icon size={16} className="flex-shrink-0" />
-                {item.label}
-              </NavLink>
-            ))}
             <SharePanel />
-            {campaignItems.slice(1).map((item) => (
+            {campaignItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.end}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
