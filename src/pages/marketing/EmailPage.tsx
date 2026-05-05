@@ -277,6 +277,217 @@ If you're planning growth in the next 12 months and want to understand how this 
   },
 ];
 
+const foundersCampaign: Stage[] = [
+  {
+    stage: 1,
+    label: "Origin",
+    description: "Establish credibility through lived experience. We're not a tech company that spotted a market — we're operators who got frustrated enough to build something better.",
+    emails: [
+      {
+        id: 1,
+        subject: "We built this because everything else let us down",
+        preview: "Not a tech pitch. A note from people who've actually run kitchens.",
+        timing: "Day 1 — Cold send",
+        purpose: "Lead with authenticity and shared experience. Position HospitalitySupport.uk as built by operators for operators — not sold to them by outsiders.",
+        body: `Hi [First Name],
+
+I'll be straight with you.
+
+HospitalitySupport.uk wasn't built by developers who spotted a gap in the market. It was built by people who've worked in kitchens, managed multi-site operations, dealt with EHO visits on a bad week, and spent far too many late nights trying to reconcile GP figures that should have been obvious.
+
+We used the existing solutions. The expensive software that required three days of training to set up. The compliance systems that were technically impressive but completely disconnected from how a busy kitchen actually operates. The training platforms that looked great in a demo and gathered dust two weeks in.
+
+None of them were built by people who'd actually had to run a pass on a Saturday night.
+
+So we built HospitalitySupport.uk differently.
+
+It's not a platform you manage. It's a team that works for you — GP Controller, Menu Development Chef, Allergen Specialist, Training Manager, Compliance Lead — available around the clock, from £100 per kitchen per month.
+
+You talk to it the way you'd talk to a trusted ops colleague. It handles the rest.
+
+We know what the problems actually feel like. That's why this works differently.`,
+        cta: "Give us 30 minutes — we'll show you the difference →",
+      },
+    ],
+  },
+  {
+    stage: 2,
+    label: "The Problem With Everything Else",
+    description: "Name the frustrations with existing solutions directly. The reader should be nodding.",
+    emails: [
+      {
+        id: 2,
+        subject: "Every system we tried solved the wrong problem",
+        preview: "Built for compliance officers and accountants. Not for kitchens.",
+        timing: "Day 4 — No response to Email 1",
+        purpose: "Build resonance by naming specific frustrations with existing tools. Not attacking competitors — articulating the gap they all share.",
+        body: `Hi [First Name],
+
+We've tried most of the systems that exist for hospitality operations. Here's what we found.
+
+The food safety platforms are designed for someone whose entire job is compliance. Not for a head chef who has forty minutes between prep and service to deal with anything administrative.
+
+The GP and costing tools are powerful if you have the time to keep them updated. Which, in a working kitchen, you rarely do. So they drift. And then you trust them less. And then you stop using them.
+
+The training platforms work if you have an L&D team to build the content and chase completions. Most hospitality businesses don't have that. They have a manager who's already doing three other jobs.
+
+None of them were built by people who'd actually had to use them under pressure. You can feel it in every click.
+
+HospitalitySupport.uk was built by operators who'd lived with that frustration long enough to do something about it.
+
+It works the way a good ops colleague works — you ask for something, it gets done, properly, without you having to manage the process.
+
+That's not a feature list. That's a fundamentally different approach.`,
+        cta: "Book 30 minutes — see what different actually looks like →",
+      },
+      {
+        id: 3,
+        subject: "The allergen query that arrived at 6pm on a Friday",
+        preview: "We've been that chef. That's exactly why we built this.",
+        timing: "Day 7 — No response to Emails 1–2",
+        purpose: "Specific, emotionally resonant scenario from lived experience. The reader should recognise it immediately.",
+        body: `Hi [First Name],
+
+You'll recognise this.
+
+6pm Friday. Kitchen's in the middle of service. A front-of-house team member comes through with a customer query — can they confirm whether a specific dish contains any tree nuts, because the customer has a serious allergy.
+
+The head chef is on the pass. The allergen folder is somewhere in the office. The dish in question went through a recipe change three weeks ago. No one's sure if the documentation was updated.
+
+That moment — the uncertainty, the pressure, the calculation of risk — is something we've all lived through.
+
+It's not a system failure. It's the reality of hospitality operations running faster than documentation can keep pace with.
+
+HospitalitySupport.uk keeps allergen information current as your menu changes. A query like that gets a clear, evidenced answer immediately — not a search through a folder, not a phone call to someone who might know.
+
+We built this because we've been that chef. We know exactly how much is at stake in that moment.`,
+        cta: "See how allergen management actually works →",
+      },
+    ],
+  },
+  {
+    stage: 3,
+    label: "What We Built Instead",
+    description: "Show the practical difference. Not features — how it feels to actually use something built by people who understand the work.",
+    emails: [
+      {
+        id: 4,
+        subject: "What it looks like when ops support is built by operators",
+        preview: "Not a system to manage. A team that already understands the kitchen.",
+        timing: "Day 10 — No response to Emails 1–3",
+        purpose: "Paint the picture of what genuinely different support looks like in daily practice. Concrete tasks, not abstract benefits.",
+        body: `Hi [First Name],
+
+Here's what a normal working day looks like with HospitalitySupport.uk in place.
+
+Your head chef messages first thing — a supplier has substituted an ingredient and they need to know the allergen impact and updated dish cost before the lunch service.
+
+Done before 10am. Allergens checked. Cost recalculated. Spec updated. Chef confirmed.
+
+Your area manager flags that a new site is opening in six weeks and needs a full training programme built for a team of twelve.
+
+Done within 24 hours. Role-specific plans for every position. Sent directly to staff phones. Completion tracked automatically.
+
+Your GM asks about food safety records before a scheduled inspection.
+
+Already in order. Because they always are.
+
+None of those tasks required a manager to coordinate, chase, or quality-check. They just got done.
+
+That's what happens when ops support is built by people who understand what a kitchen actually needs — and what it genuinely doesn't have time for.
+
+From £100 per kitchen per month.`,
+        cta: "Let us walk you through it — 30 minutes →",
+      },
+    ],
+  },
+  {
+    stage: 4,
+    label: "The Guarantee",
+    description: "A direct, confident close backed by genuine belief. We've worked in these kitchens. We know this is the best use of 30 minutes.",
+    emails: [
+      {
+        id: 5,
+        subject: "Give us 30 minutes. We guarantee it'll be worth it.",
+        preview: "Not a sales pitch. A demonstration from people who know your operation from the inside.",
+        timing: "Day 14 — No response to Emails 1–4",
+        purpose: "The guarantee email. Confident, direct, backed by credibility earned through the sequence. No hedging.",
+        body: `Hi [First Name],
+
+We don't say this lightly, and we don't say it to everyone.
+
+Give us 30 minutes — a live walkthrough of HospitalitySupport.uk on a real scenario from your business — and we guarantee it will be the most useful half hour you've invested in your operation in a long time.
+
+Not because we have a polished deck. Because we know what your problems actually feel like.
+
+We've managed the kitchens. We've dealt with the compliance visits. We've sat with the spreadsheets at midnight trying to work out where the margin went. We've watched good managers leave because the operational admin was relentless.
+
+We built HospitalitySupport.uk to fix the things that were genuinely unfixable with everything else we tried.
+
+In 30 minutes we'll show you it working on a real task — your menu, your margins, your training requirements. Not a demo environment. The actual thing.
+
+If you don't think it's worth the time, that's a fair call. But we've yet to have that conversation.
+
+Book the 30 minutes. See it for yourself.`,
+        cta: "Book 30 minutes — we'll make it worth it →",
+      },
+      {
+        id: 6,
+        subject: "The question we always get asked after the demo",
+        preview: "\"Why hasn't anyone built this before?\"",
+        timing: "Day 17 — No response, or replied with 'not right now'",
+        purpose: "Social proof through the common reaction — without fabricating testimonials. Builds confidence by anticipating the outcome of the demo.",
+        body: `Hi [First Name],
+
+The question we hear most often at the end of a walkthrough is some version of: why hasn't anyone built this before?
+
+The honest answer is that most people who build software for hospitality have never worked a service. They've spoken to operators, done market research, built features they were told people wanted.
+
+They built tools. Not support.
+
+The difference shows up in how it actually works. Not in a feature comparison — in what happens when a problem lands on your desk at the wrong moment and you need it handled by someone who already understands the context.
+
+We built HospitalitySupport.uk because we were the ones who needed it and couldn't find it.
+
+If you'd like to see why that difference matters in practice, the walkthrough takes 30 minutes. We'll cover whatever's most relevant to your business — GP, allergens, compliance, training, or all of it.
+
+No obligation. Just the conversation.`,
+        cta: "Book the walkthrough →",
+      },
+    ],
+  },
+  {
+    stage: 5,
+    label: "Final Ask",
+    description: "Direct close. Genuine, low-pressure, confident. Built on everything that came before.",
+    emails: [
+      {
+        id: 7,
+        subject: "One last note — from one operator to another",
+        preview: "We built something we're proud of. We'd like you to see it.",
+        timing: "Day 21 — Final email in sequence",
+        purpose: "Warm, direct, personal close. Operator-to-operator tone. No new pitch — just a genuine final ask.",
+        body: `Hi [First Name],
+
+Last one from me, and I'll keep it honest.
+
+We built HospitalitySupport.uk because we spent years working in kitchens and operations, watching good businesses run harder than they needed to because the support available to them was either too expensive, too complicated, or too far removed from how a kitchen actually works.
+
+We know the problems from the inside. That's what makes this different. Not just different from other software — different from having to figure it all out yourself.
+
+From £100 per kitchen per month, you get a full operations team that already understands the work: GP control, menu development, allergen management, compliance, training — available any time you need it.
+
+If you'd like to see it, we'll give you 30 minutes of our time and show you exactly what it does on a real scenario.
+
+We're confident enough in what we've built to guarantee it's worth yours.
+
+If the timing isn't right, that's completely fine. But if it is — the link below is all it takes.`,
+        cta: "Book 30 minutes →",
+      },
+    ],
+  },
+];
+
 function EmailCard({ email }: { email: Email; stageNum: number }) {
   const [open, setOpen] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
@@ -400,23 +611,61 @@ function StageBlock({ stage }: { stage: Stage }) {
   );
 }
 
+const campaigns = [
+  {
+    id: 'outbound',
+    label: 'Campaign 1: Outbound',
+    description: 'Problem-led cold outreach. Builds commercial case across 5 stages.',
+    data: campaign,
+  },
+  {
+    id: 'founders',
+    label: 'Campaign 2: Founder Story',
+    description: 'Authenticity-led. Built by operators who felt the pain — and built something better.',
+    data: foundersCampaign,
+  },
+];
+
 export default function EmailPage() {
-  const totalEmails = campaign.reduce((acc, s) => acc + s.emails.length, 0);
+  const [activeCampaign, setActiveCampaign] = useState<'outbound' | 'founders'>('outbound');
+  const current = campaigns.find((c) => c.id === activeCampaign)!;
+  const totalEmails = current.data.reduce((acc, s) => acc + s.emails.length, 0);
 
   return (
     <div className="min-h-full">
       <PageHeader
-        title="Email Campaign"
-        subtitle={`${totalEmails} emails across 5 stages — copy subject line and body, ready to send.`}
-        deployLabel="How to use: expand an email, copy the subject line into your email client, paste the body, send."
+        title="Email Campaigns"
+        subtitle="Two sequences, ready to send — copy subject line and body directly into your email client."
+        deployLabel="How to use: select a campaign, expand an email, copy the subject line and body, send."
         badge="Email"
       />
       <div className="px-4 py-6 sm:p-8 space-y-6">
+
+        {/* Campaign switcher */}
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-2 flex gap-2">
+          {campaigns.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setActiveCampaign(c.id as 'outbound' | 'founders')}
+              className={`flex-1 rounded-xl px-4 py-3 text-left transition-all ${
+                activeCampaign === c.id
+                  ? 'bg-slate-700 border border-slate-500 shadow-sm'
+                  : 'hover:bg-slate-700/40 border border-transparent'
+              }`}
+            >
+              <p className={`text-sm font-bold leading-snug ${activeCampaign === c.id ? 'text-white' : 'text-slate-400'}`}>{c.label}</p>
+              <p className="text-xs text-slate-500 mt-0.5 leading-snug">{c.description}</p>
+            </button>
+          ))}
+        </div>
+
         {/* Sequence overview */}
         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Sequence overview</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            {current.label} — {totalEmails} email{totalEmails !== 1 ? 's' : ''} across {current.data.length} stages
+          </p>
           <div className="flex flex-wrap gap-2">
-            {campaign.map((s) => (
+            {current.data.map((s) => (
               <div key={s.stage} className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${stageLabelColour[s.stage]}`}>
                 <span className="font-black">{s.stage}.</span>
                 <span>{s.label}</span>
@@ -426,7 +675,7 @@ export default function EmailPage() {
           </div>
         </div>
 
-        {campaign.map((stage) => (
+        {current.data.map((stage) => (
           <StageBlock key={stage.stage} stage={stage} />
         ))}
       </div>
