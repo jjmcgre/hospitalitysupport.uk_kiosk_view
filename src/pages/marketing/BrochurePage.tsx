@@ -861,8 +861,7 @@ export default function BrochurePage({ standalone = false }: { standalone?: bool
             {standalone
               ? <p className="text-slate-400 text-sm">HospitalitySupport.uk · Sales Brochure</p>
               : <><h1 className="text-white font-black text-2xl">Brochure</h1>
-                  <p className="text-slate-400 text-sm mt-1">8-page square sales brochure — send as PDF or print for meetings</p>
-                  <a href="/view/brochure" target="_blank" className="inline-block mt-2 text-xs text-teal-400 hover:text-teal-300 underline underline-offset-2">Open standalone (clean for sharing) ↗</a>
+                  <p className="text-slate-400 text-sm mt-1">8-page square — save as PDF or print for meetings. Share via <span className="text-teal-400 font-mono">/brochure</span></p>
                 </>
             }
           </div>

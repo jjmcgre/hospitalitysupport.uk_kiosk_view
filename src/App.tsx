@@ -19,10 +19,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public-facing pages */}
+        {/* Public-facing shareable pages — clean, no sidebar */}
         <Route path="/landing" element={<LandingPage />} />
-
-        {/* Standalone print/share assets — no sidebar, clean for sending */}
+        <Route path="/demo" element={<LandingPage />} />
+        <Route path="/brochure" element={<BrochurePage standalone />} />
+        <Route path="/one-pager" element={<Print1Page standalone />} />
+        <Route path="/sales-pack" element={<Print5Page standalone />} />
+        {/* Legacy view routes */}
         <Route path="/view/brochure" element={<BrochurePage standalone />} />
         <Route path="/view/1-pager" element={<Print1Page standalone />} />
         <Route path="/view/5-pager" element={<Print5Page standalone />} />
@@ -37,7 +40,7 @@ function App() {
           <Route path="email" element={<EmailPage />} />
           <Route path="sales" element={<SalesPage />} />
           <Route path="brand" element={<BrandPage />} />
-          <Route path="brochure" element={<BrochurePage />} />
+          <Route path="brochure-tool" element={<BrochurePage />} />
           <Route path="print-1" element={<Print1Page />} />
           <Route path="print-5" element={<Print5Page />} />
           <Route path="enquiries" element={<EnquiriesPage />} />

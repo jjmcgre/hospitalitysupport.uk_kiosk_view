@@ -26,8 +26,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
             {standalone
               ? <p className="text-slate-400 text-sm">HospitalitySupport.uk · 1-Page Summary</p>
               : <><h1 className="text-white font-black text-2xl">1-Page Summary</h1>
-                  <p className="text-slate-400 text-sm mt-1">Single A4 page — save as PDF to email, or print for meetings</p>
-                  <a href="/view/1-pager" target="_blank" className="inline-block mt-2 text-xs text-teal-400 hover:text-teal-300 underline underline-offset-2">Open standalone (clean for sharing) ↗</a>
+                  <p className="text-slate-400 text-sm mt-1">Single A4 — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/one-pager</span></p>
                 </>
             }
           </div>

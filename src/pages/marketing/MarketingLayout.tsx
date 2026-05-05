@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Outlet, NavLink, Link } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Monitor, Inbox, CalendarDays } from 'lucide-react';
+import { Outlet, NavLink } from 'react-router-dom';
+import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Inbox, CalendarDays, Copy, Check, ExternalLink, Share2 } from 'lucide-react';
 
 const liveItems = [
   { to: '/enquiries', label: 'Enquiries', icon: Inbox },
@@ -10,9 +10,9 @@ const liveItems = [
 const campaignItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/email', label: 'Email Campaign', icon: Mail },
-  { to: '/brochure', label: 'Brochure / Sales Deck', icon: BookOpen },
-  { to: '/print-1', label: '1-Pager (Print)', icon: FileText },
-  { to: '/print-5', label: '5-Pager (Print)', icon: Files },
+  { to: '/brochure-tool', label: 'Brochure', icon: BookOpen },
+  { to: '/print-1', label: '1-Page Summary', icon: FileText },
+  { to: '/print-5', label: '5-Page Brochure', icon: Files },
   { to: '/sales', label: 'Sales & Talking Points', icon: MessageSquare },
   { to: '/brand', label: 'Brand & Positioning', icon: Palette },
 ];
@@ -23,6 +23,81 @@ const socialItems = [
   { to: '/facebook', label: 'Facebook', icon: Facebook },
   { to: '/linkedin', label: 'LinkedIn', icon: Linkedin },
 ];
+
+const shareLinks = [
+  { label: 'Product overview', path: '/demo', description: 'Full kiosk / landing page' },
+  { label: 'Brochure (8-page)', path: '/brochure', description: 'Square PDF, ready to print' },
+  { label: '1-page summary', path: '/one-pager', description: 'A4, email or print' },
+  { label: '5-page sales pack', path: '/sales-pack', description: 'A4, full detail' },
+];
+
+function CopyLinkButton({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+  return (
+    <button
+      onClick={copy}
+      title="Copy link"
+      className="p-1.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"
+    >
+      {copied ? <Check size={13} className="text-teal-400" /> : <Copy size={13} />}
+    </button>
+  );
+}
+
+function SharePanel() {
+  const [open, setOpen] = useState(false);
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+
+  return (
+    <div className="border-t border-slate-800 pt-2">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+      >
+        <span className="flex items-center gap-2">
+          <Share2 size={15} className="flex-shrink-0" />
+          Share links
+        </span>
+        <span className={`text-[10px] font-bold uppercase tracking-wider transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▾</span>
+      </button>
+
+      {open && (
+        <div className="mt-1 space-y-1 px-1">
+          {shareLinks.map((link) => {
+            const fullUrl = `${origin}${link.path}`;
+            return (
+              <div key={link.path} className="flex items-center gap-1 bg-slate-800/60 rounded-xl px-3 py-2.5">
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-xs font-semibold truncate">{link.label}</p>
+                  <p className="text-slate-500 text-[10px] truncate">{link.description}</p>
+                  <p className="text-teal-600 text-[10px] font-mono truncate mt-0.5">{window.location.host}{link.path}</p>
+                </div>
+                <div className="flex items-center gap-0.5 flex-shrink-0">
+                  <CopyLinkButton url={fullUrl} />
+                  <a
+                    href={link.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Open in new tab"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"
+                  >
+                    <ExternalLink size={13} />
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function MarketingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,21 +125,8 @@ export default function MarketingLayout() {
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-          {/* Kiosk Overview — the public-facing product page */}
-          <div className="mb-2">
-            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1">Public</p>
-            <Link
-              to="/landing"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800"
-            >
-              <Monitor size={16} className="flex-shrink-0" />
-              Kiosk Overview
-            </Link>
-          </div>
-
-          <div className="border-t border-slate-800 pt-2 mb-2">
-            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Live</p>
+          <div className="mb-1">
+            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1">Live</p>
             {liveItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -126,6 +188,8 @@ export default function MarketingLayout() {
               </NavLink>
             ))}
           </div>
+
+          <SharePanel />
         </nav>
 
         <div className="p-4 border-t border-slate-800">
