@@ -148,31 +148,31 @@ function SpokeMap() {
   const cards: CardDef[] = [
     { col: T,        title: 'Recipe & Spec',
       lines: ['Full recipe, method & mise en place', 'Portions, yield & scaling', 'Batch notes per serving size'],
-      x: 334, y: 14, w: 196, sx: 480, sy: 68 },
+      x: 310, y: 4, w: 228, sx: 480, sy: 68 },
     { col: '#0284c7', title: 'Cost & GP',
       lines: ['Live ingredient costs vs your suppliers', 'GP auto-calculated per dish', 'Sell-price guidance & margin alerts'],
-      x: 658, y: 38, w: 192, sx: 658, sy: 84 },
+      x: 638, y: 26, w: 228, sx: 658, sy: 84 },
     { col: '#0891b2', title: 'Supplier Pricing',
       lines: ['Live price tracking from your suppliers', 'Invoice scan & match', 'Auto-recost when prices change', 'Direct supplier messaging'],
-      x: 726, y: 218, w: 198, sx: 726, sy: 268 },
+      x: 700, y: 202, w: 230, sx: 726, sy: 268 },
     { col: '#dc2626', title: 'Allergens & Nutrition',
       lines: ['14 allergens auto-generated per dish', "Natasha's Law compliant matrix", 'Nutrition per portion — auto-updated'],
-      x: 658, y: 474, w: 210, sx: 658, sy: 474 },
+      x: 632, y: 462, w: 238, sx: 658, sy: 474 },
     { col: '#d97706', title: 'HACCP & Safety',
       lines: ['CCPs generated per dish', 'Critical limits & corrective actions', 'Temp logs, evidence & inspection reports'],
-      x: 330, y: 524, w: 200, sx: 468, sy: 524 },
+      x: 308, y: 512, w: 232, sx: 468, sy: 524 },
     { col: '#059669', title: 'Training & Compliance',
       lines: ['Bespoke training from your menus & ops', 'Level 2 food hygiene included', 'All legal compliance checks built in', 'Cert tracking & auto-renewal alerts'],
-      x: 44, y: 456, w: 210, sx: 254, sy: 490 },
+      x: 18, y: 444, w: 242, sx: 254, sy: 490 },
     { col: TL,       title: 'Front of House',
       lines: ['Live menu knowledge for all staff', 'Instant allergen answers', 'Dish descriptions & wine pairings'],
-      x: 44, y: 222, w: 200, sx: 244, sy: 270 },
+      x: 18, y: 208, w: 232, sx: 244, sy: 270 },
     { col: '#ea580c', title: 'Ordering & Deliveries',
       lines: ['Shopping list auto-built from menu', 'One-click POs to suppliers', 'Delivery checker — scan vs PO', 'Discrepancy alerts & records'],
-      x: 44, y: 42, w: 204, sx: 248, sy: 88 },
+      x: 18, y: 26, w: 236, sx: 248, sy: 88 },
   ];
 
-  const ROW = 13.5, HDR = 16, PAD = 6;
+  const ROW = 15, HDR = 19, PAD = 7;
 
   return (
     <svg viewBox="0 0 960 610" style={{ width: '100%', height: '100%', display: 'block' }}>
@@ -186,7 +186,7 @@ function SpokeMap() {
 
       {cards.map(c => (
         <line key={c.title + 's'} x1={cx} y1={cy} x2={c.sx} y2={c.sy}
-          stroke={c.col} strokeWidth="1.4" strokeOpacity="0.25" strokeDasharray="5,4" />
+          stroke={c.col} strokeWidth="0.8" strokeOpacity="0.20" strokeDasharray="3,5" />
       ))}
 
       {cards.map(c => {
@@ -199,13 +199,13 @@ function SpokeMap() {
               fill={c.col} fillOpacity="0.12" />
             <rect x={c.x} y={c.y + HDR - 2} width={c.w} height={2}
               fill={c.col} fillOpacity="0.20" />
-            <text x={c.x + 9} y={c.y + HDR - 4}
-              fill={c.col} fontSize="9" fontWeight="800" fontFamily={F}>{c.title}</text>
+            <text x={c.x + 10} y={c.y + HDR - 5}
+              fill={c.col} fontSize="10.5" fontWeight="800" fontFamily={F}>{c.title}</text>
             {c.lines.map((ln, li) => (
               <g key={ln}>
-                <circle cx={c.x + 11} cy={c.y + HDR + PAD + li * ROW + 4} r={1.6} fill={c.col} fillOpacity="0.6" />
-                <text x={c.x + 18} y={c.y + HDR + PAD + li * ROW + 8}
-                  fill={S4} fontSize="7.4" fontFamily={F}>{ln}</text>
+                <circle cx={c.x + 12} cy={c.y + HDR + PAD + li * ROW + 5} r={1.8} fill={c.col} fillOpacity="0.6" />
+                <text x={c.x + 20} y={c.y + HDR + PAD + li * ROW + 9}
+                  fill={S4} fontSize="8.5" fontFamily={F}>{ln}</text>
               </g>
             ))}
           </g>
