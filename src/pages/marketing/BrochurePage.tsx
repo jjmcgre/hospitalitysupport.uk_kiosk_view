@@ -429,23 +429,6 @@ function SolutionPage() {
             ]} />
           </Card>
 
-          {/* Pipeline value */}
-          <Card teal>
-            <Label>MRR pipeline by site size</Label>
-            <div style={{ marginTop: 6 }}>
-              {[
-                { label: '1 site',      mrr: '£100 / mo' },
-                { label: '2–5 sites',   mrr: '£300 / mo' },
-                { label: '6–15 sites',  mrr: '£900 / mo' },
-                { label: '16+ sites',   mrr: '£1,600 / mo' },
-              ].map((r, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', fontFamily: F }}>
-                  <span style={{ fontSize: 11.5, color: S4 }}>{r.label}</span>
-                  <span style={{ fontSize: 11.5, fontWeight: 900, color: TL }}>{r.mrr}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
         </div>
       </div>
       <PageFooter />
@@ -855,21 +838,6 @@ function ClosePage() {
           </div>
 
           <Rule />
-
-          <div>
-            <Label>Pipeline value by site size</Label>
-            {[
-              { label: '1 site',      mrr: '£100/mo' },
-              { label: '2–5 sites',   mrr: '£300/mo' },
-              { label: '6–15 sites',  mrr: '£900/mo' },
-              { label: '16+ sites',   mrr: '£1,600/mo' },
-            ].map((r, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none', fontFamily: F }}>
-                <span style={{ fontSize: 11, color: S5 }}>{r.label}</span>
-                <span style={{ fontSize: 12, fontWeight: 900, color: TL }}>{r.mrr}</span>
-              </div>
-            ))}
-          </div>
 
           <p style={{ color: '#0d1f2d', fontSize: 9.5, margin: 0, lineHeight: 1.6, fontFamily: F }}>
             Confidential · Not for distribution
