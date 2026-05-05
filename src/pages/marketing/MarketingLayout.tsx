@@ -64,7 +64,7 @@ function SharePanel() {
       >
         <span className="flex items-center gap-2">
           <Share2 size={15} className="flex-shrink-0" />
-          Public links
+          Marketing share links
         </span>
         <span className={`text-[10px] font-bold uppercase tracking-wider transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
@@ -158,7 +158,7 @@ export default function MarketingLayout() {
 
           <div className="border-t border-slate-800 pt-2">
             <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Campaign</p>
-            {campaignItems.map((item) => (
+            {campaignItems.slice(0, 1).map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -177,6 +177,24 @@ export default function MarketingLayout() {
               </NavLink>
             ))}
             <SharePanel />
+            {campaignItems.slice(1).map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`
+                }
+              >
+                <item.icon size={16} className="flex-shrink-0" />
+                {item.label}
+              </NavLink>
+            ))}
           </div>
 
           <div className="border-t border-slate-800 pt-2">
