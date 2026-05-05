@@ -73,13 +73,13 @@ Deno.serve(async (req: Request) => {
 
     // Build HTML email
     const firstName = contact.name?.split(" ")[0] || contact.name || "there";
-    const brochureUrl = `${siteUrl ?? "https://hospitality.support"}/brochure`;
+    const overviewUrl = `${siteUrl ?? "https://hospitality.support"}/demo`;
 
-    // Replace [link text][BROCHURE_LINK] with proper anchor in HTML, plain URL in text
+    // Replace [link text][OVERVIEW_LINK] with proper anchor in HTML, plain URL in text
     const replaceBrochureHtml = (s: string) =>
-      s.replace(/\[([^\]]+)\]\[BROCHURE_LINK\]/g, `<a href="${brochureUrl}" style="color:#14b8a6;">$1</a>`);
+      s.replace(/\[([^\]]+)\]\[OVERVIEW_LINK\]/g, `<a href="${overviewUrl}" style="color:#14b8a6;">$1</a>`);
     const replaceBrochureText = (s: string) =>
-      s.replace(/\[([^\]]+)\]\[BROCHURE_LINK\]/g, `$1: ${brochureUrl}`);
+      s.replace(/\[([^\]]+)\]\[OVERVIEW_LINK\]/g, `$1: ${overviewUrl}`);
 
     const personalizedText = body
       .replace(/\[First Name\]/gi, firstName);

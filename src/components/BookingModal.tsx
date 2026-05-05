@@ -78,7 +78,7 @@ export default function BookingModal() {
   const today = isoDate(new Date());
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setForm(EMPTY);
       setStep('details');
       setError('');

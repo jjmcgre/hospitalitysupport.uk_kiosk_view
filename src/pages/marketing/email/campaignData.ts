@@ -731,7 +731,7 @@ HospitalitySupport.uk is £100 per kitchen per month, all in. No per-user fees. 
 
 The platforms charge what they charge because operators have kept paying it. We started with a blank sheet and asked what this should actually cost. The answer was £100 a month.
 
-Full detail on what's included in our brochure — [view it here][BROCHURE_LINK].`,
+Full detail on what's included in our brochure — [view it here][OVERVIEW_LINK].`,
         cta: "See the full comparison →",
       },
       {
@@ -752,7 +752,7 @@ You're paying for tools. You still need the people to use them.
 
 HospitalitySupport.uk is different by design. The team does the work. You send a message, flag a task, ask a question — it gets handled. The records are kept. The margins are live. The compliance is current. One price. One team. Everything covered.
 
-See exactly what's included in our brochure — [download here][BROCHURE_LINK].`,
+See exactly what's included in our brochure — [download here][OVERVIEW_LINK].`,
         cta: "See what's included →",
       },
     ],
@@ -780,7 +780,7 @@ A GP & Cost Controller who keeps your margins live as prices shift, without anyo
 
 One team. One price. From £100 per kitchen per month. Legacy platforms charge more than this for a fraction of what's covered.
 
-Full detail on everything that's included — [read our brochure][BROCHURE_LINK].`,
+Full detail on everything that's included — [read our brochure][OVERVIEW_LINK].`,
         cta: "Read the full breakdown →",
       },
     ],
@@ -806,7 +806,7 @@ In our experience, most operators could answer honestly: probably not. The compl
 
 That's not a failure of intent. It's the predictable result of selling software to people who don't have time to operate it.
 
-Before the next renewal hits, it's worth knowing what £100 per kitchen per month actually covers with us — and how it compares to what you're currently spending. We've laid out the full comparison in our brochure — [it's a straightforward read][BROCHURE_LINK].
+Before the next renewal hits, it's worth knowing what £100 per kitchen per month actually covers with us — and how it compares to what you're currently spending. We've laid out the full comparison in our brochure — [it's a straightforward read][OVERVIEW_LINK].
 
 If you'd like to see the system in practice, a 30-minute walkthrough covers your scenario with no sales pressure. The link below puts time straight in the diary.`,
         cta: "Book a walkthrough before your renewal →",
@@ -836,7 +836,7 @@ The legacy platforms charge £300–£600 a month for individual pieces of this 
 
 We handle the work. That's the difference.
 
-If you'd like to see what that looks like for your business, the walkthrough takes 30 minutes. If you'd prefer to read first, our brochure covers everything — [view it here][BROCHURE_LINK]. Either way, worth knowing what the alternative looks like before the next invoice arrives.`,
+If you'd like to see what that looks like for your business, the walkthrough takes 30 minutes. If you'd prefer to read first, our brochure covers everything — [view it here][OVERVIEW_LINK]. Either way, worth knowing what the alternative looks like before the next invoice arrives.`,
         cta: "Book a 30-minute walkthrough →",
       },
     ],
