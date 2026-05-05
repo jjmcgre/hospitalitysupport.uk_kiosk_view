@@ -41,14 +41,13 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
       {/* Header */}
       <div style={{
         position: 'relative', zIndex: 1,
-        background: 'rgba(15,22,35,0.95)', padding: '8px 28px',
+        background: 'rgba(15,22,35,0.95)', padding: '8px 16mm',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
       }}>
         <span style={{ color: W, fontWeight: 900, fontSize: 13, letterSpacing: '-0.02em' }}>
           HospitalitySupport<span style={{ color: TL }}>.uk</span>
         </span>
-        <span style={{ color: S5, fontSize: 8 }}>Page {n} of 5</span>
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative', zIndex: 1 }}>
@@ -59,7 +58,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
       <div style={{
         position: 'relative', zIndex: 1,
         background: 'rgba(10,18,30,0.9)', borderTop: '1px solid rgba(255,255,255,0.05)',
-        padding: '6px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0,
+        padding: '6px 16mm', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0,
       }}>
         <span style={{ color: S8, fontSize: 7.5 }}>Built by operators, for operators · No 6-week onboarding · No consultants</span>
         <span style={{ color: T, fontSize: 7.5, fontWeight: 700 }}>hospitalitysupport.uk</span>
@@ -248,7 +247,7 @@ function Page1() {
 
         {/* Left — emotional hook */}
         <div style={{
-          background: DARK, padding: '20px 20px 18px 28px',
+          background: DARK, padding: '20px 20px 18px 16mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
@@ -327,7 +326,7 @@ function Page1() {
       <div style={{
         background: DARK, borderTop: `2px solid ${T}`,
         borderBottom: '1px solid rgba(45,212,191,0.10)',
-        padding: '10px 28px', display: 'flex', alignItems: 'center',
+        padding: '10px 16mm', display: 'flex', alignItems: 'center',
         justifyContent: 'space-between', flexShrink: 0, gap: 20,
       }}>
         <div style={{ flex: 1 }}>
@@ -385,7 +384,7 @@ function Page2() {
 
         {/* Left — dark mockups */}
         <div style={{
-          background: DARK, padding: '18px 14px 16px 28px',
+          background: DARK, padding: '18px 14px 16px 16mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
@@ -494,7 +493,7 @@ function Page2() {
 
         {/* Right — dark context */}
         <div style={{
-          background: 'rgba(15,22,35,0.8)', padding: '18px 28px 16px 16px',
+          background: 'rgba(15,22,35,0.8)', padding: '18px 16mm 16px 16px',
           display: 'flex', flexDirection: 'column', gap: 9,
         }}>
           <p style={{ color: S4, fontSize: 10.5, lineHeight: 1.65, margin: 0 }}>
@@ -561,7 +560,7 @@ function Page3() {
 
         {/* Left — dark context */}
         <div style={{
-          background: 'rgba(15,22,35,0.8)', padding: '18px 14px 16px 28px',
+          background: 'rgba(15,22,35,0.8)', padding: '18px 14px 16px 16mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', gap: 9,
         }}>
@@ -610,7 +609,7 @@ function Page3() {
 
         {/* Right — dark mockups */}
         <div style={{
-          background: DARK, padding: '18px 28px 16px 14px',
+          background: DARK, padding: '18px 16mm 16px 14px',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
 
@@ -718,7 +717,7 @@ function Page4() {
 
         {/* Left — dark mockups */}
         <div style={{
-          background: DARK, padding: '18px 14px 16px 28px',
+          background: DARK, padding: '18px 14px 16px 16mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
@@ -827,7 +826,7 @@ function Page4() {
 
         {/* Right — dark content */}
         <div style={{
-          background: 'rgba(15,22,35,0.8)', padding: '18px 28px 16px 16px',
+          background: 'rgba(15,22,35,0.8)', padding: '18px 16mm 16px 16px',
           display: 'flex', flexDirection: 'column', gap: 9,
         }}>
           <Card teal>
@@ -894,7 +893,7 @@ function Page5() {
 
         {/* Left — dark context */}
         <div style={{
-          background: 'rgba(15,22,35,0.8)', padding: '18px 14px 16px 28px',
+          background: 'rgba(15,22,35,0.8)', padding: '18px 14px 16px 16mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', gap: 9,
         }}>
@@ -954,7 +953,7 @@ function Page5() {
 
         {/* Right — dark */}
         <div style={{
-          background: DARK, padding: '18px 28px 16px 14px',
+          background: DARK, padding: '18px 16mm 16px 14px',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
 
