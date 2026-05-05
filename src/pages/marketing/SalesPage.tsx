@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CopyButton from './components/CopyButton';
 import PageHeader from './components/PageHeader';
+import { useBooking } from '../../context/BookingContext';
 
 const talkingPoints = [
   {
@@ -143,6 +144,7 @@ function ExpandableCard({ title, subtitle, content }: ExpandableCardProps) {
 }
 
 export default function SalesPage() {
+  const { openBooking } = useBooking();
   return (
     <div className="min-h-full">
       <PageHeader
@@ -203,6 +205,19 @@ export default function SalesPage() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="bg-teal-500/10 border border-teal-500/30 rounded-2xl p-6 flex items-center justify-between gap-6">
+          <div>
+            <p className="text-white font-bold text-base mb-1">Ready to book a walkthrough?</p>
+            <p className="text-slate-400 text-sm">30 minutes. Your dishes, your suppliers, your operation — no slides, no generic demo.</p>
+          </div>
+          <button
+            onClick={openBooking}
+            className="flex-shrink-0 bg-teal-500 hover:bg-teal-400 transition-colors text-white font-bold px-6 py-3 rounded-xl text-sm whitespace-nowrap"
+          >
+            Book a demo →
+          </button>
         </div>
       </div>
     </div>

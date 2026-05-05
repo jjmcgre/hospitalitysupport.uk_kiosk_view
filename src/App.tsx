@@ -14,9 +14,13 @@ import Print1Page from './pages/marketing/Print1Page';
 import Print5Page from './pages/marketing/Print5Page';
 import EnquiriesPage from './pages/marketing/EnquiriesPage';
 import DiaryPage from './pages/marketing/DiaryPage';
+import { BookingProvider } from './context/BookingContext';
+import BookingModal from './components/BookingModal';
 
 function App() {
   return (
+    <BookingProvider>
+      <BookingModal />
     <BrowserRouter>
       <Routes>
         {/* Public-facing shareable pages — clean, no sidebar */}
@@ -48,6 +52,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </BookingProvider>
   );
 }
 

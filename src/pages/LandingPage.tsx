@@ -10,8 +10,7 @@ import BenefitsSection from '../components/BenefitsSection';
 import DifferenceSection from '../components/DifferenceSection';
 import PricingSection from '../components/PricingSection';
 import ClosingSection from '../components/ClosingSection';
-import BookingModal from '../components/BookingModal';
-import { BookingProvider, useBooking } from '../context/BookingContext';
+import { useBooking } from '../context/BookingContext';
 
 function Nav() {
   const { openBooking } = useBooking();
@@ -30,7 +29,7 @@ function Nav() {
   );
 }
 
-function PageContent() {
+export default function LandingPage() {
   const { openBooking } = useBooking();
   const [searchParams] = useSearchParams();
 
@@ -53,15 +52,6 @@ function PageContent() {
       <WhatsAppSection />
       <PricingSection />
       <ClosingSection />
-      <BookingModal />
     </div>
-  );
-}
-
-export default function LandingPage() {
-  return (
-    <BookingProvider>
-      <PageContent />
-    </BookingProvider>
   );
 }

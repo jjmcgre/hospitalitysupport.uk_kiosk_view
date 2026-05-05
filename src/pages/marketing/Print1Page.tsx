@@ -1,3 +1,5 @@
+import { useBooking } from '../../context/BookingContext';
+
 /*
   1-Pager — A4 portrait, 210×297mm.
   Audience: business owners and commercial directors.
@@ -16,6 +18,7 @@ const S6   = '#475569';
 const F    = "'Inter', system-ui, sans-serif";
 
 export default function Print1Page({ standalone = false }: { standalone?: boolean }) {
+  const { openBooking } = useBooking();
   const caps = [
     { label: 'Cost & GP',              note: 'Live against your suppliers. Every dish, every day.' },
     { label: 'Menu & Recipe',           note: 'Full spec from plain English. Auto-recosted on any change.' },
@@ -348,14 +351,31 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                 We'll show the system on a real scenario — your dishes, your suppliers, your operation.
               </div>
             </div>
-            <div style={{
-              background: W, color: T, fontWeight: 900, fontSize: 11.5,
-              padding: '10px 20px', borderRadius: 8, whiteSpace: 'nowrap',
-              flexShrink: 0, letterSpacing: '-0.01em',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-            }}>
-              hospitalitysupport.uk →
-            </div>
+            {standalone ? (
+              <a
+                href="/demo?book=1"
+                style={{
+                  background: W, color: T, fontWeight: 900, fontSize: 11.5,
+                  padding: '10px 20px', borderRadius: 8, whiteSpace: 'nowrap',
+                  flexShrink: 0, letterSpacing: '-0.01em', textDecoration: 'none',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)', display: 'block',
+                }}
+              >
+                Book a demo →
+              </a>
+            ) : (
+              <button
+                onClick={openBooking}
+                style={{
+                  background: W, color: T, fontWeight: 900, fontSize: 11.5,
+                  padding: '10px 20px', borderRadius: 8, whiteSpace: 'nowrap',
+                  flexShrink: 0, letterSpacing: '-0.01em', cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)', border: 'none',
+                }}
+              >
+                Book a demo →
+              </button>
+            )}
           </div>
 
         </div>

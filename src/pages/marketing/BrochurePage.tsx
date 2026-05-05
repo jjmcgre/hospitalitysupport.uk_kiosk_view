@@ -1,4 +1,5 @@
 import React from 'react';
+import { useBooking } from '../../context/BookingContext';
 
 /*
   250×200mm landscape at 96dpi = 945 × 756px.
@@ -183,7 +184,7 @@ function Rule() {
 /* ══════════════════════════════════════════════════════════════════════
    PAGE 1 — COVER
 ══════════════════════════════════════════════════════════════════════ */
-function CoverPage() {
+function CoverPage({ onBook }: { onBook: () => void }) {
   const caps = [
     { label: 'Menu creation',       sub: 'Full spec in under 3 minutes' },
     { label: 'Live GP & costing',   sub: 'Every dish, every day' },
@@ -259,10 +260,12 @@ function CoverPage() {
           </div>
 
           <div style={{ marginTop: 16 }}>
-            <Card teal style={{ padding: '12px 14px', textAlign: 'center' as const }}>
-              <div style={{ color: W, fontWeight: 900, fontSize: 10, marginBottom: 3, fontFamily: F }}>Book a 30-minute demo</div>
-              <div style={{ color: TL, fontWeight: 900, fontSize: 12, fontFamily: F }}>hospitalitysupport.uk</div>
-            </Card>
+            <button onClick={onBook} style={{ width: '100%', padding: 0, border: 'none', cursor: 'pointer', background: 'transparent', display: 'block' }}>
+              <Card teal style={{ padding: '12px 14px', textAlign: 'center' as const }}>
+                <div style={{ color: W, fontWeight: 900, fontSize: 10, marginBottom: 3, fontFamily: F }}>Book a 30-minute demo</div>
+                <div style={{ color: TL, fontWeight: 900, fontSize: 12, fontFamily: F }}>hospitalitysupport.uk →</div>
+              </Card>
+            </button>
           </div>
         </div>
       </div>
@@ -735,7 +738,7 @@ function ComparisonPage() {
 /* ══════════════════════════════════════════════════════════════════════
    PAGE 8 — CLOSE
 ══════════════════════════════════════════════════════════════════════ */
-function ClosePage() {
+function ClosePage({ onBook }: { onBook: () => void }) {
   const modules = [
     'Menu Development', 'Cost & GP', 'Ordering & POs',
     'Supplier Pricing', 'Allergens', 'HACCP & Safety',
@@ -791,9 +794,9 @@ function ClosePage() {
             <p style={{ color: S4, fontSize: 10.5, lineHeight: 1.6, margin: '0 0 18px', fontFamily: F }}>
               We'll show your actual dishes recosting live against your supplier prices. No slides. No generic demo. Your data, your operation, in real time.
             </p>
-            <div style={{ background: T, color: W, fontWeight: 900, fontSize: 13, padding: '12px 0', borderRadius: 10, textAlign: 'center' as const, letterSpacing: '-0.01em', fontFamily: F }}>
-              hospitalitysupport.uk
-            </div>
+            <button onClick={onBook} style={{ width: '100%', background: T, color: W, fontWeight: 900, fontSize: 13, padding: '12px 0', borderRadius: 10, textAlign: 'center' as const, letterSpacing: '-0.01em', fontFamily: F, cursor: 'pointer', border: 'none' }}>
+              Book a demo → hospitalitysupport.uk
+            </button>
           </div>
 
           <Rule />
@@ -808,6 +811,7 @@ function ClosePage() {
    EXPORT
 ══════════════════════════════════════════════════════════════════════ */
 export default function BrochurePage({ standalone = false }: { standalone?: boolean }) {
+  const { openBooking } = useBooking();
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
       <div style={{ maxWidth: PW + 48 }} className="mx-auto">
@@ -852,14 +856,14 @@ export default function BrochurePage({ standalone = false }: { standalone?: bool
         `}</style>
 
         <div className="space-y-6">
-          <CoverPage />
+          <CoverPage onBook={standalone ? () => { window.location.href = '/demo?book=1'; } : openBooking} />
           <ProblemPage />
           <SolutionPage />
           <CapabilityPage />
           <AudiencePage />
           <PricingPage />
           <ComparisonPage />
-          <ClosePage />
+          <ClosePage onBook={standalone ? () => { window.location.href = '/demo?book=1'; } : openBooking} />
         </div>
       </div>
     </div>

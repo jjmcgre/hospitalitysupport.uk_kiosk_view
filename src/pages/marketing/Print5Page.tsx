@@ -1,4 +1,5 @@
 import React from 'react';
+import { useBooking } from '../../context/BookingContext';
 
 /*
   5-Pager — A4 portrait, 794×1123px at 96dpi.
@@ -1041,13 +1042,31 @@ function Page5() {
               It changes what you personally have to carry. Menu development. GP control. Allergens. Compliance. Training. Front-of-house. All of it. From £3.30 a day. No payroll. No politics. No sick days.
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{
-                background: T, color: W, fontWeight: 900,
-                fontSize: 11, padding: '9px 16px', borderRadius: 8,
-                whiteSpace: 'nowrap' as const, letterSpacing: '-0.01em',
-              }}>
-                Book a 30-min demo →
-              </div>
+              {standalone ? (
+                <a
+                  href="/demo?book=1"
+                  style={{
+                    background: T, color: W, fontWeight: 900,
+                    fontSize: 11, padding: '9px 16px', borderRadius: 8,
+                    whiteSpace: 'nowrap' as const, letterSpacing: '-0.01em',
+                    textDecoration: 'none', display: 'inline-block',
+                  }}
+                >
+                  Book a 30-min demo →
+                </a>
+              ) : (
+                <button
+                  onClick={openBooking}
+                  style={{
+                    background: T, color: W, fontWeight: 900,
+                    fontSize: 11, padding: '9px 16px', borderRadius: 8,
+                    whiteSpace: 'nowrap' as const, letterSpacing: '-0.01em',
+                    cursor: 'pointer', border: 'none',
+                  }}
+                >
+                  Book a 30-min demo →
+                </button>
+              )}
               <span style={{ color: S5, fontSize: 9, lineHeight: 1.5 }}>
                 We'll show your dishes recosting live.<br />
                 Your data. No slides. No pitch deck.
@@ -1064,6 +1083,7 @@ function Page5() {
    EXPORT
 ═══════════════════════════════════════════════════════════════════════ */
 export default function Print5Page({ standalone = false }: { standalone?: boolean }) {
+  const { openBooking } = useBooking();
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
       <div className="max-w-3xl mx-auto">
