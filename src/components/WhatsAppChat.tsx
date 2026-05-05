@@ -29,7 +29,7 @@ const conversations = [
       { id: 2, text: "What's the damage?", sender: 'user' as const, timestamp: '08:45', read: true },
       { id: 3, text: "Your Lamb Rump dropped from 71% to 65% GP. Here are your options:\n\n1. Adjust portion: 180g → 165g (back to 70% GP)\n2. Increase price: £24 → £26 (72% GP)\n3. Switch cut: Use lamb loin instead (69% GP, same portion)\n\nWhat works for you?", sender: 'system' as const, timestamp: '08:46', read: true },
       { id: 4, text: "Option 3 - switch to loin", sender: 'user' as const, timestamp: '08:47', read: true },
-      { id: 5, text: "Done. Recipe updated, allergen info unchanged, GP restored to 69%. Your team will see the updated spec next time they open the dish.", sender: 'system' as const, timestamp: '08:47', read: false }
+      { id: 5, text: "Done. Recipe updated, allergen info unchanged, GP restored to 69%. The updated spec is live — anyone opening the dish will see it immediately.", sender: 'system' as const, timestamp: '08:47', read: false }
     ]
   },
   {
@@ -38,7 +38,7 @@ const conversations = [
       { id: 1, text: "I've got 2 new starters Monday - need them trained on allergens and our menu", sender: 'user' as const, timestamp: '14:22', read: true },
       { id: 2, text: "No problem. What are their roles?", sender: 'system' as const, timestamp: '14:22', read: true },
       { id: 3, text: "One chef de partie, one front of house", sender: 'user' as const, timestamp: '14:23', read: true },
-      { id: 4, text: "Training plans created:\n\n**Chef de Partie:**\n• Food safety level 2 (45 min)\n• Your menu specs (20 min)\n• Allergen awareness (15 min)\n\n**Front of House:**\n• Allergen customer service (20 min)\n• Menu knowledge (25 min)\n• Your service standards (15 min)\n\nI'll send them the links Monday morning. You'll get completion alerts.", sender: 'system' as const, timestamp: '14:24', read: true },
+      { id: 4, text: "Training plans created:\n\n**Chef de Partie:**\n• Food safety level 2 (45 min)\n• Your menu specs (20 min)\n• Allergen awareness (15 min)\n\n**Front of House:**\n• Allergen customer service (20 min)\n• Menu knowledge (25 min)\n• Your service standards (15 min)\n\nLinks ready to send Monday morning. Completion is tracked automatically.", sender: 'system' as const, timestamp: '14:24', read: true },
       { id: 5, text: "Perfect. Can they do it before shift?", sender: 'user' as const, timestamp: '14:25', read: true },
       { id: 6, text: "Yes - each plan is under 90 minutes total. They can do it on their phones before they start.", sender: 'system' as const, timestamp: '14:25', read: false }
     ]
@@ -127,7 +127,7 @@ export default function WhatsAppChat() {
           </div>
           <div>
             <div className="font-semibold text-sm sm:text-base">HospitalitySupport.uk</div>
-            <div className="text-xs text-teal-100">Your operations team</div>
+            <div className="text-xs text-teal-100">Always on. Always accurate.</div>
           </div>
         </div>
 

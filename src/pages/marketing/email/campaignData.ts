@@ -37,9 +37,9 @@ For most hospitality businesses that question is genuinely hard to answer. Ingre
 
 HospitalitySupport.uk was built to close that gap.
 
-It's not a software platform you log into. It's a working operations team — Menu Development Chef, GP & Cost Controller, Allergen Specialist, Training Manager, Compliance Lead — available to your business around the clock, from £100 per kitchen per month.
+HospitalitySupport.uk is a platform built from real hospitality expertise — covering GP control, menu development, allergen management, compliance, and staff training — all connected, all live, from £100 per kitchen per month.
 
-You ask a question, flag a problem, or request a task. It gets handled. Properly.
+You ask a question, flag a problem, or request a task. It's handled. Automatically and accurately.
 
 No per-user fees. No setup. No onboarding overhead.
 
@@ -71,7 +71,7 @@ It's not negligence. It's the reality of running a busy kitchen without the syst
 
 The question isn't whether this happens — it's how long it goes unnoticed, and how often.
 
-HospitalitySupport.uk gives your business a dedicated GP & Cost Controller that works from your live data. When prices shift, the impact is calculated immediately. You get a clear decision — adjust the spec, change the price, or accept the margin — not a retrospective report.
+HospitalitySupport.uk works from your live supplier data. When prices shift, the impact is calculated immediately. You get a clear decision — adjust the spec, change the price, or accept the margin — not a retrospective report.
 
 One message. Decision made. Spec updated. Margin protected.
 
@@ -239,9 +239,9 @@ This is the last email in this sequence — I won't keep landing in your inbox a
 
 I'll keep it short.
 
-HospitalitySupport.uk is a full hospitality operations team — GP control, menu development, allergen management, compliance, staff training — available to your business around the clock, from £100 per kitchen per month.
+HospitalitySupport.uk handles GP control, menu development, allergen management, compliance, and staff training — all connected, all live, from £100 per kitchen per month.
 
-If you'd like to see it working before making any decision, I'm happy to do a no-agenda 30-minute walkthrough. I'll show you the system running on a real scenario, answer whatever questions come up, and leave you to decide whether it's relevant.
+If you'd like to see it working before making any decision, I'm happy to do a no-agenda 30-minute walkthrough. I'll show you the platform running on a real scenario, answer whatever questions come up, and leave you to decide whether it's relevant.
 
 No follow-up pressure after that. Just a straightforward conversation.
 
@@ -260,7 +260,7 @@ The conventional model for growing a hospitality estate is well understood: more
 
 The question operators are asking more often now is whether that ratio has to hold.
 
-HospitalitySupport.uk gives every kitchen in your estate access to a full operations team — GP control, menu development, allergen management, compliance, training — for a flat fee per kitchen. The same fee whether you have two sites or twenty.
+HospitalitySupport.uk gives every kitchen in your estate the same capability — GP control, menu development, allergen management, compliance, training — for a flat fee per kitchen. The same fee whether you have two sites or twenty.
 
 Standards are consistent across every location because the system that maintains them is the same system. Compliance is evidenced at every site. Training happens the same way everywhere. GP visibility doesn't depend on which manager happens to be thorough.
 
@@ -297,9 +297,9 @@ None of them were built by people who'd actually had to run a pass on a Saturday
 
 So we built HospitalitySupport.uk differently.
 
-It's not a platform you manage. It's a team that works for you — GP Controller, Menu Development Chef, Allergen Specialist, Training Manager, Compliance Lead — available around the clock, from £100 per kitchen per month.
+It's not a platform you manage. It's a platform that does the work — GP control, menu development, allergen management, compliance, staff training — built from real operational expertise, available around the clock, from £100 per kitchen per month.
 
-You talk to it the way you'd talk to a trusted ops colleague. It handles the rest.
+You send a message. It handles the rest. No setup, no spreadsheets, no chasing.
 
 We know what the problems actually feel like. That's why this works differently.`,
         cta: "Give us 30 minutes — we'll show you the difference →",
@@ -331,7 +331,7 @@ None of them were built by people who'd actually had to use them under pressure.
 
 HospitalitySupport.uk was built by operators who'd lived with that frustration long enough to do something about it.
 
-It works the way a good ops colleague works — you ask for something, it gets done, properly, without you having to manage the process.
+It works the way it should — you ask for something, it's done properly, without you having to manage the process or update a system.
 
 That's not a feature list. That's a fundamentally different approach.`,
         cta: "Book 30 minutes — see what different actually looks like →",
@@ -441,7 +441,7 @@ The honest answer is that most people who build software for hospitality have ne
 
 They built tools. Not support.
 
-The difference shows up in how it actually works. Not in a feature comparison — in what happens when a problem lands on your desk at the wrong moment and you need it handled by someone who already understands the context.
+The difference shows up in how it actually works. Not in a feature comparison — in what happens when a problem lands on your desk at the wrong moment and the platform already has the context to handle it accurately.
 
 We built HospitalitySupport.uk because we were the ones who needed it and couldn't find it.
 
@@ -471,7 +471,7 @@ We built HospitalitySupport.uk because we spent years working in kitchens and op
 
 We know the problems from the inside. That's what makes this different. Not just different from other software — different from having to figure it all out yourself.
 
-From £100 per kitchen per month, you get a full operations team that already understands the work: GP control, menu development, allergen management, compliance, training — available any time you need it.
+From £100 per kitchen per month, you get a platform that already understands the work: GP control, menu development, allergen management, compliance, training — available any time you need it.
 
 If you'd like to see it, we'll give you 30 minutes of our time and show you exactly what it does on a real scenario.
 
@@ -510,7 +510,7 @@ None of it requires a chef.
 
 But it lands on a chef — because in most hospitality businesses, the kitchen carries the operational admin that no one else has time for. And the person who carries most of it is usually the one you can least afford to lose to a spreadsheet.
 
-HospitalitySupport.uk takes all of it off the kitchen. GP control, allergen management, compliance records, staff training — handled by a dedicated ops team, from £100 per kitchen per month.
+HospitalitySupport.uk takes all of it off the kitchen. GP control, allergen management, compliance records, staff training — handled automatically by a platform built from real hospitality expertise, from £100 per kitchen per month.
 
 For the price of a coffee a day, your head chef gets their week back.
 
@@ -545,7 +545,7 @@ These aren't abstract benefits. They're the things a skilled chef does when they
 
 The operational admin doesn't disappear when it's left undone — it just creates risk. And it doesn't get done well when it's squeezed into the gaps — it creates a different kind of risk.
 
-HospitalitySupport.uk removes it entirely. A dedicated GP Controller, Allergen Specialist, Compliance Lead, and Training Manager — handling everything that shouldn't be on the chef's list, from £100 per kitchen per month.
+HospitalitySupport.uk removes it entirely. GP control, allergen management, compliance, and training — all handled automatically, everything that shouldn't be on the chef's list, from £100 per kitchen per month.
 
 That's the price of protecting the margin the chef should be focusing on.`,
         cta: "Talk to us about what this looks like for your kitchen →",
@@ -570,7 +570,7 @@ You didn't hire them for that. They didn't become chefs for that.
 
 But the admin has to go somewhere. And in most kitchens, it goes to whoever can't say no — which is usually the most capable person in the room.
 
-HospitalitySupport.uk was built specifically to stop that drift. The operational work is handled. Properly. Continuously. By people who understand kitchens — so the people who understand kitchens can get back to the work they're actually good at.
+HospitalitySupport.uk was built specifically to stop that drift. The operational work is handled automatically — properly, continuously — so the people who understand kitchens can get back to the work they're actually good at.
 
 From £100 per kitchen per month. The cost of one hour of management time.`,
         cta: "Let's talk about what your kitchen gets back →",
@@ -624,15 +624,11 @@ From £100 per kitchen per month. Less than the cost of a single improvement not
 
 That's what HospitalitySupport.uk costs per kitchen.
 
-For that, every single day, your kitchen has access to:
+For that, every single day, your kitchen has:
 
-A GP & Cost Controller keeping your margins live as supplier prices move.
-An Allergen Specialist maintaining your allergen records as the menu changes.
-A Compliance Lead ensuring your food safety documentation is always current.
-A Training Manager handling new starter onboarding and completion tracking.
-A Menu Development Chef available when you need a fresh set of eyes on the food.
+Live GP and margin control updating automatically as supplier prices move. Allergen records maintained as the menu changes. Food safety documentation always current. Staff training built and tracked automatically. Menu development capability when you need a fresh perspective on the food.
 
-Not a platform. Not a portal. A team — responding to your kitchen, handling the work, giving your head chef their time back.
+All of it handled. All of it accurate. Your head chef's time back.
 
 The alternative is your chef doing all of this between services, in the margins of a job they were hired to do something else. Or it doesn't get done. Or it gets done badly.
 
@@ -699,7 +695,7 @@ Most operators are still on those platforms. Not because they're the best option
 
 We rewrote the approach from scratch.
 
-HospitalitySupport.uk isn't a legacy platform with a new interface. It's a full hospitality operations team — GP & Cost Controller, Menu Development Chef, Allergen Specialist, Training Manager, Compliance Lead — available around the clock, from £100 per kitchen per month.
+HospitalitySupport.uk isn't a legacy platform with a new interface. It's a platform that does the work — GP control, menu development, allergen management, compliance, staff training — built from real hospitality expertise, available around the clock, from £100 per kitchen per month.
 
 No per-user fees. No setup costs. No annual contract. No onboarding overhead. Just the work, done properly, from day one.
 
@@ -727,7 +723,7 @@ Compliance platforms run £200–£400 a month plus per-user fees. What you get:
 
 Run the full stack and you're looking at £750–£1,600 a month per site — four separate logins, four sets of data, and someone in your team carrying the admin burden for all of it.
 
-HospitalitySupport.uk is £100 per kitchen per month, all in. No per-user fees. No setup costs. And unlike the platforms above, the work gets done for you — by a dedicated team, not a tool waiting to be operated.
+HospitalitySupport.uk is £100 per kitchen per month, all in. No per-user fees. No setup costs. And unlike the platforms above, the work gets done automatically — not stored in a tool waiting for someone to operate it.
 
 The platforms charge what they charge because operators have kept paying it. We started with a blank sheet and asked what this should actually cost. The answer was £100 a month.
 

@@ -4,7 +4,7 @@ import { ChefHat, TrendingUp, Eye, Shield, GraduationCap, ClipboardCheck, Wine, 
 const team = [
   {
     icon: ChefHat,
-    title: 'Menu Development Chef',
+    title: 'Menu & Recipe',
     description: 'Builds menus that work in real kitchens',
     details: {
       headline: 'Full menu generated in under one hour',
@@ -17,7 +17,7 @@ const team = [
   },
   {
     icon: TrendingUp,
-    title: 'Cost & GP Controller',
+    title: 'Cost & GP',
     description: 'Protects margin continuously',
     details: {
       headline: 'Prices dishes using live supplier data',
@@ -28,7 +28,7 @@ const team = [
   },
   {
     icon: Eye,
-    title: 'Supplier & Price Watcher',
+    title: 'Supplier & Pricing',
     description: 'Stops silent price creep',
     details: {
       points: [
@@ -42,7 +42,7 @@ const team = [
   },
   {
     icon: Shield,
-    title: 'Allergen & Nutrition Specialist',
+    title: 'Allergens & Nutrition',
     description: 'Keeps you safe by design',
     details: {
       points: [
@@ -56,7 +56,7 @@ const team = [
   },
   {
     icon: GraduationCap,
-    title: 'Training Manager',
+    title: 'Staff Training',
     description: 'Stops knowledge walking out the door',
     details: {
       points: [
@@ -70,7 +70,7 @@ const team = [
   },
   {
     icon: ClipboardCheck,
-    title: 'Compliance Lead',
+    title: 'Compliance & Food Safety',
     description: 'Keeps inspections boring',
     details: {
       points: [
@@ -84,7 +84,7 @@ const team = [
   },
   {
     icon: Wine,
-    title: 'Wine & Bar Specialist',
+    title: 'Bar & Wine',
     description: 'Aligns drinks, margin, and service',
     details: {
       points: [
@@ -98,7 +98,7 @@ const team = [
   },
   {
     icon: Users,
-    title: 'Front-of-House Specialist',
+    title: 'Front of House',
     description: 'Keeps service consistent',
     details: {
       points: [
@@ -120,16 +120,16 @@ export default function TeamSection() {
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12 md:mb-14">
           <div className="inline-block bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-5">
-            Your pocket team
+            What it covers
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight mb-6 text-white">
-            Meet your pocket team
+            Eight capabilities.<br />One platform.
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed mb-4">
-            A full hospitality operations team — without payroll, politics, or turnover
+            Built from real hospitality expertise — each capability handles its domain automatically, so your team doesn't have to.
           </p>
           <p className="text-slate-500 text-base max-w-2xl mx-auto leading-relaxed">
-            It's not humans responding — it's a system built from real hospitality expertise, designed to behave like a reliable operations team.
+            Every area works from the same live data. When a recipe changes, costs update, allergens update, compliance updates — automatically, across the board.
           </p>
         </div>
 
@@ -258,7 +258,7 @@ export default function TeamSection() {
 
         <div className="mt-12 text-center">
           <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            All of them work from the same live reality.<br />
+            All eight work from the same live data.<br />
             <span className="text-teal-400 font-black text-xl sm:text-2xl">Nothing duplicated. Nothing forgotten.</span>
           </p>
         </div>
