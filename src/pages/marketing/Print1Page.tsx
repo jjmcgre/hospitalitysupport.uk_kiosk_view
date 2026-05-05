@@ -5,7 +5,6 @@
 */
 const NAV  = '#080f1a';
 const DARK = '#0f1623';
-const UI   = '#1a2535';
 const T    = '#14b8a6';
 const TL   = '#2dd4bf';
 const T3   = '#99f6e4';
@@ -14,7 +13,6 @@ const S3   = '#cbd5e1';
 const S4   = '#94a3b8';
 const S5   = '#64748b';
 const S6   = '#475569';
-const S8   = '#1e293b';
 const F    = "'Inter', system-ui, sans-serif";
 
 export default function Print1Page({ standalone = false }: { standalone?: boolean }) {
@@ -58,7 +56,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
             background: NAV, position: 'relative',
           }}
         >
-          {/* Subtle grid overlay */}
+          {/* Grid overlay */}
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
@@ -87,240 +85,199 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           {/* HERO */}
           <div style={{
             position: 'relative', zIndex: 1,
-            background: DARK, padding: '18px 28px 16px',
+            background: DARK, padding: '20px 28px 18px',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}>
             <h1 style={{
-              color: W, fontSize: 24, fontWeight: 900, margin: 0,
-              lineHeight: 1.1, letterSpacing: '-0.03em', maxWidth: 520,
+              color: W, fontSize: 26, fontWeight: 900, margin: '0 0 6px',
+              lineHeight: 1.05, letterSpacing: '-0.03em',
             }}>
-              Your kitchens are costing more<br />
+              Your kitchens are costing more{' '}
               <span style={{ color: TL }}>than your P&L shows.</span>
             </h1>
-            <p style={{ color: S4, fontSize: 11, marginTop: 8, lineHeight: 1.65, maxWidth: 540 }}>
-              Ingredient prices change without warning. Margin drift goes unnoticed until month end. Training is inconsistent. Compliance relies on whoever happens to be in that week. HospitalitySupport.uk closes every one of those gaps, continuously, for £3.30 a day.
+            <p style={{ color: S4, fontSize: 10.5, margin: 0, lineHeight: 1.6, maxWidth: 580 }}>
+              Ingredient prices change without warning. Margin drift goes unnoticed until month end. Training is inconsistent. Compliance relies on whoever happens to be in that week.{' '}
+              <span style={{ color: S3, fontWeight: 600 }}>HospitalitySupport.uk closes every one of those gaps — automatically, for £3.30 a day.</span>
             </p>
           </div>
 
-          {/* THE HIDDEN COST STRIP */}
+          {/* KEY NUMBERS */}
           <div style={{
             position: 'relative', zIndex: 1,
-            background: 'rgba(15,23,42,0.6)', padding: '10px 28px',
+            background: 'rgba(10,18,30,0.8)', padding: '12px 28px',
+            display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
           }}>
-            <div style={{
-              fontSize: 8, fontWeight: 800, color: S5,
-              textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8,
-            }}>
-              Where the margin goes — and how it's recovered
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
-              {[
-                { problem: 'Supplier price rise',   fix: 'Flagged immediately. Options presented. Spec updated.',       saving: 'GP protected' },
-                { problem: 'New starter on shift',  fix: 'Role-specific training sent to their phone before day one.',  saving: 'No margin lost to errors' },
-                { problem: 'EHO inspection notice', fix: 'All records current. Evidence already in order.',             saving: 'No audit scramble' },
-                { problem: 'Manager stretched thin', fix: 'Operational tasks handled automatically. Capacity returned.', saving: 'Focus on growth' },
-              ].map((s, i) => (
-                <div key={i} style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 8, padding: '8px 9px',
-                }}>
-                  <div style={{ color: '#f87171', fontSize: 8.5, fontWeight: 700, marginBottom: 4, lineHeight: 1.3 }}>{s.problem}</div>
-                  <div style={{ color: S4, fontSize: 8, lineHeight: 1.45, marginBottom: 5 }}>{s.fix}</div>
-                  <div style={{
-                    color: TL, fontSize: 7.5, fontWeight: 800,
-                    background: 'rgba(45,212,191,0.08)',
-                    border: '1px solid rgba(45,212,191,0.2)',
-                    borderRadius: 4, padding: '2px 6px', display: 'inline-block',
-                  }}>{s.saving}</div>
-                </div>
-              ))}
-            </div>
+            {[
+              { val: '£3.30',   label: 'per kitchen / day' },
+              { val: '3 min',   label: 'dish concept to live spec' },
+              { val: '14',      label: 'allergens tracked' },
+              { val: '< 1 sec', label: 'to recost on price change' },
+              { val: '0',       label: 'per-user fees' },
+            ].map((s) => (
+              <div key={s.label} style={{ textAlign: 'center' }}>
+                <div style={{ color: TL, fontSize: 18, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+                <div style={{ color: S5, fontSize: 7.5, marginTop: 4, lineHeight: 1.3 }}>{s.label}</div>
+              </div>
+            ))}
           </div>
 
-          {/* MAIN CONTENT */}
+          {/* MAIN BODY */}
           <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0, position: 'relative', zIndex: 1 }}>
 
-            {/* LEFT — what the team does */}
+            {/* LEFT — capabilities */}
             <div style={{
-              background: DARK, padding: '14px 12px 14px 28px',
+              background: DARK, padding: '16px 14px 16px 28px',
               borderRight: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', flexDirection: 'column', gap: 8,
+              display: 'flex', flexDirection: 'column',
             }}>
-              <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                What it handles — automatically
+              <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 12 }}>
+                What it covers
               </div>
 
-              {[
-                {
-                  role: 'Cost & GP',
-                  desc: 'Every dish monitored against your GP targets. Supplier price changes flagged the moment they happen, with adjustment options presented before it costs you anything.',
-                },
-                {
-                  role: 'Menu & Recipe',
-                  desc: 'Menus and dish specs built around your kitchen, your skill level, your service pressure. Recosted automatically whenever ingredients change.',
-                },
-                {
-                  role: 'Allergens & Nutrition',
-                  desc: 'All 14 allergens tracked across your menu. Updates automatically when recipes change. Natasha\'s Law compliance maintained without manual intervention.',
-                },
-                {
-                  role: 'Compliance & Food Safety',
-                  desc: 'Food safety records maintained continuously. Evidence built as work happens. When an inspector arrives, everything is already in order — because it always is.',
-                },
-                {
-                  role: 'Staff Training',
-                  desc: 'Role-specific training plans built from your actual operation. Sent to staff directly. Completions tracked automatically. New starters ready before their first shift.',
-                },
-                {
-                  role: 'Front of House',
-                  desc: 'Allergen queries answered accurately. Service standards documented. FOH product knowledge current whenever the menu changes.',
-                },
-              ].map((c, i) => (
-                <div key={i} style={{
-                  display: 'flex', gap: 9, padding: '7px 9px',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  borderRadius: 8,
-                }}>
-                  <span style={{
-                    color: TL, fontWeight: 900, fontSize: 11,
-                    lineHeight: 1.3, flexShrink: 0, marginTop: 1,
-                  }}>→</span>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: 9.5, color: W, marginBottom: 2 }}>{c.role}</div>
-                    <div style={{ fontSize: 8.5, color: S4, lineHeight: 1.5 }}>{c.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* RIGHT — commercial case + how it works */}
-            <div style={{
-              background: 'rgba(15,22,35,0.7)', padding: '14px 28px 14px 14px',
-              display: 'flex', flexDirection: 'column', gap: 9,
-            }}>
-
-              {/* The commercial case */}
-              <div style={{
-                background: 'rgba(20,184,166,0.06)',
-                border: '1px solid rgba(20,184,166,0.18)',
-                borderRadius: 9, padding: '10px 11px',
-              }}>
-                <div style={{
-                  fontSize: 8, fontWeight: 800, color: TL,
-                  textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6,
-                }}>The commercial case</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
                 {[
-                  { label: '1 kitchen at 68% GP vs 71% target', value: '−£1,200/mo per site' },
-                  { label: '4 sites · same drift undetected',   value: '−£57,600/yr' },
-                  { label: 'HospitalitySupport.uk · 4 kitchens', value: '£400/mo' },
-                  { label: 'Return on first GP improvement',    value: '3× in month one' },
-                ].map((r, i) => (
+                  { icon: '↗', label: 'Cost & GP',               note: 'Live against your suppliers. Flags changes before they hit the P&L.' },
+                  { icon: '◈', label: 'Menu & Recipe',            note: 'Full spec from a plain-English description. Auto-recosted on any price change.' },
+                  { icon: '⚑', label: 'Allergens & Nutrition',    note: 'All 14 tracked. Natasha\'s Law compliant. Updates when recipes change.' },
+                  { icon: '✓', label: 'Compliance & Food Safety', note: 'Evidence built as work happens. Always inspection-ready.' },
+                  { icon: '▸', label: 'Staff Training',           note: 'Built from your real ops. Role-specific. Sent direct. Tracked.' },
+                  { icon: '◇', label: 'Front of House',           note: 'Live menu knowledge for all FOH. Allergen answers on demand.' },
+                  { icon: '⊡', label: 'Ordering & Deliveries',    note: 'Shopping list auto-built from the menu. POs and delivery checking built in.' },
+                  { icon: '⊞', label: 'Supplier Pricing',         note: 'Suppliers update their own portal. You see every price change instantly.' },
+                ].map((c, i) => (
                   <div key={i} style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '4px 0',
-                    borderTop: i > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                  }}>
-                    <span style={{ color: S4, fontSize: 8.5 }}>{r.label}</span>
-                    <span style={{
-                      color: i === 3 ? TL : i >= 2 ? T3 : '#fca5a5',
-                      fontSize: 9, fontWeight: 800,
-                    }}>{r.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* How it works */}
-              <div>
-                <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-                  How it works
-                </div>
-                {[
-                  { step: '01', title: 'Just send a message', body: 'No new software. No dashboards. No training required. Your team asks a question — it gets answered accurately, instantly.' },
-                  { step: '02', title: 'Built from your operation', body: 'Your menus. Your suppliers. Your kitchen. Every answer is specific to your business — not a generic template.' },
-                  { step: '03', title: 'Always current', body: 'When prices change, when menus update, when a new starter joins — the system keeps pace. Nothing goes stale.' },
-                  { step: '04', title: 'One flat price per kitchen', body: 'No per-user fees. No tiered plans. £100/month per kitchen. Whether your team is 3 or 30.' },
-                ].map((s, i) => (
-                  <div key={i} style={{
-                    display: 'flex', gap: 9, padding: '7px 9px',
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    padding: '8px 10px',
                     background: 'rgba(255,255,255,0.03)',
                     border: '1px solid rgba(255,255,255,0.06)',
-                    borderRadius: 8, marginBottom: i < 3 ? 5 : 0,
+                    borderRadius: 7,
                   }}>
-                    <span style={{
-                      color: S6, fontSize: 9, fontWeight: 900,
-                      flexShrink: 0, width: 18, paddingTop: 1,
-                    }}>{s.step}</span>
+                    <span style={{ color: TL, fontSize: 10, fontWeight: 900, flexShrink: 0, width: 14, marginTop: 1 }}>{c.icon}</span>
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 9.5, color: W, marginBottom: 2 }}>{s.title}</div>
-                      <div style={{ fontSize: 8.5, color: S4, lineHeight: 1.5 }}>{s.body}</div>
+                      <div style={{ color: W, fontWeight: 800, fontSize: 9.5, marginBottom: 1 }}>{c.label}</div>
+                      <div style={{ color: S5, fontSize: 8, lineHeight: 1.4 }}>{c.note}</div>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
 
-              {/* Multi-site note */}
+            {/* RIGHT */}
+            <div style={{
+              background: 'rgba(15,22,35,0.7)', padding: '16px 28px 16px 14px',
+              display: 'flex', flexDirection: 'column', gap: 10,
+            }}>
+
+              {/* Scenario strip */}
+              <div>
+                <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>
+                  Common scenarios — handled automatically
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  {[
+                    { trigger: 'Supplier price rises overnight',  outcome: 'Affected dishes flagged. GP recalculated. Adjustments presented.' },
+                    { trigger: 'New starter begins tomorrow',     outcome: 'Role-specific training sent to their phone today.' },
+                    { trigger: 'EHO inspection — 48hrs notice',  outcome: 'All records current. Evidence already in order.' },
+                    { trigger: 'Menu changes mid-week',          outcome: 'Allergens, costs, and training all update automatically.' },
+                  ].map((s, i) => (
+                    <div key={i} style={{
+                      display: 'grid', gridTemplateColumns: '1fr auto',
+                      gap: 8, padding: '7px 10px',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      borderRadius: 7,
+                    }}>
+                      <div>
+                        <div style={{ color: '#f87171', fontSize: 8.5, fontWeight: 700, marginBottom: 2 }}>{s.trigger}</div>
+                        <div style={{ color: S4, fontSize: 8, lineHeight: 1.4 }}>{s.outcome}</div>
+                      </div>
+                      <span style={{
+                        color: TL, fontSize: 7, fontWeight: 800,
+                        background: 'rgba(45,212,191,0.08)',
+                        border: '1px solid rgba(45,212,191,0.18)',
+                        borderRadius: 4, padding: '2px 6px',
+                        alignSelf: 'center', whiteSpace: 'nowrap',
+                      }}>handled</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pricing */}
+              <div style={{
+                background: 'rgba(20,184,166,0.06)',
+                border: '1px solid rgba(20,184,166,0.20)',
+                borderRadius: 9, padding: '12px 13px',
+              }}>
+                <div style={{ fontSize: 8, fontWeight: 800, color: TL, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 10 }}>
+                  Pricing
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[
+                    { tier: 'Standard venue',   price: '£100 / month', sub: 'Restaurants, pubs, cafés' },
+                    { tier: 'Dark kitchen',     price: '£250 / month', sub: 'Production & dark kitchens' },
+                    { tier: 'Multi-site',       price: '£100 / kitchen', sub: 'Groups & estate operators' },
+                  ].map((p, i) => (
+                    <div key={i} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      paddingTop: i > 0 ? 6 : 0,
+                      borderTop: i > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    }}>
+                      <div>
+                        <div style={{ color: W, fontSize: 9.5, fontWeight: 700 }}>{p.tier}</div>
+                        <div style={{ color: S5, fontSize: 8 }}>{p.sub}</div>
+                      </div>
+                      <div style={{ color: TL, fontSize: 12, fontWeight: 900, textAlign: 'right' }}>{p.price}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ color: S6, fontSize: 7.5, marginTop: 8, paddingTop: 7, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  Per kitchen, not per user · Annual billing · No setup fees · Whole team, one flat fee
+                </div>
+              </div>
+
+              {/* Multi-site */}
               <div style={{
                 background: 'rgba(255,255,255,0.03)',
                 border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: 9, padding: '9px 11px',
+                borderRadius: 9, padding: '10px 12px',
               }}>
-                <div style={{ fontSize: 8, fontWeight: 800, color: S4, textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 5 }}>
+                <div style={{ fontSize: 8, fontWeight: 800, color: S4, textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 8 }}>
                   Multi-site operators
                 </div>
-                {[
-                  'Central visibility across every kitchen',
-                  'Consistent standards — no site-by-site chasing',
-                  'GP performance tracked per location',
-                  'Scales without adding management overhead',
-                ].map((t, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: i < 3 ? 4 : 0 }}>
-                    <span style={{
-                      width: 10, height: 10, borderRadius: 2,
-                      background: T, flexShrink: 0, marginTop: 1,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 7, color: W, fontWeight: 900,
-                    }}>✓</span>
-                    <span style={{ color: S3, fontSize: 8.5, lineHeight: 1.4 }}>{t}</span>
-                  </div>
-                ))}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px 14px' }}>
+                  {[
+                    'Central visibility across every kitchen',
+                    'Consistent standards — no site-by-site chasing',
+                    'GP tracked per location',
+                    'Scales without adding management overhead',
+                  ].map((t, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 5 }}>
+                      <span style={{
+                        width: 9, height: 9, borderRadius: 2,
+                        background: T, flexShrink: 0, marginTop: 2,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 6, color: W, fontWeight: 900,
+                      }}>✓</span>
+                      <span style={{ color: S3, fontSize: 8, lineHeight: 1.4 }}>{t}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* STATS BAR */}
-          <div style={{
-            position: 'relative', zIndex: 1,
-            background: 'rgba(10,18,30,0.9)', padding: '10px 28px',
-            display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6,
-            borderTop: '1px solid rgba(255,255,255,0.05)',
-          }}>
-            {[
-              { val: '£3.30',  label: 'Per kitchen / day' },
-              { val: '6',      label: 'Capabilities connected' },
-              { val: '24/7',   label: 'Always available' },
-              { val: '14',     label: 'Allergens tracked' },
-              { val: '0',      label: 'Per-user fees' },
-              { val: '< 1 min', label: 'Response time' },
-            ].map((s) => (
-              <div key={s.label} style={{ textAlign: 'center' }}>
-                <div style={{ color: TL, fontSize: 14, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-                <div style={{ color: S5, fontSize: 7.5, marginTop: 3, lineHeight: 1.3 }}>{s.label}</div>
-              </div>
-            ))}
+            </div>
           </div>
 
           {/* CTA */}
           <div style={{
             position: 'relative', zIndex: 1,
-            background: T, padding: '12px 28px',
+            background: T, padding: '13px 28px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
             <div>
               <div style={{ color: W, fontWeight: 900, fontSize: 13 }}>Book a 30-minute walkthrough. No slides. No pitch deck.</div>
-              <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 10, marginTop: 2 }}>We'll show you the system working on a real scenario — your operation, your questions, your context.</div>
+              <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 9.5, marginTop: 2 }}>We'll show the system working on a real scenario — your dishes, your suppliers, your operation.</div>
             </div>
             <div style={{
               background: W, color: T, fontWeight: 900, fontSize: 11,
