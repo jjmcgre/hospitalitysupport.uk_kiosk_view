@@ -80,7 +80,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
               background: 'rgba(20,184,166,0.10)', border: '1px solid rgba(20,184,166,0.25)',
               borderRadius: 999, padding: '3px 12px', letterSpacing: '0.05em',
             }}>
-              A full operations team · from £100 per kitchen per month
+              Full operations capability · from £100 per kitchen per month
             </span>
           </div>
 
@@ -98,7 +98,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
               <span style={{ color: TL }}>than your P&L shows.</span>
             </h1>
             <p style={{ color: S4, fontSize: 11, marginTop: 8, lineHeight: 1.65, maxWidth: 540 }}>
-              Most hospitality businesses lose 4–7 points of gross profit every quarter — not through bad decisions, but through slow ones. Ingredient prices change. Margin drift goes unnoticed. Training is inconsistent. Compliance relies on whoever is in that week. HospitalitySupport.uk closes every one of those gaps, continuously, for £3.30 a day.
+              Ingredient prices change without warning. Margin drift goes unnoticed until month end. Training is inconsistent. Compliance relies on whoever happens to be in that week. HospitalitySupport.uk closes every one of those gaps, continuously, for £3.30 a day.
             </p>
           </div>
 
@@ -149,32 +149,32 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
               display: 'flex', flexDirection: 'column', gap: 8,
             }}>
               <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                Your operations team — always on
+                What it handles — automatically
               </div>
 
               {[
                 {
-                  role: 'GP & Cost Controller',
-                  desc: 'Monitors every dish against your GP targets. Flags supplier price changes the moment they happen. Presents adjustment options. Keeps your margins live — not month-end.',
+                  role: 'Cost & GP',
+                  desc: 'Every dish monitored against your GP targets. Supplier price changes flagged the moment they happen, with adjustment options presented before it costs you anything.',
                 },
                 {
-                  role: 'Menu Development Chef',
-                  desc: 'Builds menus and dish specs around your kitchen, your skill level, your service pressure. Recosts automatically when ingredients change.',
+                  role: 'Menu & Recipe',
+                  desc: 'Menus and dish specs built around your kitchen, your skill level, your service pressure. Recosted automatically whenever ingredients change.',
                 },
                 {
-                  role: 'Allergen Specialist',
+                  role: 'Allergens & Nutrition',
                   desc: 'All 14 allergens tracked across your menu. Updates automatically when recipes change. Natasha\'s Law compliance maintained without manual intervention.',
                 },
                 {
-                  role: 'Compliance Lead',
+                  role: 'Compliance & Food Safety',
                   desc: 'Food safety records maintained continuously. Evidence built as work happens. When an inspector arrives, everything is already in order — because it always is.',
                 },
                 {
-                  role: 'Training Manager',
-                  desc: 'Role-specific training plans built from your actual operation. Sent to staff directly. Completions tracked. New starters ready before their first shift.',
+                  role: 'Staff Training',
+                  desc: 'Role-specific training plans built from your actual operation. Sent to staff directly. Completions tracked automatically. New starters ready before their first shift.',
                 },
                 {
-                  role: 'Front-of-House Specialist',
+                  role: 'Front of House',
                   desc: 'Allergen queries answered accurately. Service standards documented. FOH product knowledge current whenever the menu changes.',
                 },
               ].map((c, i) => (
@@ -238,7 +238,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                   How it works
                 </div>
                 {[
-                  { step: '01', title: 'Just send a message', body: 'No new software. No dashboards. No training required. Your team asks a question. The operations team responds.' },
+                  { step: '01', title: 'Just send a message', body: 'No new software. No dashboards. No training required. Your team asks a question — it gets answered accurately, instantly.' },
                   { step: '02', title: 'Built from your operation', body: 'Your menus. Your suppliers. Your kitchen. Every answer is specific to your business — not a generic template.' },
                   { step: '03', title: 'Always current', body: 'When prices change, when menus update, when a new starter joins — the system keeps pace. Nothing goes stale.' },
                   { step: '04', title: 'One flat price per kitchen', body: 'No per-user fees. No tiered plans. £100/month per kitchen. Whether your team is 3 or 30.' },
@@ -299,7 +299,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           }}>
             {[
               { val: '£3.30',  label: 'Per kitchen / day' },
-              { val: '6',      label: 'Specialists in your team' },
+              { val: '6',      label: 'Capabilities connected' },
               { val: '24/7',   label: 'Always available' },
               { val: '14',     label: 'Allergens tracked' },
               { val: '0',      label: 'Per-user fees' },
@@ -319,7 +319,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
             <div>
-              <div style={{ color: W, fontWeight: 900, fontSize: 13 }}>Book a 20-minute walkthrough. No slides. No pitch deck.</div>
+              <div style={{ color: W, fontWeight: 900, fontSize: 13 }}>Book a 30-minute walkthrough. No slides. No pitch deck.</div>
               <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 10, marginTop: 2 }}>We'll show you the system working on a real scenario — your operation, your questions, your context.</div>
             </div>
             <div style={{
