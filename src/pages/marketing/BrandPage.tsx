@@ -48,7 +48,7 @@ const messageHouse = {
   ],
   proof: [
     "Priced per kitchen — not per user. No seat licences.",
-    "WhatsApp interface. No training. No onboarding.",
+    "Simple messaging interface. No training. No onboarding.",
     "Menu development, GP, allergens, training, compliance — all in one team.",
     "From £100/month. £3.30/day.",
     "Built for high-turnover, high-pressure environments.",

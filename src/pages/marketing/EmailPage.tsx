@@ -41,7 +41,7 @@ None of this shows up as a line item. It shows up as underperformance that's har
 
 HospitalitySupport.uk was built for this.
 
-It's not a platform. It's a full hospitality operations team — Menu Development Chef, GP & Cost Controller, Allergen Specialist, Training Manager, Compliance Lead, Front-of-House Specialist — working from your live data, available via WhatsApp, around the clock.
+It's not a platform. It's a full hospitality operations team — Menu Development Chef, GP & Cost Controller, Allergen Specialist, Training Manager, Compliance Lead, Front-of-House Specialist — working from your live data, available around the clock.
 
 From £100 per kitchen per month. No per-user fees. No setup. No onboarding overhead.
 
@@ -73,7 +73,7 @@ Ingredient costs move weekly. Portion consistency drifts. Menu pricing lags supp
 
 HospitalitySupport.uk gives your business a dedicated Cost & GP Controller — working from your actual data, flagging issues the moment they happen, presenting decisions you can act on immediately.
 
-One WhatsApp message. Decision made. Spec updated. GP protected.
+One message. Decision made. Spec updated. GP protected.
 
 From £100 per kitchen per month.
 
@@ -244,7 +244,7 @@ This is the last email in this sequence — I won't keep landing in your inbox a
 
 I'll keep it short.
 
-HospitalitySupport.uk is a full hospitality operations team, available to your business via WhatsApp, from £100 per kitchen per month.
+HospitalitySupport.uk is a full hospitality operations team, available to your business the moment you need them, from £100 per kitchen per month.
 
 GP control. Menu development. Allergen management. Compliance. Staff training. All of it. All the time.
 

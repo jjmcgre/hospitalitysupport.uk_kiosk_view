@@ -234,7 +234,7 @@ export default function Print1Page() {
                   How it works
                 </div>
                 {[
-                  { step: '01', title: 'WhatsApp — nothing else', body: 'No new software. No dashboards. No training required. Your team sends a message. The team responds.' },
+                  { step: '01', title: 'Just send a message', body: 'No new software. No dashboards. No training required. Your team asks a question. The operations team responds.' },
                   { step: '02', title: 'Built from your operation', body: 'Your menus. Your suppliers. Your kitchen. Every answer is specific to your business — not a generic template.' },
                   { step: '03', title: 'Always current', body: 'When prices change, when menus update, when a new starter joins — the system keeps pace. Nothing goes stale.' },
                   { step: '04', title: 'One flat price per kitchen', body: 'No per-user fees. No tiered plans. £100/month per kitchen. Whether your team is 3 or 30.' },

@@ -9,7 +9,7 @@ export default function WhatsAppSection() {
             How you interact with it
           </div>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-4 text-white">
-            If you can use WhatsApp,<br />you can use this
+            As simple as sending<br /><span className="text-teal-400">a message</span>
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
             No dashboards to learn. No forms to fill. Just ask — and watch it do the work.

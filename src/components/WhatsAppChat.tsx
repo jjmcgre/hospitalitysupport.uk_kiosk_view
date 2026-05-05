@@ -38,7 +38,7 @@ const conversations = [
       { id: 1, text: "I've got 2 new starters Monday - need them trained on allergens and our menu", sender: 'user' as const, timestamp: '14:22', read: true },
       { id: 2, text: "No problem. What are their roles?", sender: 'system' as const, timestamp: '14:22', read: true },
       { id: 3, text: "One chef de partie, one front of house", sender: 'user' as const, timestamp: '14:23', read: true },
-      { id: 4, text: "Training plans created:\n\n**Chef de Partie:**\n• Food safety level 2 (45 min)\n• Your menu specs (20 min)\n• Allergen awareness (15 min)\n\n**Front of House:**\n• Allergen customer service (20 min)\n• Menu knowledge (25 min)\n• Your service standards (15 min)\n\nI'll send them WhatsApp links Monday morning. You'll get completion alerts.", sender: 'system' as const, timestamp: '14:24', read: true },
+      { id: 4, text: "Training plans created:\n\n**Chef de Partie:**\n• Food safety level 2 (45 min)\n• Your menu specs (20 min)\n• Allergen awareness (15 min)\n\n**Front of House:**\n• Allergen customer service (20 min)\n• Menu knowledge (25 min)\n• Your service standards (15 min)\n\nI'll send them the links Monday morning. You'll get completion alerts.", sender: 'system' as const, timestamp: '14:24', read: true },
       { id: 5, text: "Perfect. Can they do it before shift?", sender: 'user' as const, timestamp: '14:25', read: true },
       { id: 6, text: "Yes - each plan is under 90 minutes total. They can do it on their phones before they start.", sender: 'system' as const, timestamp: '14:25', read: false }
     ]

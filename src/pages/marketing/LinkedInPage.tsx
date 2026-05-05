@@ -91,7 +91,7 @@ const adBodies = [
   "From £100/month per kitchen, HospitalitySupport.uk is the operations team you never had to hire. No payroll. No sick days. No politics.",
   "Multi-site operators: one price per kitchen, central visibility across all sites, consistent standards without micromanagement. HospitalitySupport.uk scales with you.",
   "Dark kitchens and production kitchens have unique operational demands. HospitalitySupport.uk High-Intensity Kitchen tier is built for high-churn, multi-brand environments.",
-  "If you can use WhatsApp, you can use HospitalitySupport.uk. No training required. No onboarding. Just ask what you need.",
+  "If you can send a message, you can use HospitalitySupport.uk. No training required. No onboarding. Just ask what you need.",
   "The hospitality industry is losing experienced people. HospitalitySupport.uk maintains standards that don't depend on who's in this week.",
   "£3.30 a day. No per-user pricing. No seat licences. Just a full operations team — always available, always current.",
 ];

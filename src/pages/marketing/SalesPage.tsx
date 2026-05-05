@@ -24,7 +24,7 @@ const talkingPoints = [
     detail: "Training generated from your actual operation. Role-specific. Sent direct to their phone. Completion tracked. Works for teams of 3 or 30.",
   },
   {
-    point: "If you can use WhatsApp, you can use this.",
+    point: "If you can send a message, you can use this.",
     detail: "No training required. No onboarding. No configuration. Your team already knows how to send a message. That's the entire interface.",
   },
   {
@@ -56,7 +56,7 @@ const objections = [
   },
   {
     objection: "Our team won't use new technology.",
-    response: "There's no new technology to use. If your team can send a WhatsApp message, they can use HospitalitySupport.uk. No training. No login flows. No dashboards they'll ignore after the first week.",
+    response: "There's no new technology to use. If your team can send a message, they can use HospitalitySupport.uk. No training. No login flows. No dashboards they'll ignore after the first week.",
   },
   {
     objection: "We're too small to need something like this.",
@@ -88,7 +88,7 @@ const objections = [
   },
 ];
 
-const shortPitch = `HospitalitySupport.uk is a full hospitality operations team in your pocket. Menu development, GP control, allergen management, compliance, and training — all available by WhatsApp, all built around how you already work. From £3.30 a day, priced per kitchen, not per user.`;
+const shortPitch = `HospitalitySupport.uk is a full hospitality operations team in your pocket. Menu development, GP control, allergen management, compliance, and training — all built around how you already work, available the moment you need them. From £3.30 a day, priced per kitchen, not per user.`;
 
 const longPitch = `Running a hospitality business today means managing three relentless problems: skill erosion, compliance pressure, and margin protection.
 
@@ -100,7 +100,7 @@ It's not software you configure. It's not a dashboard you check. It behaves like
 
 Menu Development Chef. Cost & GP Controller. Allergen Specialist. Training Manager. Compliance Lead. Front-of-House Specialist. All working from the same live data. Nothing duplicated. Nothing forgotten.
 
-You access it the same way you'd message a team member. WhatsApp. That's it. No training. No onboarding. No change management.
+You access it the same way you'd message a team member — instantly, in plain language, from wherever you are. No training. No onboarding. No change management.
 
 Priced per kitchen, not per user. From £100/month. That's £3.30 a day for a team that never calls in sick, never needs managing, and never loses institutional knowledge when someone leaves.
 
