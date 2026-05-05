@@ -87,7 +87,7 @@ export default function BrandPage() {
         subtitle="Headlines, straplines, and the message house — copy for any channel."
         badge="Brand"
       />
-      <div className="p-8 space-y-10">
+      <div className="px-4 py-6 sm:p-8 space-y-10">
         <div className="bg-teal-500/5 border border-teal-500/20 rounded-2xl p-6">
           <div className="flex items-start justify-between gap-4 mb-3">
             <h2 className="text-white font-bold text-lg">Master Brand Statement</h2>

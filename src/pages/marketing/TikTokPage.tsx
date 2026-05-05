@@ -23,7 +23,7 @@ export default function TikTokPage() {
       />
 
       {/* Video selector */}
-      <div className="px-8 pt-6 pb-2 flex gap-3 flex-wrap">
+      <div className="px-4 pt-5 pb-2 sm:px-8 sm:pt-6 flex gap-3 flex-wrap">
         {tiktokVideos.map((v) => (
           <button
             key={v.id}
@@ -43,7 +43,7 @@ export default function TikTokPage() {
       </div>
 
       {/* Main layout */}
-      <div className="p-8 grid grid-cols-1 xl:grid-cols-[auto_1fr] gap-10 items-start">
+      <div className="px-4 py-6 sm:p-8 grid grid-cols-1 xl:grid-cols-[auto_1fr] gap-6 sm:gap-10 items-start">
         {/* Left: phone preview */}
         <div className="flex flex-col items-center gap-4">
           <div className="text-center mb-1">

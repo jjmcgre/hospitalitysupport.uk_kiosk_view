@@ -136,7 +136,7 @@ export default function LinkedInPage() {
         deployLabel="How to use: copy any post script and paste directly into LinkedIn. For video, copy the script and record to camera."
         badge="LinkedIn"
       />
-      <div className="p-8 space-y-8">
+      <div className="px-4 py-6 sm:p-8 space-y-8">
         <div>
           <h2 className="text-white font-bold text-lg mb-4">Video Briefs</h2>
           <div className="space-y-4">

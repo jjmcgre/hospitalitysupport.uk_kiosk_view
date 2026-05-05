@@ -324,7 +324,7 @@ function EmailCard({ email }: { email: Email; stageNum: number }) {
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email body</p>
               <CopyButton text={bodyText} />
             </div>
-            <pre className="text-slate-300 text-sm whitespace-pre-wrap font-sans leading-relaxed bg-slate-900/40 rounded-xl p-4 border border-slate-700">{email.body}</pre>
+            <pre className="text-slate-300 text-sm whitespace-pre-wrap font-sans leading-relaxed bg-slate-900/40 rounded-xl p-4 border border-slate-700 overflow-x-auto break-words">{email.body}</pre>
           </div>
 
           {/* CTA */}
@@ -414,7 +414,7 @@ export default function EmailPage() {
         deployLabel="How to use: expand an email, copy the subject line into your email client, paste the body, send."
         badge="Email"
       />
-      <div className="p-8 space-y-6">
+      <div className="px-4 py-6 sm:p-8 space-y-6">
         {/* Sequence overview */}
         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Sequence overview</p>

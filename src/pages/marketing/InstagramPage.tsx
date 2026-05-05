@@ -19,11 +19,11 @@ export default function InstagramPage() {
   return (
     <div className="min-h-full bg-slate-950">
       <div className="border-b border-slate-800">
-        <div className="px-8 py-3 bg-teal-500/10 border-b border-teal-500/20 flex items-center gap-3">
+        <div className="px-4 py-3 sm:px-8 bg-teal-500/10 border-b border-teal-500/20 flex items-center gap-3 flex-wrap">
           <span className="w-2 h-2 rounded-full bg-teal-400 flex-shrink-0" />
           <p className="text-teal-300 text-sm font-semibold">How to use: copy the caption, paste into Instagram, upload your video or image, post.</p>
         </div>
-        <div className="px-8 py-6">
+        <div className="px-4 py-5 sm:px-8 sm:py-6">
           <span className="text-xs font-bold uppercase tracking-widest text-teal-400 bg-teal-500/10 border border-teal-500/20 px-3 py-1 rounded-full">
             Instagram
           </span>
@@ -54,8 +54,8 @@ export default function InstagramPage() {
       </div>
 
       {tab === 'reels' ? (
-        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-200px)]">
-          <div className="lg:w-72 border-b lg:border-b-0 lg:border-r border-slate-800 p-5 flex flex-col gap-3 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto flex-shrink-0">
+        <div className="flex flex-col md:flex-row min-h-[calc(100vh-200px)]">
+          <div className="md:w-64 lg:w-72 border-b md:border-b-0 md:border-r border-slate-800 p-4 md:p-5 flex flex-col gap-3 md:sticky md:top-0 md:h-screen md:overflow-y-auto flex-shrink-0">
             <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Campaigns</p>
             {reels.map((r, i) => (
               <button
@@ -113,8 +113,8 @@ export default function InstagramPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            <div className="flex flex-col xl:flex-row gap-8 p-8 items-start">
-              <div className="flex-shrink-0">
+            <div className="flex flex-col xl:flex-row gap-6 p-4 sm:p-6 xl:p-8 items-start">
+              <div className="flex-shrink-0 mx-auto xl:mx-0">
                 <ReelPlayer
                   key={reel.id}
                   reel={reel}
@@ -186,8 +186,8 @@ export default function InstagramPage() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-200px)]">
-          <div className="lg:w-72 border-b lg:border-b-0 lg:border-r border-slate-800 p-5 flex flex-col gap-3 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto flex-shrink-0">
+        <div className="flex flex-col md:flex-row min-h-[calc(100vh-200px)]">
+          <div className="md:w-64 lg:w-72 border-b md:border-b-0 md:border-r border-slate-800 p-4 md:p-5 flex flex-col gap-3 md:sticky md:top-0 md:h-screen md:overflow-y-auto flex-shrink-0">
             <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Static Creatives</p>
             {staticAds.map((a, i) => (
               <button
@@ -245,8 +245,8 @@ export default function InstagramPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            <div className="flex flex-col xl:flex-row gap-8 p-8 items-start">
-              <div className="flex-shrink-0">
+            <div className="flex flex-col xl:flex-row gap-6 p-4 sm:p-6 xl:p-8 items-start">
+              <div className="flex-shrink-0 mx-auto xl:mx-0">
                 <StaticAdPreview
                   key={ad.id}
                   ad={ad}

@@ -69,7 +69,7 @@ export default function PricingSection() {
         </div>
 
         {/* Disruption callout */}
-        <div className="mb-10 bg-slate-900/60 border border-white/10 rounded-3xl p-8 max-w-3xl mx-auto text-center">
+        <div className="mb-10 bg-slate-900/60 border border-white/10 rounded-3xl px-5 py-6 sm:p-8 max-w-3xl mx-auto text-center">
           <p className="text-white font-black text-xl mb-3">
             "That seems cheap. Is it actually any good?"
           </p>
@@ -84,11 +84,11 @@ export default function PricingSection() {
           </button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
           {tiers.map((t) => (
             <div
               key={t.name}
-              className={`rounded-3xl p-7 flex flex-col ${
+              className={`rounded-3xl p-5 sm:p-7 flex flex-col ${
                 t.highlight
                   ? 'bg-teal-500/15 border-2 border-teal-500/50 shadow-xl shadow-teal-900/30'
                   : 'bg-slate-900/60 border border-white/8'

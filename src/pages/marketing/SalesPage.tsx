@@ -150,7 +150,7 @@ export default function SalesPage() {
         subtitle="Talking points, objection responses, and pitch scripts — copy and use in conversations."
         badge="Sales"
       />
-      <div className="p-8 space-y-10">
+      <div className="px-4 py-6 sm:p-8 space-y-10">
         <div>
           <h2 className="text-white font-bold text-lg mb-4">Pitch Scripts</h2>
           <div className="space-y-4">

@@ -152,7 +152,7 @@ export default function OverviewPage() {
         badge="Live"
       />
 
-      <div className="p-8 space-y-8">
+      <div className="px-4 py-6 sm:p-8 space-y-8">
 
         {/* Refresh row */}
         <div className="flex items-center justify-between -mt-2">

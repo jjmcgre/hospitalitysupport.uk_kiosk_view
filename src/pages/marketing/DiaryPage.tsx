@@ -136,7 +136,7 @@ export default function DiaryPage() {
         badge="Live Calendar"
       />
 
-      <div className="p-8">
+      <div className="px-4 py-6 sm:p-8">
         {/* Week navigator */}
         <div className="flex items-center justify-between mb-6">
           <button

@@ -43,9 +43,9 @@ function CopyLinkButton({ url }: { url: string }) {
     <button
       onClick={copy}
       title="Copy link"
-      className="p-1.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"
+      className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
     >
-      {copied ? <Check size={13} className="text-teal-400" /> : <Copy size={13} />}
+      {copied ? <Check size={15} className="text-teal-400" /> : <Copy size={15} />}
     </button>
   );
 }
@@ -85,9 +85,9 @@ function SharePanel() {
                     target="_blank"
                     rel="noopener noreferrer"
                     title="Open in new tab"
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"
+                    className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
                   >
-                    <ExternalLink size={13} />
+                    <ExternalLink size={15} />
                   </a>
                 </div>
               </div>

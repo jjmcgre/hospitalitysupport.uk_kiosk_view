@@ -34,7 +34,7 @@ export default function FacebookPage() {
         deployLabel="How to use: expand a campaign, copy the script, record to camera or brief a videographer, upload to Facebook."
         badge="Social Video"
       />
-      <div className="p-8 space-y-4">
+      <div className="px-4 py-6 sm:p-8 space-y-4">
         {campaigns.map((c) => (
           <ScriptCard
             key={c.title}

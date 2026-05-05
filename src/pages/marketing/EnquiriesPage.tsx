@@ -67,7 +67,7 @@ export default function EnquiriesPage() {
         badge="Live Data"
       />
 
-      <div className="p-8">
+      <div className="px-4 py-6 sm:p-8">
         {/* Summary strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
