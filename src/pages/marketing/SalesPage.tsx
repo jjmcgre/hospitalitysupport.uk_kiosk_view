@@ -4,8 +4,8 @@ import PageHeader from './components/PageHeader';
 
 const talkingPoints = [
   {
-    point: "It's not software — it's a team.",
-    detail: "Most hospitality tech requires trained users, time, and discipline. HospitalitySupport.uk behaves like a reliable operations team. You don't configure it. You just tell it what you need.",
+    point: "It does the work — you don't operate it.",
+    detail: "Most hospitality platforms require trained users, ongoing maintenance, and discipline to stay current. HospitalitySupport.uk handles the work automatically. You send a message or ask a question — it responds with accurate, live information built from your actual operation.",
   },
   {
     point: "Priced per kitchen, not per user.",
@@ -21,7 +21,7 @@ const talkingPoints = [
   },
   {
     point: "Training that doesn't rely on memory walking out the door.",
-    detail: "Training generated from your actual operation. Role-specific. Sent direct to their phone. Completion tracked. Works for teams of 3 or 30.",
+    detail: "Training generated from your actual operation. Role-specific. Sent direct to their phone. Completion tracked automatically. Works for teams of 3 or 30.",
   },
   {
     point: "If you can send a message, you can use this.",
@@ -29,19 +29,19 @@ const talkingPoints = [
   },
   {
     point: "It builds around you — not the other way around.",
-    detail: "You don't restructure your business around HospitalitySupport.uk. It adapts to your existing workflows, your existing systems, how your team already operates.",
+    detail: "You don't restructure your business around HospitalitySupport.uk. It works alongside your existing workflows, your existing systems, how your operation already runs.",
   },
   {
     point: "Multi-site clarity without multi-site overhead.",
     detail: "Central visibility across every kitchen. Same standards, every site. One price per kitchen — whether you have 2 or 20.",
   },
   {
-    point: "£3.30 a day for a full operations team.",
-    detail: "Menu development, GP control, allergen management, compliance, training, front-of-house support. All of them. For £3.30 a day. No payroll. No politics. No sick days.",
+    point: "£3.30 a day. Everything your kitchen operation needs.",
+    detail: "Menu development, GP control, allergen management, compliance, training, front-of-house support — all connected, all live. For £3.30 a day per kitchen.",
   },
   {
     point: "It doesn't change what hospitality is. It changes what you personally have to carry.",
-    detail: "The industry is still hard. Margins are still tight. Teams still change. HospitalitySupport.uk removes the work you shouldn't have to do — so you can focus on the work only you can do.",
+    detail: "The industry is still hard. Margins are still tight. Teams still change. HospitalitySupport.uk removes the operational work you shouldn't have to do — so you can focus on the work only you can do.",
   },
 ];
 
@@ -64,7 +64,7 @@ const objections = [
   },
   {
     objection: "What does it actually do?",
-    response: "It works like a team of specialists in your pocket. You ask, it responds — with real, accurate information built from your actual operation. Menu creation, cost calculations, training plans, compliance records, allergen data. All live, all in one place, all accessible in a message.",
+    response: "It's a hospitality operations platform built from real industry expertise. You ask a question or flag a task — it responds with accurate, live information specific to your operation. Menu creation, cost calculations, training plans, compliance records, allergen data. All connected, all current, all accessible in a message.",
   },
   {
     objection: "We tried something like this before and it didn't work.",
@@ -76,11 +76,11 @@ const objections = [
   },
   {
     objection: "Our chef handles all of this.",
-    response: "Your head chef is one person. HospitalitySupport.uk is eight specialists. When your chef is on a split shift, dealing with a delivery, managing a Saturday service — this is still working. The knowledge doesn't walk out the door when they do.",
+    response: "Your head chef is one person carrying a full shift. HospitalitySupport.uk runs continuously — when your chef is on the pass, dealing with a delivery, or managing a Saturday service, the GP is still live, the allergens are still current, and the compliance is still in order. The knowledge doesn't walk out the door when they do.",
   },
   {
     objection: "Is this AI? We're not sure about AI.",
-    response: "HospitalitySupport.uk is built from real hospitality expertise. It behaves like a team member — not a chatbot. The outputs are practical, accurate, and built around how real kitchens work. The question isn't whether you trust AI. It's whether the results are reliable. And they are.",
+    response: "HospitalitySupport.uk is built from real hospitality expertise. The outputs are practical, accurate, and grounded in how real kitchens work — not generic answers from a chatbot. The question isn't whether you trust the technology. It's whether the results are reliable. And they are.",
   },
   {
     objection: "We'd need a demo first.",
@@ -88,21 +88,21 @@ const objections = [
   },
 ];
 
-const shortPitch = `HospitalitySupport.uk is a full hospitality operations team in your pocket. Menu development, GP control, allergen management, compliance, and training — all built around how you already work, available the moment you need them. From £3.30 a day, priced per kitchen, not per user.`;
+const shortPitch = `HospitalitySupport.uk is a hospitality operations platform built from real industry expertise. Menu development, GP control, allergen management, compliance, and training — all connected, all automatic, built around how you already work. From £3.30 a day, priced per kitchen, not per user.`;
 
 const longPitch = `Running a hospitality business today means managing three relentless problems: skill erosion, compliance pressure, and margin protection.
 
-Most operators manage all of this manually — spreadsheets, paper records, tribal knowledge, and constant supervision. It's expensive, inconsistent, and entirely dependent on a few experienced people.
+Most operators manage all of this manually — spreadsheets, paper records, tribal knowledge, and constant supervision. It's expensive, inconsistent, and entirely dependent on a few experienced people staying on top of it.
 
 HospitalitySupport.uk is a different model.
 
-It's not software you configure. It's not a dashboard you check. It behaves like a reliable operations team — a full team of specialists that's always available, always current, and built around how your business already works.
+It's not a platform you configure and maintain. It's not a dashboard you have to remember to check. It does the work automatically — GP tracked as supplier prices move, allergens updated as the menu changes, compliance evidenced as work happens, training built and sent from your actual operation.
 
-Menu Development Chef. Cost & GP Controller. Allergen Specialist. Training Manager. Compliance Lead. Front-of-House Specialist. All working from the same live data. Nothing duplicated. Nothing forgotten.
+You access it the way you'd send a message — instantly, in plain language, from wherever you are. No training. No onboarding. No change management.
 
-You access it the same way you'd message a team member — instantly, in plain language, from wherever you are. No training. No onboarding. No change management.
+Menu development, GP control, allergen management, compliance, training, front-of-house support. All connected. All working from the same live data. Nothing duplicated. Nothing forgotten.
 
-Priced per kitchen, not per user. From £100/month. That's £3.30 a day for a team that never calls in sick, never needs managing, and never loses institutional knowledge when someone leaves.
+Priced per kitchen, not per user. From £100/month — that's £3.30 a day for a platform that never drifts, never needs managing, and never loses what it knows when someone leaves.
 
 For operators who want to stop carrying everything themselves — and start running their business instead.`;
 

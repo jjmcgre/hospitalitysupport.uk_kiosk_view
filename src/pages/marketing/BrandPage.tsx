@@ -1,31 +1,31 @@
 import CopyButton from './components/CopyButton';
 import PageHeader from './components/PageHeader';
 
-const masterStatement = `HospitalitySupport.uk is a full hospitality operations team — menu development, GP control, allergen management, compliance, and training — available in your pocket, built around how your business already works. From £3.30 a day, priced per kitchen, not per user.`;
+const masterStatement = `HospitalitySupport.uk is a hospitality operations platform built from real industry expertise — covering menu development, GP control, allergen management, compliance, and training in one connected system. Everything updates automatically. From £3.30 a day, priced per kitchen, not per user.`;
 
 const headlines = [
-  "A team of experts in your pocket — built around how hospitality actually works.",
-  "The operations team you never had to hire.",
-  "Stop managing around your software. Start using a team.",
-  "Menu. Margin. Compliance. Training. All in one place. All in your pocket.",
+  "The operations capability your kitchen has always needed — without the overhead.",
+  "Stop doing the admin. Start running the business.",
+  "Menu. Margin. Compliance. Training. All connected. All automatic.",
   "It doesn't change what hospitality is. It changes what you personally have to carry.",
   "Built for the reality of hospitality — not the ideal version.",
-  "Not software. Not a tool. A team.",
-  "The support your experienced staff never had time to give.",
+  "One platform. Every function. Always live.",
+  "The support your best people never had time to give.",
+  "Built by operators who got tired of managing around bad tools.",
 ];
 
 const straplines = [
-  "Expertise without the payroll.",
-  "The team that's always already done it.",
-  "A team in your pocket. A business that runs better.",
+  "Expertise without the overhead.",
+  "Always current. Always accurate.",
+  "One platform. A business that runs better.",
   "Priced per kitchen. Built for hospitality.",
   "Because one good person shouldn't have to carry everything.",
-  "GP. Compliance. Training. Sorted.",
-  "Your operations. Our team.",
+  "GP. Compliance. Training. Handled.",
+  "Your operations. Always in order.",
 ];
 
 const messageHouse = {
-  mastermessage: "HospitalitySupport.uk gives hospitality operators a full operations team in their pocket — built around how they already work, priced per kitchen, available every day.",
+  mastermessage: "HospitalitySupport.uk is a hospitality operations platform built from real industry expertise — all functions connected, all data live, priced per kitchen so the whole team can use it from day one.",
   pillars: [
     {
       name: "People",
@@ -49,16 +49,16 @@ const messageHouse = {
   proof: [
     "Priced per kitchen — not per user. No seat licences.",
     "Simple messaging interface. No training. No onboarding.",
-    "Menu development, GP, allergens, training, compliance — all in one team.",
+    "Menu development, GP, allergens, training, compliance — all connected in one platform.",
     "From £100/month. £3.30/day.",
     "Built for high-turnover, high-pressure environments.",
   ],
   avoid: [
-    "Don't call it software or a platform.",
-    "Don't use technical language or AI jargon.",
+    "Don't use AI jargon — describe what it does, not how it's built.",
     "Don't lead with features — lead with outcomes.",
-    "Don't make comparisons to tools the audience has been disappointed by.",
-    "Don't promise it replaces all existing systems — it complements them.",
+    "Don't imply humans are responding — it's a platform, not a service.",
+    "Don't promise it replaces existing systems — it complements them.",
+    "Don't overstate speed claims — stick to 'under an hour', 'under 3 minutes' for specific tasks.",
   ],
 };
 
