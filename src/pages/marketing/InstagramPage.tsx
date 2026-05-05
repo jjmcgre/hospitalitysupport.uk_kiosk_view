@@ -24,7 +24,7 @@ export default function InstagramPage() {
         </span>
         <h1 className="text-white font-black text-3xl mt-3">Ad Previews</h1>
         <p className="text-slate-400 text-sm mt-1">
-          Interactive reel player and static post creatives — ready to brief a designer or use as a reference.
+          Reel scripts and static post creatives — copy captions, brief a designer, or use as a direct reference.
         </p>
 
         <div className="flex gap-1 mt-5 bg-slate-900 border border-slate-800 rounded-xl p-1 w-fit">

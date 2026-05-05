@@ -132,7 +132,7 @@ export default function LinkedInPage() {
     <div className="min-h-full">
       <PageHeader
         title="LinkedIn"
-        subtitle="Three video briefs, ten post scripts, ten ad headlines, and ten ad body copy variants."
+        subtitle="Three video scripts, ten post scripts, and ad copy — copy and deploy directly."
         badge="LinkedIn"
       />
       <div className="p-8 space-y-8">

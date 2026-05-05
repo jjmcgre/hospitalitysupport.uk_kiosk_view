@@ -17,7 +17,7 @@ export default function TikTokPage() {
     <div className="min-h-full">
       <PageHeader
         title="TikTok"
-        subtitle="Animated preview · script & captions · voiceover download — three campaigns ready to drop into CapCut."
+        subtitle="Three campaigns — copy the script, download the voiceover, and drop into CapCut."
         badge="Video"
       />
 

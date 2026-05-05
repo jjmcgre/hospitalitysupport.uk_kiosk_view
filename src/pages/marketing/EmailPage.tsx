@@ -280,9 +280,13 @@ If you're planning growth in the next 12 months and want to understand how this 
   },
 ];
 
-function EmailCard({ email, stageNum }: { email: Email; stageNum: number }) {
+function EmailCard({ email }: { email: Email; stageNum: number }) {
   const [open, setOpen] = useState(false);
-  const fullText = `Subject: ${email.subject}\nPreview: ${email.preview}\n\n${email.body}\n\n${email.cta}`;
+  const [showNotes, setShowNotes] = useState(false);
+
+  // Clean sendable copies — no internal labels
+  const subjectText = email.subject;
+  const bodyText = `${email.body}\n\n${email.cta}`;
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
@@ -298,41 +302,50 @@ function EmailCard({ email, stageNum }: { email: Email; stageNum: number }) {
           <h3 className="text-white font-semibold text-base mb-1 leading-snug">{email.subject}</h3>
           <p className="text-slate-400 text-sm">{email.preview}</p>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
-          {open && <CopyButton text={fullText} />}
-          <span className="text-slate-400 text-sm">{open ? 'Hide' : 'View'}</span>
-        </div>
+        <span className="text-slate-400 text-sm flex-shrink-0 mt-0.5">{open ? 'Hide' : 'View'}</span>
       </button>
 
       {open && (
         <div className="px-5 pb-5 border-t border-slate-700 pt-4 space-y-4">
-          {/* Purpose note */}
-          <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl p-3">
-            <p className="text-xs font-semibold text-teal-400 uppercase tracking-wider mb-1">Purpose</p>
-            <p className="text-teal-100/70 text-sm leading-relaxed">{email.purpose}</p>
+
+          {/* Subject line — ready to copy */}
+          <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-700">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Subject line</p>
+              <CopyButton text={subjectText} />
+            </div>
+            <p className="text-white text-sm font-medium">{email.subject}</p>
+            <p className="text-slate-500 text-xs mt-1">Preview: {email.preview}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Subject Line</p>
-              <p className="text-white text-sm">{email.subject}</p>
-            </div>
-            <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Preview Text</p>
-              <p className="text-slate-300 text-sm">{email.preview}</p>
-            </div>
-          </div>
+          {/* Body — ready to copy and send */}
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Body</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email body</p>
+              <CopyButton text={bodyText} />
+            </div>
             <pre className="text-slate-300 text-sm whitespace-pre-wrap font-sans leading-relaxed bg-slate-900/40 rounded-xl p-4 border border-slate-700">{email.body}</pre>
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">CTA</p>
-              <p className="text-teal-300 text-sm font-medium">{email.cta}</p>
-            </div>
-            <CopyButton text={fullText} />
+
+          {/* CTA */}
+          <div className="flex items-center justify-between bg-slate-900/40 rounded-xl px-4 py-3 border border-slate-700">
+            <p className="text-teal-300 text-sm font-semibold">{email.cta}</p>
+            <CopyButton text={email.cta} />
           </div>
+
+          {/* Notes toggle — internal only */}
+          <button
+            onClick={() => setShowNotes(!showNotes)}
+            className="text-xs text-slate-600 hover:text-slate-400 transition-colors underline underline-offset-2"
+          >
+            {showNotes ? 'Hide notes' : 'Show internal notes'}
+          </button>
+          {showNotes && (
+            <div className="bg-slate-900/40 border border-slate-700 rounded-xl p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Purpose (internal)</p>
+              <p className="text-slate-400 text-sm leading-relaxed">{email.purpose}</p>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -356,20 +369,29 @@ const stageLabelColour: Record<number, string> = {
 };
 
 function StageBlock({ stage }: { stage: Stage }) {
+  const [showDesc, setShowDesc] = useState(false);
   return (
     <div className={`rounded-2xl border p-6 space-y-4 ${stageAccent[stage.stage]}`}>
       <div className="flex items-start gap-4">
         <div className={`text-2xl font-black leading-none w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${stageLabelColour[stage.stage]}`}>
           {stage.stage}
         </div>
-        <div>
-          <div className="flex items-center gap-2 mb-1">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h2 className="text-white font-bold text-base">{stage.label}</h2>
             <span className={`text-[10px] font-bold uppercase tracking-wider border rounded-full px-2 py-px ${stageLabelColour[stage.stage]}`}>
               Stage {stage.stage}
             </span>
+            <button
+              onClick={() => setShowDesc(!showDesc)}
+              className="text-xs text-slate-600 hover:text-slate-400 transition-colors underline underline-offset-2 ml-1"
+            >
+              {showDesc ? 'hide notes' : 'notes'}
+            </button>
           </div>
-          <p className="text-slate-400 text-sm leading-relaxed">{stage.description}</p>
+          {showDesc && (
+            <p className="text-slate-400 text-sm leading-relaxed mt-1">{stage.description}</p>
+          )}
         </div>
       </div>
       <div className="space-y-3">
@@ -388,7 +410,7 @@ export default function EmailPage() {
     <div className="min-h-full">
       <PageHeader
         title="Email Campaign"
-        subtitle={`${totalEmails}-email, 5-stage sequence targeting business owners and commercial directors. P&L-focused, ROI-led, written for decision-makers.`}
+        subtitle={`${totalEmails} emails across 5 stages — copy subject line and body, ready to send.`}
         badge="Email"
       />
       <div className="p-8 space-y-6">

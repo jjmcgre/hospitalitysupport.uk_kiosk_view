@@ -1069,14 +1069,14 @@ export default function Print5Page() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
-            <h1 className="text-white font-black text-2xl">5-Pager — A4 Printable</h1>
-            <p className="text-slate-400 text-sm mt-1">Full sales brochure · 5 A4 pages · Print or save as PDF</p>
+            <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
+            <p className="text-slate-400 text-sm mt-1">5 A4 pages — save as PDF to email, or print for meetings</p>
           </div>
           <button
             onClick={() => window.print()}
             className="bg-teal-500 hover:bg-teal-400 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors"
           >
-            Print / Save PDF
+            Save as PDF / Print
           </button>
         </div>
 

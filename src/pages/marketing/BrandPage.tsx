@@ -84,7 +84,7 @@ export default function BrandPage() {
     <div className="min-h-full">
       <PageHeader
         title="Brand & Positioning"
-        subtitle="Master brand statement, headlines, straplines, and the full message house."
+        subtitle="Headlines, straplines, and the message house — copy for any channel."
         badge="Brand"
       />
       <div className="p-8 space-y-10">

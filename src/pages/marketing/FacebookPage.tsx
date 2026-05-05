@@ -30,7 +30,7 @@ export default function FacebookPage() {
     <div className="min-h-full">
       <PageHeader
         title="Facebook"
-        subtitle="Three video campaign briefs for Facebook. Longer format, owner-focused, authoritative tone."
+        subtitle="Three video scripts — copy the script, brief a videographer, or record direct to camera."
         badge="Social Video"
       />
       <div className="p-8 space-y-4">

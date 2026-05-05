@@ -147,7 +147,7 @@ export default function SalesPage() {
     <div className="min-h-full">
       <PageHeader
         title="Sales & Talking Points"
-        subtitle="Ten core talking points, ten objection-handling pairs, and two pitch scripts."
+        subtitle="Talking points, objection responses, and pitch scripts — copy and use in conversations."
         badge="Sales"
       />
       <div className="p-8 space-y-10">
