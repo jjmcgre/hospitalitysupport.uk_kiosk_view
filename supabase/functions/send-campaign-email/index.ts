@@ -69,7 +69,6 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const bookingUrl = `${siteUrl ?? "https://hospitality.support"}/demo?book=1`;
     const trackPixelUrl = `${supabaseUrl}/functions/v1/email-tracking/pixel?sid=${sendRow.id}`;
-    const trackClickUrl = `${supabaseUrl}/functions/v1/email-tracking/click?sid=${sendRow.id}&url=${encodeURIComponent(bookingUrl)}`;
     const unsubUrl = `${supabaseUrl}/functions/v1/email-tracking/unsub?cid=${contactId}`;
 
     // Build HTML email
@@ -90,7 +89,7 @@ Deno.serve(async (req: Request) => {
 <body style="font-family:Georgia,serif;font-size:15px;color:#1a1a1a;max-width:600px;margin:0 auto;padding:32px 24px;background:#ffffff;">
 ${htmlBody}
 <p style="margin:28px 0 0;">
-  <a href="${trackClickUrl}"
+  <a href="${bookingUrl}"
      style="display:inline-block;background-color:#14b8a6;color:#ffffff;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;text-decoration:none;padding:14px 28px;border-radius:10px;letter-spacing:0.01em;">
     ${ctaLabel} &rarr;
   </a>
