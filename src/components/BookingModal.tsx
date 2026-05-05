@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   X, ArrowRight, CheckCircle, Mail, Phone,
-  Building2, Users, AlertCircle, Calendar, Clock, ChevronLeft, ChevronRight, Video,
+  Building2, Users, AlertCircle, Calendar, Clock, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { supabase } from '../lib/supabase';
@@ -443,7 +443,7 @@ export default function BookingModal() {
               <div className="text-white font-black text-2xl mb-2">Demo booked!</div>
               <div className="text-slate-400 text-sm leading-relaxed max-w-xs mx-auto">
                 A confirmation email has been sent to{' '}
-                <span className="text-white font-semibold">{form.email}</span> with your video call link.
+                <span className="text-white font-semibold">{form.email}</span>. Your video call link will be sent closer to the date.
               </div>
             </div>
 
@@ -466,17 +466,6 @@ export default function BookingModal() {
                   <span className="text-white font-semibold">{form.business_name}</span>
                 </div>
               </div>
-            )}
-
-            {videoLink && (
-              <a
-                href={videoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full max-w-xs bg-teal-500 hover:bg-teal-400 transition-colors text-white font-black rounded-2xl py-3.5 text-sm flex items-center justify-center gap-2"
-              >
-                <Video size={15} /> Join video call
-              </a>
             )}
 
             <button
