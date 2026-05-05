@@ -47,17 +47,20 @@ function estimateArr(enqs: Enquiry[]) {
 }
 
 function Stat({
-  label, value, sub, icon: Icon, accent = false, warn = false,
+  label, value, sub, icon: Icon, accent = false, warn = false, to,
 }: {
   label: string; value: string | number; sub?: string;
-  icon: React.ElementType; accent?: boolean; warn?: boolean;
+  icon: React.ElementType; accent?: boolean; warn?: boolean; to?: string;
 }) {
-  return (
-    <div className={`rounded-2xl border p-5 flex flex-col gap-2 ${
-      accent ? 'bg-teal-500/8 border-teal-500/25' :
-      warn ? 'bg-amber-500/8 border-amber-500/25' :
-      'bg-slate-800 border-slate-700'
-    }`}>
+  const cls = `rounded-2xl border p-5 flex flex-col gap-2 transition-all ${
+    to ? 'cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.99]' : ''
+  } ${
+    accent ? 'bg-teal-500/8 border-teal-500/25 hover:border-teal-400/40' :
+    warn ? 'bg-amber-500/8 border-amber-500/25 hover:border-amber-400/40' :
+    'bg-slate-800 border-slate-700 hover:border-slate-500'
+  }`;
+  const inner = (
+    <>
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
         accent ? 'bg-teal-500/20 border border-teal-500/30' :
         warn ? 'bg-amber-500/20 border border-amber-500/30' :
@@ -72,8 +75,10 @@ function Stat({
         <div className="text-slate-400 text-xs mt-1 font-medium">{label}</div>
         {sub && <div className="text-slate-600 text-[10px] mt-0.5">{sub}</div>}
       </div>
-    </div>
+    </>
   );
+  if (to) return <Link to={to} className={cls}>{inner}</Link>;
+  return <div className={cls}>{inner}</div>;
 }
 
 function ActivityBar({ label, count, max }: { label: string; count: number; max: number }) {
@@ -162,15 +167,16 @@ export default function OverviewPage() {
 
         {/* KPI row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Stat icon={Inbox} label="Total enquiries" value={enquiries.length} sub="all time" accent />
-          <Stat icon={TrendingUp} label="Last 7 days" value={last7} sub={`${last30} in 30 days`} accent={last7 > 0} />
-          <Stat icon={CalendarCheck} label="Demos booked" value={bookedSlots} sub={`${availableSlots} slots open`} warn={bookedSlots > 0} />
+          <Stat icon={Inbox} label="Total enquiries" value={enquiries.length} sub="all time" accent to="/enquiries" />
+          <Stat icon={TrendingUp} label="Last 7 days" value={last7} sub={`${last30} in 30 days`} accent={last7 > 0} to="/enquiries" />
+          <Stat icon={CalendarCheck} label="Demos booked" value={bookedSlots} sub={`${availableSlots} slots open`} warn={bookedSlots > 0} to="/diary" />
           <Stat
             icon={PoundSterling}
             label="Pipeline ARR"
             value={potentialArr > 0 ? `£${potentialArr.toLocaleString()}` : '—'}
             sub="if all enquiries convert"
             accent={potentialArr > 0}
+            to="/enquiries"
           />
         </div>
 
