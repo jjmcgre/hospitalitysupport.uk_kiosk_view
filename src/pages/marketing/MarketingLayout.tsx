@@ -25,27 +25,29 @@ const socialItems = [
 ];
 
 const shareLinks = [
-  { label: 'Product overview', path: '/demo', description: 'Full kiosk / landing page' },
-  { label: 'Brochure (8-page)', path: '/brochure', description: 'Square PDF, ready to print' },
-  { label: '1-page summary', path: '/one-pager', description: 'A4, email or print' },
-  { label: '5-page sales pack', path: '/sales-pack', description: 'A4, full detail' },
+  { name: 'HospitalitySupport.uk — Product Overview', path: '/demo', description: 'Full product kiosk / landing page' },
+  { name: 'HospitalitySupport.uk — Brochure', path: '/brochure', description: '8-page square PDF, ready to print' },
+  { name: 'HospitalitySupport.uk — 1-Page Summary', path: '/one-pager', description: 'A4 single page, email or print' },
+  { name: 'HospitalitySupport.uk — Sales Pack', path: '/sales-pack', description: '5-page A4, full detail' },
 ];
 
-function CopyLinkButton({ url }: { url: string }) {
+function CopyButton({ text, title, children }: { text: string; title: string; children: React.ReactNode }) {
   const [copied, setCopied] = useState(false);
   const copy = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
   return (
     <button
       onClick={copy}
-      title="Copy link"
-      className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
+      title={title}
+      className={`p-2.5 rounded-lg transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center gap-1 ${
+        copied ? 'text-teal-400 bg-teal-500/10' : 'text-slate-500 hover:text-teal-400 hover:bg-teal-500/10'
+      }`}
     >
-      {copied ? <Check size={15} className="text-teal-400" /> : <Copy size={15} />}
+      {copied ? <Check size={15} /> : children}
     </button>
   );
 }
@@ -68,18 +70,24 @@ function SharePanel() {
       </button>
 
       {open && (
-        <div className="mt-1 space-y-1 px-1">
+        <div className="mt-1 space-y-1.5 px-1 pb-2">
           {shareLinks.map((link) => {
             const fullUrl = `${origin}${link.path}`;
+            const shareText = `${link.name}\n${fullUrl}`;
             return (
-              <div key={link.path} className="flex items-center gap-1 bg-slate-800/60 rounded-xl px-3 py-2.5">
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-xs font-semibold truncate">{link.label}</p>
-                  <p className="text-slate-500 text-[10px] truncate">{link.description}</p>
-                  <p className="text-teal-600 text-[10px] font-mono truncate mt-0.5">{window.location.host}{link.path}</p>
-                </div>
-                <div className="flex items-center gap-0.5 flex-shrink-0">
-                  <CopyLinkButton url={fullUrl} />
+              <div key={link.path} className="bg-slate-800/60 rounded-xl px-3 py-3">
+                {/* Name — this is what gets shared */}
+                <p className="text-white text-xs font-bold leading-snug mb-0.5">{link.name}</p>
+                <p className="text-slate-500 text-[10px] mb-2">{link.description}</p>
+
+                {/* Actions row */}
+                <div className="flex items-center gap-1">
+                  {/* Copy name + URL together — primary action */}
+                  <CopyButton text={shareText} title="Copy name + link (paste into WhatsApp / email)">
+                    <Copy size={14} />
+                  </CopyButton>
+                  <span className="text-slate-600 text-[10px] flex-1 font-mono truncate">{window.location.host}{link.path}</span>
+                  {/* Open in tab */}
                   <a
                     href={link.path}
                     target="_blank"
@@ -87,12 +95,13 @@ function SharePanel() {
                     title="Open in new tab"
                     className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
                   >
-                    <ExternalLink size={15} />
+                    <ExternalLink size={14} />
                   </a>
                 </div>
               </div>
             );
           })}
+          <p className="text-slate-600 text-[10px] px-2 pt-1 leading-snug">Copy pastes the name and link together — ready to drop into WhatsApp, email, or a message.</p>
         </div>
       )}
     </div>
