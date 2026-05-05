@@ -147,8 +147,7 @@ export default function BookingModal() {
     setSubmitting(true);
     setError('');
 
-    const roomCode = crypto.randomUUID().replace(/-/g, '').slice(0, 10);
-    const meetLink = `https://meet.google.com/${roomCode.slice(0, 3)}-${roomCode.slice(3, 7)}-${roomCode.slice(7, 10)}`;
+    const meetLink = 'https://meet.google.com/mav-hmei-vzi';
 
     const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
       p_slot_id:    selectedSlot.id,
