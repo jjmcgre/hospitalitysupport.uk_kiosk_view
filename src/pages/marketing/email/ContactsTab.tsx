@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Plus, Trash2, Mail, Send, CheckCircle, XCircle, Loader2,
   UserPlus, X, Eye, MousePointer, AlertTriangle, ChevronRight,
-  Clock, Building2, Phone, FileText,
+  Clock, Building2, Phone, FileText, Play, Square, Zap,
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { campaigns, type Email } from './campaignData';
@@ -18,6 +18,11 @@ interface Contact {
   current_campaign_id: string;
   current_stage: number;
   created_at: string;
+  automation_active: boolean;
+  automation_campaign_id: string | null;
+  automation_next_email_id: number | null;
+  automation_next_send_at: string | null;
+  automation_paused: boolean;
 }
 
 interface SendRecord {
@@ -49,6 +54,10 @@ function fmt(d: string | null) {
 
 function fmtShort(d: string) {
   return new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function fmtDate(d: string) {
+  return new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 const campaignLabel = (id: string) => campaigns.find(c => c.id === id)?.label ?? id;
@@ -101,6 +110,94 @@ function AddContactModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
             {saving ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
             Add contact
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Enroll Automation Modal ────────────────────────────────────────────────────
+function EnrollModal({ contact, onClose, onEnrolled }: { contact: Contact; onClose: () => void; onEnrolled: () => void }) {
+  const [selectedCampaignId, setSelectedCampaignId] = useState('founders');
+  const [enrolling, setEnrolling] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  const enroll = async () => {
+    setEnrolling(true); setResult(null);
+    try {
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/automated-campaign/enroll`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          contactId: contact.id,
+          campaignId: selectedCampaignId,
+          siteUrl: window.location.origin,
+        }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || data.error) {
+        setResult({ ok: false, msg: data.error ?? 'Failed to enroll' });
+      } else {
+        setResult({ ok: true, msg: 'Enrolled — first email sent now, sequence continues automatically.' });
+        onEnrolled();
+      }
+    } catch (e) {
+      setResult({ ok: false, msg: String(e) });
+    }
+    setEnrolling(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-white font-bold text-base">Start automated sequence</h3>
+            <p className="text-slate-500 text-xs mt-0.5">{contact.name} — {contact.email}</p>
+          </div>
+          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors"><X size={18} /></button>
+        </div>
+
+        <div className="bg-slate-800/60 border border-sky-500/20 rounded-xl p-3">
+          <p className="text-sky-300 text-xs font-medium leading-relaxed">
+            The first email sends immediately. Subsequent emails are sent automatically each morning at 8am on the schedule below. Automation stops if the recipient books a meeting or unsubscribes.
+          </p>
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Choose campaign</label>
+          <div className="space-y-1.5">
+            {campaigns.map(c => (
+              <button key={c.id} onClick={() => setSelectedCampaignId(c.id)}
+                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${selectedCampaignId === c.id ? 'bg-teal-500/10 border-teal-500/40 text-teal-300' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'}`}>
+                <span className="font-semibold">{c.label}</span>
+                <span className="text-[11px] block opacity-60 mt-0.5">{c.description}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {result && (
+          <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium ${result.ok ? 'bg-teal-500/10 border border-teal-500/30 text-teal-300' : 'bg-rose-500/10 border border-rose-500/30 text-rose-300'}`}>
+            {result.ok ? <CheckCircle size={15} /> : <XCircle size={15} />}
+            {result.msg}
+          </div>
+        )}
+
+        <div className="flex gap-3 pt-1">
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition-all">
+            {result?.ok ? 'Close' : 'Cancel'}
+          </button>
+          {!result?.ok && (
+            <button onClick={enroll} disabled={enrolling}
+              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-400 text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+              {enrolling ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
+              Start sequence
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -237,8 +334,10 @@ function ContactPanel({
   const [sends, setSends] = useState<SendRecord[]>([]);
   const [loadingSends, setLoadingSends] = useState(true);
   const [showSend, setShowSend] = useState(false);
+  const [showEnroll, setShowEnroll] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [unenrolling, setUnenrolling] = useState(false);
 
   const loadSends = useCallback(async () => {
     setLoadingSends(true);
@@ -259,16 +358,34 @@ function ContactPanel({
     onDeleted();
   };
 
+  const handleUnenroll = async () => {
+    setUnenrolling(true);
+    try {
+      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/automated-campaign/unenroll`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ contactId: contact.id }),
+      });
+      onRefresh(contact.id);
+    } finally {
+      setUnenrolling(false);
+    }
+  };
+
   const totalSends = sends.length;
   const opened = sends.filter(s => s.opened_at).length;
   const clicked = sends.filter(s => s.clicked_at).length;
 
+  const nextCampaign = campaigns.find(c => c.id === contact.automation_campaign_id);
+  const nextEmail = nextCampaign?.data.flatMap(s => s.emails).find(e => e.id === contact.automation_next_email_id);
+
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
 
-      {/* Panel */}
       <div className="fixed inset-y-0 right-0 z-50 w-full max-w-lg bg-slate-900 border-l border-slate-700 flex flex-col shadow-2xl">
         {/* Header */}
         <div className="flex items-start gap-4 px-6 py-5 border-b border-slate-800">
@@ -279,6 +396,11 @@ function ContactPanel({
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-white font-bold text-base">{contact.name}</h2>
               {statusBadge(contact.status)}
+              {contact.automation_active && (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/25 rounded-full px-2 py-px flex items-center gap-1">
+                  <Zap size={8} />Auto
+                </span>
+              )}
             </div>
             <p className="text-slate-400 text-sm mt-0.5">{contact.email}</p>
             {contact.business_name && (
@@ -294,6 +416,46 @@ function ContactPanel({
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+
+          {/* Automation status */}
+          {contact.automation_active ? (
+            <div className="bg-sky-500/5 border border-sky-500/25 rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Zap size={14} className="text-sky-400" />
+                  <p className="text-sky-300 text-sm font-semibold">Automated sequence active</p>
+                </div>
+                <button
+                  onClick={handleUnenroll}
+                  disabled={unenrolling}
+                  className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-rose-400 transition-colors"
+                >
+                  {unenrolling ? <Loader2 size={11} className="animate-spin" /> : <Square size={11} />}
+                  Stop
+                </button>
+              </div>
+              <p className="text-sky-400/70 text-xs">{campaignLabel(contact.automation_campaign_id ?? '')}</p>
+              {nextEmail && (
+                <p className="text-slate-400 text-xs">
+                  Next: <span className="text-slate-300 font-medium">{nextEmail.subject}</span>
+                </p>
+              )}
+              {contact.automation_next_send_at && (
+                <p className="text-slate-500 text-xs flex items-center gap-1">
+                  <Clock size={10} />
+                  Scheduled: {fmtDate(contact.automation_next_send_at)} at 8:00am
+                </p>
+              )}
+            </div>
+          ) : contact.status === 'active' ? (
+            <button
+              onClick={() => setShowEnroll(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-slate-600 hover:border-sky-500/50 hover:bg-sky-500/5 text-slate-500 hover:text-sky-300 transition-all text-sm"
+            >
+              <Play size={14} />
+              <span>Start automated email sequence</span>
+            </button>
+          ) : null}
 
           {/* Contact info */}
           <div className="grid grid-cols-2 gap-3">
@@ -353,7 +515,6 @@ function ContactPanel({
                 {sends.map((s) => (
                   <div key={s.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
                     <div className="flex items-start gap-3">
-                      {/* Status dot */}
                       <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${s.bounced_at ? 'bg-rose-400' : s.clicked_at ? 'bg-amber-400' : s.opened_at ? 'bg-teal-400' : 'bg-slate-600'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-semibold leading-snug">{s.subject}</p>
@@ -361,8 +522,6 @@ function ContactPanel({
                         <p className="text-slate-600 text-[10px] mt-0.5 flex items-center gap-1">
                           <Clock size={9} />Sent {fmt(s.sent_at)}
                         </p>
-
-                        {/* Event pills */}
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
                           {s.opened_at ? (
                             <span className="flex items-center gap-1 text-[10px] font-semibold text-teal-400 bg-teal-500/10 border border-teal-500/25 rounded-full px-2 py-0.5">
@@ -373,19 +532,17 @@ function ContactPanel({
                               <Eye size={9} />Not opened
                             </span>
                           )}
-                          {s.clicked_at ? (
+                          {s.clicked_at && (
                             <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/25 rounded-full px-2 py-0.5">
                               <MousePointer size={9} />{s.click_count}× clicked
                             </span>
-                          ) : null}
+                          )}
                           {s.bounced_at && (
                             <span className="flex items-center gap-1 text-[10px] font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/25 rounded-full px-2 py-0.5">
                               <AlertTriangle size={9} />Bounced
                             </span>
                           )}
                         </div>
-
-                        {/* Timestamps */}
                         {(s.opened_at || s.clicked_at) && (
                           <div className="mt-2 space-y-0.5">
                             {s.opened_at && <p className="text-slate-600 text-[10px]">First open: {fmt(s.opened_at)}</p>}
@@ -444,6 +601,14 @@ function ContactPanel({
           onSent={() => { loadSends(); onRefresh(contact.id); }}
         />
       )}
+
+      {showEnroll && (
+        <EnrollModal
+          contact={contact}
+          onClose={() => setShowEnroll(false)}
+          onEnrolled={() => { loadSends(); onRefresh(contact.id); }}
+        />
+      )}
     </>
   );
 }
@@ -473,12 +638,19 @@ export default function ContactsTab() {
     if (selected?.id === id && data) setSelected(data as Contact);
   };
 
+  const activeAutomations = contacts.filter(c => c.automation_active).length;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-white font-bold text-base">Contacts</h2>
-          <p className="text-slate-500 text-xs mt-0.5">{contacts.length} contact{contacts.length !== 1 ? 's' : ''}</p>
+          <p className="text-slate-500 text-xs mt-0.5">
+            {contacts.length} contact{contacts.length !== 1 ? 's' : ''}
+            {activeAutomations > 0 && (
+              <span className="ml-2 text-sky-400 font-medium">· {activeAutomations} in sequence</span>
+            )}
+          </p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
@@ -506,7 +678,6 @@ export default function ContactsTab() {
               onClick={() => setSelected(c)}
               className="w-full bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-2xl px-5 py-4 flex items-center gap-4 text-left transition-all hover:bg-slate-750 group"
             >
-              {/* Avatar */}
               <div className="w-9 h-9 rounded-xl bg-slate-700 group-hover:bg-slate-600 flex items-center justify-center flex-shrink-0 text-white font-bold text-sm transition-colors">
                 {c.name.charAt(0).toUpperCase()}
               </div>
@@ -514,14 +685,23 @@ export default function ContactsTab() {
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
                   <p className="text-white font-semibold text-sm">{c.name}</p>
                   {statusBadge(c.status)}
+                  {c.automation_active && (
+                    <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/25 rounded-full px-2 py-px">
+                      <Zap size={8} />Auto
+                    </span>
+                  )}
                 </div>
                 <p className="text-slate-400 text-xs">{c.email}</p>
                 {c.business_name && <p className="text-slate-500 text-xs mt-0.5">{c.business_name}</p>}
-                {c.current_campaign_id && (
+                {c.automation_active && c.automation_next_send_at ? (
+                  <p className="text-sky-500/70 text-[10px] mt-1 flex items-center gap-1">
+                    <Clock size={8} />Next email {fmtDate(c.automation_next_send_at)}
+                  </p>
+                ) : c.current_campaign_id ? (
                   <p className="text-slate-600 text-[10px] mt-1">
                     {campaignLabel(c.current_campaign_id)} · Stage {c.current_stage}
                   </p>
-                )}
+                ) : null}
               </div>
               <ChevronRight size={15} className="text-slate-600 group-hover:text-slate-400 flex-shrink-0 transition-colors" />
             </button>
