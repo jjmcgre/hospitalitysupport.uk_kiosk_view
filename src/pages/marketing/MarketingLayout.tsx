@@ -118,6 +118,7 @@ export default function MarketingLayout() {
         transform transition-transform duration-300 ease-in-out
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:relative lg:translate-x-0 lg:flex
+        print:hidden
       `}>
         <div className="p-6 border-b border-slate-800">
           <span className="text-white font-black text-base tracking-tight">
@@ -208,13 +209,13 @@ export default function MarketingLayout() {
 
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/60 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/60 lg:hidden print:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center gap-3">
+        <header className="lg:hidden print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => setMobileOpen(true)}
             className="text-slate-400 hover:text-white transition-colors p-1"
