@@ -57,14 +57,14 @@ function SharePanel() {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
-    <div className="border-t border-slate-800 pt-2">
+    <div className="mt-1">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
       >
         <span className="flex items-center gap-2">
           <Share2 size={15} className="flex-shrink-0" />
-          Share links
+          Public links
         </span>
         <span className={`text-[10px] font-bold uppercase tracking-wider transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
@@ -176,6 +176,7 @@ export default function MarketingLayout() {
                 {item.label}
               </NavLink>
             ))}
+            <SharePanel />
           </div>
 
           <div className="border-t border-slate-800 pt-2">
@@ -199,7 +200,6 @@ export default function MarketingLayout() {
             ))}
           </div>
 
-          <SharePanel />
         </nav>
 
         <div className="p-4 border-t border-slate-800">
