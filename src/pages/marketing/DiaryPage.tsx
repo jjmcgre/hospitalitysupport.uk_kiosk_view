@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, User, Check, Trash2, RefreshCw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, User, Check, Trash2, RefreshCw, Calendar, ExternalLink, Mail, Phone, Building2, Users, MessageSquare } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
+
+const GOOGLE_CAL_LINK = 'https://calendar.app.google/qFyf25dnZVdiX5BW6';
 
 interface Slot {
   id: string;
@@ -17,7 +19,11 @@ interface Enquiry {
   id: string;
   name: string;
   email: string;
+  phone: string;
   business_name: string;
+  num_sites: string;
+  message: string;
+  created_at: string;
 }
 
 const TIMES = [
@@ -61,6 +67,8 @@ export default function DiaryPage() {
   const [newNotes, setNewNotes] = useState('');
   const [saving, setSaving] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [activeTab, setActiveTab] = useState<'calendar' | 'enquiries'>('calendar');
+  const [expandedEnquiry, setExpandedEnquiry] = useState<string | null>(null);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
 
@@ -79,7 +87,8 @@ export default function DiaryPage() {
         .order('slot_time'),
       supabase
         .from('demo_bookings')
-        .select('id, name, email, business_name'),
+        .select('*')
+        .order('created_at', { ascending: false }),
     ]);
 
     setSlots(slotsRes.data ?? []);
@@ -128,16 +137,84 @@ export default function DiaryPage() {
 
   const today = isoDate(new Date());
 
+  function timeAgo(dateStr: string) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  }
+
+  const sitesLabel: Record<string, string> = {
+    '1': '1 site', '2-5': '2–5 sites', '6-15': '6–15 sites', '16+': '16+ sites',
+  };
+
   return (
     <div className="min-h-full">
       <PageHeader
         title="Demo Diary"
-        subtitle="Manage your available demo slots and see what's booked."
+        subtitle="Book demos, manage slots, and track every enquiry in one place."
         badge="Live Calendar"
       />
 
-      <div className="px-4 py-6 sm:p-8">
-        {/* Week navigator */}
+      <div className="px-4 py-6 sm:p-8 space-y-6">
+
+        {/* Tab switcher */}
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-1.5 flex gap-1.5">
+          {([
+            { id: 'calendar', label: 'Calendar & Slots', icon: <Calendar size={14} /> },
+            { id: 'enquiries', label: `Enquiries${enquiries.length > 0 ? ` (${enquiries.length})` : ''}`, icon: <MessageSquare size={14} /> },
+          ] as const).map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
+                activeTab === tab.id
+                  ? 'bg-slate-700 text-white border border-slate-500 shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-700/40 border border-transparent'
+              }`}
+            >
+              {tab.icon}{tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ── CALENDAR TAB ── */}
+        {activeTab === 'calendar' && (
+          <div className="space-y-6">
+
+            {/* Google Calendar booking embed */}
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={15} className="text-teal-400" />
+                    <span className="text-white font-bold text-sm">Google Calendar — Demo Booking Page</span>
+                  </div>
+                  <p className="text-slate-500 text-xs mt-0.5">This is your live booking page. Prospects pick a slot directly here.</p>
+                </div>
+                <a
+                  href={GOOGLE_CAL_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs text-teal-400 hover:text-teal-300 transition-colors border border-teal-500/30 rounded-xl px-3 py-1.5 flex-shrink-0"
+                >
+                  Open <ExternalLink size={11} />
+                </a>
+              </div>
+              <div className="relative" style={{ height: '640px' }}>
+                <iframe
+                  src={GOOGLE_CAL_LINK}
+                  style={{ width: '100%', height: '100%', border: 'none' }}
+                  title="Book a demo"
+                  allow="camera; microphone"
+                />
+              </div>
+            </div>
+
+            {/* Week navigator */}
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => setWeekBase(w => addDays(w, -7))}
@@ -237,40 +314,193 @@ export default function DiaryPage() {
           })}
         </div>
 
-        {/* Upcoming booked list */}
-        <div className="mt-10">
-          <h2 className="text-white font-bold text-base mb-4">Upcoming booked demos</h2>
-          {slots.filter(s => s.booked && s.slot_date >= today).length === 0 ? (
-            <p className="text-slate-600 text-sm">No booked demos this week.</p>
-          ) : (
-            <div className="space-y-3">
-              {slots
-                .filter(s => s.booked && s.slot_date >= today)
-                .map(slot => {
-                  const enq = enquiryFor(slot.booked_by_booking_id);
-                  return (
-                    <div key={slot.id} className="bg-slate-800 border border-amber-500/30 rounded-2xl px-5 py-4 flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center flex-shrink-0">
-                        <User size={16} className="text-amber-400" />
+            {/* Upcoming booked list */}
+            <div>
+              <h2 className="text-white font-bold text-base mb-4">Upcoming booked demos</h2>
+              {slots.filter(s => s.booked && s.slot_date >= today).length === 0 ? (
+                <p className="text-slate-600 text-sm">No booked demos this week.</p>
+              ) : (
+                <div className="space-y-3">
+                  {slots
+                    .filter(s => s.booked && s.slot_date >= today)
+                    .map(slot => {
+                      const enq = enquiryFor(slot.booked_by_booking_id);
+                      return (
+                        <div key={slot.id} className="bg-slate-800 border border-amber-500/30 rounded-2xl px-5 py-4 flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center flex-shrink-0">
+                            <User size={16} className="text-amber-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-white font-bold text-sm">{formatDateDisplay(slot.slot_date)} at {slot.slot_time}</div>
+                            {enq && <div className="text-slate-400 text-xs mt-0.5">{enq.name} · {enq.business_name} · {enq.email}</div>}
+                            {!enq && <div className="text-slate-600 text-xs mt-0.5">No linked enquiry</div>}
+                            {slot.notes && <div className="text-slate-500 text-xs mt-0.5 italic">{slot.notes}</div>}
+                          </div>
+                          <button
+                            onClick={() => toggleBooked(slot)}
+                            className="text-xs text-slate-500 hover:text-teal-400 transition-colors flex items-center gap-1"
+                          >
+                            <Check size={12} />Mark free
+                          </button>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+
+          </div>
+        )}
+
+        {/* ── ENQUIRIES TAB ── */}
+        {activeTab === 'enquiries' && (
+          <div className="space-y-4">
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: 'Total', val: enquiries.length },
+                { label: '1-site venues', val: enquiries.filter(e => e.num_sites === '1').length },
+                { label: 'Multi-site', val: enquiries.filter(e => ['2-5','6-15','16+'].includes(e.num_sites)).length },
+                { label: 'With message', val: enquiries.filter(e => e.message?.trim()).length },
+              ].map(s => (
+                <div key={s.label} className="bg-slate-800 border border-slate-700 rounded-2xl p-4 text-center">
+                  <div className="text-2xl font-black text-teal-400 mb-0.5">{s.val}</div>
+                  <div className="text-slate-500 text-xs">{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between">
+              <h2 className="text-white font-bold text-sm">All enquiries</h2>
+              <button onClick={load} className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 transition-colors text-xs">
+                <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />Refresh
+              </button>
+            </div>
+
+            {loading && (
+              <div className="text-center py-16 text-slate-500">
+                <RefreshCw size={20} className="animate-spin mx-auto mb-3" />Loading…
+              </div>
+            )}
+
+            {!loading && enquiries.length === 0 && (
+              <div className="text-center py-16 text-slate-600">
+                <MessageSquare size={32} className="mx-auto mb-3 opacity-40" />
+                <p className="font-semibold text-sm">No enquiries yet</p>
+                <p className="text-xs mt-1">Submissions from the booking modal will appear here.</p>
+              </div>
+            )}
+
+            {!loading && enquiries.length > 0 && (
+              <div className="space-y-3">
+                {enquiries.map(eq => (
+                  <div key={eq.id} className="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
+                    <button
+                      onClick={() => setExpandedEnquiry(expandedEnquiry === eq.id ? null : eq.id)}
+                      className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-slate-700/40 transition-colors"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0 text-teal-400 font-black text-sm">
+                        {eq.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-white font-bold text-sm">{formatDateDisplay(slot.slot_date)} at {slot.slot_time}</div>
-                        {enq && <div className="text-slate-400 text-xs mt-0.5">{enq.name} · {enq.business_name} · {enq.email}</div>}
-                        {!enq && <div className="text-slate-600 text-xs mt-0.5">No linked enquiry</div>}
-                        {slot.notes && <div className="text-slate-500 text-xs mt-0.5 italic">{slot.notes}</div>}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-white font-bold text-sm">{eq.name}</span>
+                          <span className="text-slate-400 text-xs truncate">{eq.business_name}</span>
+                          {eq.num_sites && (
+                            <span className="text-[10px] font-bold bg-teal-500/15 text-teal-300 border border-teal-500/25 rounded-full px-2 py-0.5">
+                              {sitesLabel[eq.num_sites] ?? eq.num_sites}
+                            </span>
+                          )}
+                          {eq.message?.trim() && (
+                            <span className="text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25 rounded-full px-2 py-0.5">
+                              Has message
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-slate-500 text-xs mt-0.5 flex items-center gap-3">
+                          <span className="flex items-center gap-1"><Mail size={9} />{eq.email}</span>
+                          {eq.phone && <span className="flex items-center gap-1"><Phone size={9} />{eq.phone}</span>}
+                        </div>
                       </div>
-                      <button
-                        onClick={() => toggleBooked(slot)}
-                        className="text-xs text-slate-500 hover:text-teal-400 transition-colors flex items-center gap-1"
-                      >
-                        <Check size={12} />Mark free
-                      </button>
-                    </div>
-                  );
-                })}
-            </div>
-          )}
-        </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className="text-slate-500 text-[10px]">{timeAgo(eq.created_at)}</div>
+                        <div className={`text-slate-500 mt-1 transition-transform ${expandedEnquiry === eq.id ? 'rotate-180' : ''}`}>▾</div>
+                      </div>
+                    </button>
+
+                    {expandedEnquiry === eq.id && (
+                      <div className="px-5 pb-5 border-t border-slate-700 pt-4 grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <div className="flex items-start gap-3">
+                            <Mail size={13} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Email</div>
+                              <a href={`mailto:${eq.email}`} className="text-teal-400 hover:text-teal-300 text-sm transition-colors">{eq.email}</a>
+                            </div>
+                          </div>
+                          {eq.phone && (
+                            <div className="flex items-start gap-3">
+                              <Phone size={13} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Phone</div>
+                                <a href={`tel:${eq.phone}`} className="text-white text-sm hover:text-teal-300 transition-colors">{eq.phone}</a>
+                              </div>
+                            </div>
+                          )}
+                          <div className="flex items-start gap-3">
+                            <Building2 size={13} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Business</div>
+                              <div className="text-white text-sm">{eq.business_name}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <Users size={13} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Sites</div>
+                              <div className="text-white text-sm">{sitesLabel[eq.num_sites] ?? eq.num_sites}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          {eq.message?.trim() ? (
+                            <div className="flex items-start gap-3 mb-4">
+                              <MessageSquare size={13} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-1">Message</div>
+                                <div className="text-slate-300 text-sm leading-relaxed bg-slate-900/60 rounded-xl p-3 border border-slate-700">{eq.message}</div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-slate-600 text-xs italic mb-4">No message provided.</div>
+                          )}
+                          <div className="flex gap-2">
+                            <a
+                              href={`mailto:${eq.email}?subject=Your HospitalitySupport.uk Demo&body=Hi ${eq.name.split(' ')[0]},%0A%0AThanks for your interest in HospitalitySupport.uk — I'd love to show you the platform live.%0A%0APlease use the link below to pick a time that works for you:%0A%0A${GOOGLE_CAL_LINK}%0A%0ABest regards,%0AJames`}
+                              className="flex-1 text-center bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-bold py-2.5 rounded-xl"
+                            >
+                              Reply + booking link
+                            </a>
+                            {eq.phone && (
+                              <a
+                                href={`tel:${eq.phone}`}
+                                className="flex-1 text-center bg-slate-700 hover:bg-slate-600 transition-colors text-white text-xs font-bold py-2.5 rounded-xl"
+                              >
+                                Call
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
 
       {/* Add slot modal */}

@@ -3,6 +3,8 @@ import { Mail, Phone, Building2, Users, MessageSquare, Clock, RefreshCw, Inbox }
 import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
 
+const GOOGLE_CAL_LINK = 'https://calendar.app.google/qFyf25dnZVdiX5BW6';
+
 interface Enquiry {
   id: string;
   name: string;
@@ -216,7 +218,7 @@ export default function EnquiriesPage() {
                       )}
                       <div className="mt-4 flex gap-2">
                         <a
-                          href={`mailto:${eq.email}?subject=Your HospitalitySupport.uk Demo&body=Hi ${eq.name.split(' ')[0]},%0A%0AThanks for your interest in HospitalitySupport.uk — I'd love to show you the platform live.%0A%0APlease use the link below to pick a time that works for you:%0A%0ABest regards,%0AJames`}
+                          href={`mailto:${eq.email}?subject=Your HospitalitySupport.uk Demo&body=Hi ${eq.name.split(' ')[0]},%0A%0AThanks for your interest in HospitalitySupport.uk — I'd love to show you the platform live.%0A%0APlease use the link below to pick a time that works for you:%0A%0A${GOOGLE_CAL_LINK}%0A%0ABest regards,%0AJames`}
                           className="flex-1 text-center bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-bold py-2.5 rounded-xl"
                         >
                           Reply via email
