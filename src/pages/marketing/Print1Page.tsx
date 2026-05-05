@@ -190,8 +190,8 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                       borderLeft: `2px solid ${TL}`,
                       borderRadius: '0 7px 7px 0',
                     }}>
-                      <div style={{ color: W, fontWeight: 800, fontSize: 9.5, marginBottom: 3 }}>{c.label}</div>
-                      <div style={{ color: S5, fontSize: 8, lineHeight: 1.4 }}>{c.note}</div>
+                      <div style={{ color: W, fontWeight: 800, fontSize: 11, marginBottom: 3 }}>{c.label}</div>
+                      <div style={{ color: S5, fontSize: 9.5, lineHeight: 1.4 }}>{c.note}</div>
                     </div>
                   ))}
                 </div>
@@ -214,8 +214,8 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                     }}>
                       <div style={{ flexShrink: 0, width: 3, borderRadius: 3, background: 'rgba(248,113,113,0.55)', alignSelf: 'stretch' }} />
                       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <div style={{ color: '#fca5a5', fontSize: 9.5, fontWeight: 700, marginBottom: 3 }}>{s.trigger}</div>
-                        <div style={{ color: S4, fontSize: 8.5, lineHeight: 1.45 }}>{s.outcome}</div>
+                        <div style={{ color: '#fca5a5', fontSize: 12, fontWeight: 700, marginBottom: 3 }}>{s.trigger}</div>
+                        <div style={{ color: S4, fontSize: 10.5, lineHeight: 1.45 }}>{s.outcome}</div>
                       </div>
                     </div>
                   ))}
@@ -299,7 +299,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 7, color: TL, fontWeight: 900,
                       }}>✓</div>
-                      <span style={{ color: S3, fontSize: 8.5, lineHeight: 1.4 }}>{t}</span>
+                      <span style={{ color: S3, fontSize: 10, lineHeight: 1.4 }}>{t}</span>
                     </div>
                   ))}
                 </div>
@@ -320,10 +320,10 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                       borderRadius: 7, overflow: 'hidden',
                     }}>
                       <div style={{ padding: '0 10px', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center' }}>
-                        <span style={{ color: S6, fontSize: 8.5, textDecoration: 'line-through', lineHeight: 1.4 }}>{r.them}</span>
+                        <span style={{ color: S6, fontSize: 11, textDecoration: 'line-through', lineHeight: 1.4 }}>{r.them}</span>
                       </div>
                       <div style={{ padding: '0 10px', background: 'rgba(20,184,166,0.04)', display: 'flex', alignItems: 'center' }}>
-                        <span style={{ color: TL, fontSize: 8.5, fontWeight: 700, lineHeight: 1.4 }}>{r.us}</span>
+                        <span style={{ color: TL, fontSize: 11, fontWeight: 700, lineHeight: 1.4 }}>{r.us}</span>
                       </div>
                     </div>
                   ))}
