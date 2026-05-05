@@ -372,32 +372,48 @@ We built this because we've been that chef. We know exactly how much is at stake
     emails: [
       {
         id: 4,
-        subject: "What it looks like when ops support is built by operators",
-        preview: "Not a system to manage. A team that already understands the kitchen.",
+        subject: "It just happens. Nobody chased it. Nobody managed it.",
+        preview: "This is what automatic actually means in a working kitchen.",
         timing: "Day 10 — No response to Emails 1–3",
-        purpose: "Paint the picture of what genuinely different support looks like in daily practice. Concrete tasks, not abstract benefits.",
+        purpose: "Make the 'it just happens' point viscerally clear through stacked contrast — what used to need chasing versus what now simply exists.",
         body: `Hi [First Name],
 
-Here's what a normal working day looks like with HospitalitySupport.uk in place.
+A new starter joins on Monday.
 
-Your head chef messages first thing — a supplier has substituted an ingredient and they need to know the allergen impact and updated dish cost before the lunch service.
+Their training plan is already on their phone. Role-specific. Your menu. Your allergen requirements. They completed it before they arrived.
 
-Done before 10am. Allergens checked. Cost recalculated. Spec updated. Chef confirmed.
+Nobody built it. Nobody sent it. Nobody chased the completion.
 
-Your area manager flags that a new site is opening in six weeks and needs a full training programme built for a team of twelve.
+It happened.
 
-Done within 24 hours. Role-specific plans for every position. Sent directly to staff phones. Completion tracked automatically.
+---
 
-Your GM asks about food safety records before a scheduled inspection.
+A supplier changes an ingredient mid-week.
 
-Already in order. Because they always are.
+The allergen flag is updated. The dish cost is recalculated. The spec reflects it.
 
-None of those tasks required a manager to coordinate, chase, or quality-check. They just got done.
+Nobody noticed in time to action it — because there was nothing to notice. It was already done.
 
-That's what happens when ops support is built by people who understand what a kitchen actually needs — and what it genuinely doesn't have time for.
+It happened.
+
+---
+
+An environmental health officer arrives unannounced on a Thursday morning.
+
+Every food safety record is in order. Every training completion is evidenced. Every allergen document is current.
+
+Nobody scrambled. Nobody built a folder the night before.
+
+It happened. Because it always happens. Because the system doesn't wait to be asked.
+
+---
+
+That's what we built.
+
+Not a platform you manage. Not a checklist you maintain. An operation that runs itself — so your managers can run your business.
 
 From £100 per kitchen per month.`,
-        cta: "Let us walk you through it — 30 minutes →",
+        cta: "See it working in 30 minutes →",
       },
     ],
   },
