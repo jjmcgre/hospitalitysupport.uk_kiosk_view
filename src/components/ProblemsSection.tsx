@@ -13,7 +13,7 @@ const tasks = [
   { before: 'Open a spreadsheet to recost the salmon dish', after: 'Every dish recosted the moment a price changes' },
   { before: 'Manually recalculate your GP', after: 'Live GP on every dish, always current' },
   { before: 'Email allergen info to front of house', after: 'Allergen matrix generated from ingredients' },
-  { before: 'Print new menus after a price change', after: 'Digital menus reflect changes instantly' },
+  { before: 'Build a shopping list manually from the menu', after: 'Order list auto-generated from your live menu — one action' },
   { before: 'Chase a supplier for their latest catalogue', after: 'Supplier updates their own portal — you just see it' },
 ];
 
