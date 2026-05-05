@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Plus, Trash2, Mail, Send, CheckCircle, XCircle, AlertCircle, Loader2, UserPlus, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Plus, Trash2, Mail, Send, CheckCircle, XCircle, Loader2,
+  UserPlus, X, Eye, MousePointer, AlertTriangle, ChevronRight,
+  Clock, Building2, Phone, FileText,
+} from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { campaigns, type Email } from './campaignData';
 
@@ -16,19 +20,40 @@ interface Contact {
   created_at: string;
 }
 
-interface SendState {
-  contactId: string;
-  loading: boolean;
-  success: boolean;
-  error: string;
+interface SendRecord {
+  id: string;
+  campaign_id: string;
+  email_id: number;
+  stage: number;
+  subject: string;
+  sent_at: string;
+  opened_at: string | null;
+  clicked_at: string | null;
+  bounced_at: string | null;
+  open_count: number;
+  click_count: number;
 }
 
 function statusBadge(status: string) {
-  if (status === 'unsubscribed') return <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/25 rounded-full px-2 py-px">Unsub</span>;
-  if (status === 'bounced') return <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/25 rounded-full px-2 py-px">Bounced</span>;
+  if (status === 'unsubscribed')
+    return <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/25 rounded-full px-2 py-px">Unsub</span>;
+  if (status === 'bounced')
+    return <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/25 rounded-full px-2 py-px">Bounced</span>;
   return <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400 bg-teal-500/10 border border-teal-500/25 rounded-full px-2 py-px">Active</span>;
 }
 
+function fmt(d: string | null) {
+  if (!d) return '—';
+  return new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function fmtShort(d: string) {
+  return new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+const campaignLabel = (id: string) => campaigns.find(c => c.id === id)?.label ?? id;
+
+// ── Add Contact Modal ──────────────────────────────────────────────────────────
 function AddContactModal({ onClose, onAdded }: { onClose: () => void; onAdded: () => void }) {
   const [form, setForm] = useState({ name: '', email: '', business_name: '', phone: '', notes: '' });
   const [saving, setSaving] = useState(false);
@@ -40,8 +65,7 @@ function AddContactModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
     const { error } = await supabase.from('email_contacts').insert({ ...form });
     setSaving(false);
     if (error) { setErr(error.message); return; }
-    onAdded();
-    onClose();
+    onAdded(); onClose();
   };
 
   return (
@@ -58,32 +82,22 @@ function AddContactModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
               {(field === 'name' || field === 'email') && <span className="text-rose-400 ml-0.5">*</span>}
             </label>
             {field === 'notes' ? (
-              <textarea
-                rows={2}
-                value={form[field]}
-                onChange={(e) => setForm(f => ({ ...f, [field]: e.target.value }))}
+              <textarea rows={2} value={form[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-teal-500 resize-none"
-                placeholder="Optional notes..."
-              />
+                placeholder="Optional notes..." />
             ) : (
-              <input
-                type={field === 'email' ? 'email' : 'text'}
-                value={form[field]}
-                onChange={(e) => setForm(f => ({ ...f, [field]: e.target.value }))}
+              <input type={field === 'email' ? 'email' : 'text'} value={form[field]}
+                onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-teal-500"
-                placeholder={field === 'email' ? 'name@business.com' : ''}
-              />
+                placeholder={field === 'email' ? 'name@business.com' : ''} />
             )}
           </div>
         ))}
         {err && <p className="text-rose-400 text-xs">{err}</p>}
         <div className="flex gap-3 pt-1">
           <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition-all">Cancel</button>
-          <button
-            onClick={save}
-            disabled={saving}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-          >
+          <button onClick={save} disabled={saving}
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
             {saving ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
             Add contact
           </button>
@@ -93,7 +107,8 @@ function AddContactModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
   );
 }
 
-function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () => void }) {
+// ── Send Email Modal ───────────────────────────────────────────────────────────
+function SendEmailModal({ contact, onClose, onSent }: { contact: Contact; onClose: () => void; onSent: () => void }) {
   const [selectedCampaignId, setSelectedCampaignId] = useState('founders');
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
@@ -109,13 +124,11 @@ function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () =>
     if (!selectedEmail) return;
     setSending(true); setResult(null);
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-      const resp = await fetch(`${supabaseUrl}/functions/v1/send-campaign-email`, {
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-campaign-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           contactId: contact.id,
@@ -132,6 +145,7 @@ function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () =>
         setResult({ ok: false, msg: data.error ?? 'Failed to send' });
       } else {
         setResult({ ok: true, msg: `Sent to ${contact.email}` });
+        onSent();
       }
     } catch (e) {
       setResult({ ok: false, msg: String(e) });
@@ -150,20 +164,12 @@ function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () =>
           <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors"><X size={18} /></button>
         </div>
 
-        {/* Campaign picker */}
         <div>
           <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Campaign</label>
           <div className="space-y-1.5">
             {campaigns.map(c => (
-              <button
-                key={c.id}
-                onClick={() => { setSelectedCampaignId(c.id); setSelectedEmailId(null); }}
-                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${
-                  selectedCampaignId === c.id
-                    ? 'bg-teal-500/10 border-teal-500/40 text-teal-300'
-                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
-                }`}
-              >
+              <button key={c.id} onClick={() => { setSelectedCampaignId(c.id); setSelectedEmailId(null); }}
+                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${selectedCampaignId === c.id ? 'bg-teal-500/10 border-teal-500/40 text-teal-300' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'}`}>
                 <span className="font-semibold">{c.label}</span>
                 <span className="text-[11px] block opacity-60 mt-0.5">{c.description}</span>
               </button>
@@ -171,20 +177,12 @@ function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () =>
           </div>
         </div>
 
-        {/* Email picker */}
         <div>
           <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Select email to send</label>
           <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
             {allEmails.map(e => (
-              <button
-                key={e.id}
-                onClick={() => setSelectedEmailId(e.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${
-                  selectedEmailId === e.id
-                    ? 'bg-teal-500/10 border-teal-500/40 text-teal-300'
-                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
-                }`}
-              >
+              <button key={e.id} onClick={() => setSelectedEmailId(e.id)}
+                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${selectedEmailId === e.id ? 'bg-teal-500/10 border-teal-500/40 text-teal-300' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'}`}>
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
                   <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">Stage {e.stageNum}</span>
                   <span className="text-[10px] opacity-50">{e.timing}</span>
@@ -213,11 +211,8 @@ function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () =>
         <div className="flex gap-3 pt-1">
           <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition-all">Close</button>
           {!result?.ok && (
-            <button
-              onClick={send}
-              disabled={sending || !selectedEmail}
-              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-            >
+            <button onClick={send} disabled={sending || !selectedEmail}
+              className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
               {sending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               Send email
             </button>
@@ -228,31 +223,253 @@ function SendEmailModal({ contact, onClose }: { contact: Contact; onClose: () =>
   );
 }
 
+// ── Contact Detail Panel ───────────────────────────────────────────────────────
+function ContactPanel({
+  contact, onClose, onDeleted, onRefresh,
+}: {
+  contact: Contact;
+  onClose: () => void;
+  onDeleted: () => void;
+  onRefresh: (id: string) => void;
+}) {
+  const [sends, setSends] = useState<SendRecord[]>([]);
+  const [loadingSends, setLoadingSends] = useState(true);
+  const [showSend, setShowSend] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const loadSends = useCallback(async () => {
+    setLoadingSends(true);
+    const { data } = await supabase
+      .from('email_sends')
+      .select('id, campaign_id, email_id, stage, subject, sent_at, opened_at, clicked_at, bounced_at, open_count, click_count')
+      .eq('contact_id', contact.id)
+      .order('sent_at', { ascending: false });
+    setSends((data as SendRecord[]) ?? []);
+    setLoadingSends(false);
+  }, [contact.id]);
+
+  useEffect(() => { loadSends(); }, [loadSends]);
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    await supabase.from('email_contacts').delete().eq('id', contact.id);
+    onDeleted();
+  };
+
+  const totalSends = sends.length;
+  const opened = sends.filter(s => s.opened_at).length;
+  const clicked = sends.filter(s => s.clicked_at).length;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
+
+      {/* Panel */}
+      <div className="fixed inset-y-0 right-0 z-50 w-full max-w-lg bg-slate-900 border-l border-slate-700 flex flex-col shadow-2xl">
+        {/* Header */}
+        <div className="flex items-start gap-4 px-6 py-5 border-b border-slate-800">
+          <div className="w-10 h-10 rounded-xl bg-slate-700 flex items-center justify-center flex-shrink-0 text-white font-bold text-base">
+            {contact.name.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-white font-bold text-base">{contact.name}</h2>
+              {statusBadge(contact.status)}
+            </div>
+            <p className="text-slate-400 text-sm mt-0.5">{contact.email}</p>
+            {contact.business_name && (
+              <p className="text-slate-500 text-xs mt-0.5 flex items-center gap-1">
+                <Building2 size={10} />{contact.business_name}
+              </p>
+            )}
+          </div>
+          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors flex-shrink-0 mt-0.5">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+
+          {/* Contact info */}
+          <div className="grid grid-cols-2 gap-3">
+            {contact.phone && (
+              <div className="bg-slate-800 border border-slate-700 rounded-xl p-3">
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1"><Phone size={9} />Phone</p>
+                <p className="text-white text-sm">{contact.phone}</p>
+              </div>
+            )}
+            <div className="bg-slate-800 border border-slate-700 rounded-xl p-3">
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1"><Clock size={9} />Added</p>
+              <p className="text-white text-sm">{fmtShort(contact.created_at)}</p>
+            </div>
+            {contact.current_campaign_id && (
+              <div className="bg-slate-800 border border-slate-700 rounded-xl p-3 col-span-2">
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Current sequence</p>
+                <p className="text-white text-sm">{campaignLabel(contact.current_campaign_id)} · Stage {contact.current_stage}</p>
+              </div>
+            )}
+            {contact.notes && (
+              <div className="bg-slate-800 border border-slate-700 rounded-xl p-3 col-span-2">
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1"><FileText size={9} />Notes</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{contact.notes}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Engagement summary */}
+          {totalSends > 0 && (
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: 'Sent', value: totalSends, colour: 'text-slate-300' },
+                { label: 'Opened', value: opened, colour: 'text-teal-400' },
+                { label: 'Clicked', value: clicked, colour: 'text-amber-400' },
+              ].map(s => (
+                <div key={s.label} className="bg-slate-800 border border-slate-700 rounded-xl p-3 text-center">
+                  <p className={`text-xl font-black ${s.colour}`}>{s.value}</p>
+                  <p className="text-slate-500 text-xs mt-0.5">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Correspondence history */}
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Correspondence history</p>
+            {loadingSends ? (
+              <div className="flex items-center justify-center py-8"><Loader2 size={18} className="animate-spin text-teal-400" /></div>
+            ) : sends.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center bg-slate-800/50 border border-slate-700 rounded-xl">
+                <Mail size={24} className="text-slate-600 mb-2" />
+                <p className="text-slate-500 text-sm">No emails sent yet</p>
+                <p className="text-slate-600 text-xs mt-0.5">Send the first email using the button below.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {sends.map((s) => (
+                  <div key={s.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      {/* Status dot */}
+                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${s.bounced_at ? 'bg-rose-400' : s.clicked_at ? 'bg-amber-400' : s.opened_at ? 'bg-teal-400' : 'bg-slate-600'}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-semibold leading-snug">{s.subject}</p>
+                        <p className="text-slate-500 text-[10px] mt-0.5">{campaignLabel(s.campaign_id)} · Stage {s.stage}</p>
+                        <p className="text-slate-600 text-[10px] mt-0.5 flex items-center gap-1">
+                          <Clock size={9} />Sent {fmt(s.sent_at)}
+                        </p>
+
+                        {/* Event pills */}
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                          {s.opened_at ? (
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-teal-400 bg-teal-500/10 border border-teal-500/25 rounded-full px-2 py-0.5">
+                              <Eye size={9} />{s.open_count}× opened
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-700/50 rounded-full px-2 py-0.5">
+                              <Eye size={9} />Not opened
+                            </span>
+                          )}
+                          {s.clicked_at ? (
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/25 rounded-full px-2 py-0.5">
+                              <MousePointer size={9} />{s.click_count}× clicked
+                            </span>
+                          ) : null}
+                          {s.bounced_at && (
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/25 rounded-full px-2 py-0.5">
+                              <AlertTriangle size={9} />Bounced
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Timestamps */}
+                        {(s.opened_at || s.clicked_at) && (
+                          <div className="mt-2 space-y-0.5">
+                            {s.opened_at && <p className="text-slate-600 text-[10px]">First open: {fmt(s.opened_at)}</p>}
+                            {s.clicked_at && <p className="text-slate-600 text-[10px]">First click: {fmt(s.clicked_at)}</p>}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-slate-800 flex items-center gap-3">
+          {!confirmDelete ? (
+            <>
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/25 transition-all"
+              >
+                <Trash2 size={13} />Delete
+              </button>
+              <div className="flex-1" />
+              <button
+                onClick={() => setShowSend(true)}
+                disabled={contact.status !== 'active'}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Send size={14} />Send email
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-slate-400 text-sm flex-1">Delete {contact.name}?</p>
+              <button onClick={() => setConfirmDelete(false)} className="px-3 py-2 rounded-xl text-sm text-slate-500 hover:text-white border border-slate-700 transition-all">Cancel</button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="px-4 py-2 rounded-xl text-sm font-bold bg-rose-500 hover:bg-rose-400 text-white transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {deleting ? <Loader2 size={13} className="animate-spin" /> : null}
+                Confirm delete
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {showSend && (
+        <SendEmailModal
+          contact={contact}
+          onClose={() => setShowSend(false)}
+          onSent={() => { loadSends(); onRefresh(contact.id); }}
+        />
+      )}
+    </>
+  );
+}
+
+// ── Main Tab ───────────────────────────────────────────────────────────────────
 export default function ContactsTab() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
-  const [sendTarget, setSendTarget] = useState<Contact | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [sendState] = useState<SendState | null>(null);
+  const [selected, setSelected] = useState<Contact | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from('email_contacts').select('*').order('created_at', { ascending: false });
+    const { data } = await supabase
+      .from('email_contacts')
+      .select('*')
+      .order('created_at', { ascending: false });
     setContacts(data ?? []);
     setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
-  const deleteContact = async (id: string) => {
-    setDeletingId(id);
-    await supabase.from('email_contacts').delete().eq('id', id);
-    setContacts(c => c.filter(x => x.id !== id));
-    setDeletingId(null);
+  const refreshOne = async (id: string) => {
+    const { data } = await supabase.from('email_contacts').select('*').eq('id', id).maybeSingle();
+    if (data) setContacts(cs => cs.map(c => c.id === id ? (data as Contact) : c));
+    if (selected?.id === id && data) setSelected(data as Contact);
   };
-
-  const campaignLabel = (id: string) => campaigns.find(c => c.id === id)?.label ?? id;
 
   return (
     <div className="space-y-4">
@@ -265,13 +482,14 @@ export default function ContactsTab() {
           onClick={() => setShowAdd(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-sm font-bold transition-colors"
         >
-          <Plus size={14} />
-          Add contact
+          <Plus size={14} />Add contact
         </button>
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-16"><Loader2 size={20} className="animate-spin text-teal-400" /></div>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={20} className="animate-spin text-teal-400" />
+        </div>
       ) : contacts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Mail size={32} className="text-slate-700 mb-3" />
@@ -281,7 +499,15 @@ export default function ContactsTab() {
       ) : (
         <div className="space-y-2">
           {contacts.map(c => (
-            <div key={c.id} className="bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 flex items-center gap-4">
+            <button
+              key={c.id}
+              onClick={() => setSelected(c)}
+              className="w-full bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-2xl px-5 py-4 flex items-center gap-4 text-left transition-all hover:bg-slate-750 group"
+            >
+              {/* Avatar */}
+              <div className="w-9 h-9 rounded-xl bg-slate-700 group-hover:bg-slate-600 flex items-center justify-center flex-shrink-0 text-white font-bold text-sm transition-colors">
+                {c.name.charAt(0).toUpperCase()}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
                   <p className="text-white font-semibold text-sm">{c.name}</p>
@@ -295,43 +521,22 @@ export default function ContactsTab() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  onClick={() => setSendTarget(c)}
-                  disabled={c.status !== 'active'}
-                  title="Send email"
-                  className="p-2 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  <Send size={15} />
-                </button>
-                <button
-                  onClick={() => deleteContact(c.id)}
-                  disabled={deletingId === c.id}
-                  title="Delete contact"
-                  className="p-2 rounded-lg text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 transition-colors disabled:opacity-50"
-                >
-                  {deletingId === c.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
-                </button>
-              </div>
-            </div>
+              <ChevronRight size={15} className="text-slate-600 group-hover:text-slate-400 flex-shrink-0 transition-colors" />
+            </button>
           ))}
         </div>
       )}
 
-      {sendState && (
-        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-xl text-sm font-medium ${sendState.success ? 'bg-teal-500 text-slate-950' : sendState.error ? 'bg-rose-500 text-white' : 'bg-slate-800 text-white border border-slate-700'}`}>
-          {sendState.loading && <Loader2 size={14} className="animate-spin" />}
-          {sendState.success && <CheckCircle size={14} />}
-          {sendState.error && <AlertCircle size={14} />}
-          {sendState.loading ? 'Sending...' : sendState.success ? 'Sent!' : sendState.error}
-        </div>
-      )}
-
       {showAdd && <AddContactModal onClose={() => setShowAdd(false)} onAdded={load} />}
-      {sendTarget && <SendEmailModal contact={sendTarget} onClose={() => { setSendTarget(null); load(); }} />}
 
-      {/* suppress unused import */}
-      <span className="hidden"><AlertCircle size={1} /></span>
+      {selected && (
+        <ContactPanel
+          contact={selected}
+          onClose={() => setSelected(null)}
+          onDeleted={() => { setSelected(null); load(); }}
+          onRefresh={refreshOne}
+        />
+      )}
     </div>
   );
 }
