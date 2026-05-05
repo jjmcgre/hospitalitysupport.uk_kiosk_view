@@ -29,6 +29,22 @@ const videoBriefs = [
 
 const posts = [
   {
+    title: 'The Systems Question',
+    text: `Hospitality has been sold a lot of software over the past decade.\n\nReservation platforms. EPOS systems. Recipe cost tools. Training portals. Compliance apps. Allergen spreadsheets.\n\nAnd yet — most operators I speak to are still managing GP on a spreadsheet. Still scrambling before an inspection. Still relying on one experienced person who holds everything in their head.\n\nSo the question worth asking isn't "have operators adopted technology?" It's a more uncomfortable one:\n\nWas the technology ever built for how hospitality actually works?\n\nBecause there's a difference between software built to solve an operator's daily reality — and software built for a procurement deck, with a six-week onboarding and a per-seat licence model that makes no sense in an industry with 70%+ staff turnover.\n\nWe're at an interesting moment. The operators who are growing aren't just working harder. They're working with systems that actually carry some of the load.\n\nThe question is whether the industry has the tools that make that possible — or whether we're still asking people to adapt to the technology, rather than the other way around.\n\n#HospitalityOperations #FoodAndBeverage #RestaurantManagement #HospitalityTech`,
+  },
+  {
+    title: 'The Margin Conversation Nobody Has',
+    text: `Hospitality has a margin problem that rarely gets discussed honestly.\n\nNot the headline — everyone knows margins are tight. But the mechanics of why they erode, quietly, week after week.\n\nA chicken breast goes up 8p. A portion of cream up 3p. Cheddar has a new price from next month.\n\nNone of it triggers a conversation. None of it shows up until the month-end P&L — by which point you've sold hundreds of portions at the wrong margin, and the adjustment you make is already three weeks behind.\n\nThe tools most operators use weren't built to catch this in real time. They were built to record information. To generate reports after the fact. To give you a picture of what already happened.\n\nProfitability in this industry isn't won on the big decisions. It's won — or lost — on the continuous, invisible drift that compounds across 12 dishes, seven services a week, fifty-two weeks a year.\n\nThat's the operational gap. And closing it isn't about working harder — it's about having a system that's actually watching.\n\n#GPControl #FoodCostManagement #HospitalityProfit #RestaurantOperations`,
+  },
+  {
+    title: 'What Experience Used to Hold Together',
+    text: `There's a structural shift happening in hospitality that doesn't get talked about enough.\n\nFor decades, operational knowledge lived in people. A head chef who knew the true cost of every dish. A manager who remembered which supplier had raised prices quietly six months ago. An experienced FOH lead who kept standards consistent without a written process in sight.\n\nThat model worked — when experience stayed.\n\nIt's not staying. Staff turnover in UK hospitality is running well above 70% annually in many segments. The people who carried institutional knowledge are leaving — or moving on — faster than it can be passed on.\n\nThe honest conversation the industry needs to have is this: the operational systems most kitchens run on were designed for a workforce that doesn't exist anymore. They assume continuity. They assume trained users. They assume someone who already knows what they're doing.\n\nThe reality is a kitchen that's often running with a new team, under real compliance pressure, with margins that can't absorb errors.\n\nBuilding for that reality — rather than the idealised version — is where the genuine opportunity is. Both for operators trying to hold standards, and for the industry trying to rebuild its profitability from the ground up.\n\n#HospitalityIndustry #KitchenOperations #HospitalityLeadership #FoodService`,
+  },
+  {
+    title: 'The Price of Hospitality',
+    text: `Why does eating out feel expensive — and yet hospitality businesses are still failing at record rates?\n\nIt's a question worth sitting with. Because the answer isn't simple, and the usual framing — "it's rents, it's wages, it's energy" — only gets you so far.\n\nA big part of the answer is operational inefficiency at scale. Not incompetence. Not laziness. Structural inefficiency — built into how kitchens are run, how margins are monitored, how standards are maintained — that leaks money continuously, quietly, and mostly unnoticed.\n\nAn operator running at 62% GP on a dish they priced at 70% isn't making a bad decision. They're often just missing the information they'd need to make a better one, fast enough to act.\n\nWhen the technology infrastructure of an industry improves, the whole industry benefits. Prices can be held. Margins can be protected. The best operators can grow rather than just survive.\n\nThat's the long-term case for building better operational tools in hospitality. Not to replace chefs or managers or the craft that makes great food. But to carry the administrative and financial weight that shouldn't be sitting on their shoulders — so the people running these businesses can focus on the part that actually matters.\n\nThe industry deserves better infrastructure. We're trying to build some of it.\n\n#Hospitality #FoodIndustry #HospitalityTech #RestaurantBusiness #UKHospitality`,
+  },
+  {
     title: 'The Spreadsheet Problem',
     text: `Most hospitality businesses are still managing GP on spreadsheets.\n\nUpdated once a week. Maybe.\n\nBy which point the dish that was at 72% is now at 65% — and you've sold it 200 times at the wrong margin.\n\nHospitalitySupport.uk monitors margin continuously. Catches price changes. Flags affected dishes. Recommends adjustments.\n\nBefore the damage is done.\n\nNot a dashboard. An operations team.\n\n#Hospitality #FoodAndBeverage #RestaurantManagement #GPControl`,
   },
@@ -132,7 +148,7 @@ export default function LinkedInPage() {
     <div className="min-h-full">
       <PageHeader
         title="LinkedIn"
-        subtitle="Three video scripts, ten post scripts, and ad copy — copy and deploy directly."
+        subtitle="Video scripts, editorial posts, and ad copy — copy and deploy directly."
         deployLabel="How to use: copy any post script and paste directly into LinkedIn. For video, copy the script and record to camera."
         badge="LinkedIn"
       />
@@ -155,9 +171,25 @@ export default function LinkedInPage() {
         </div>
 
         <div>
-          <h2 className="text-white font-bold text-lg mb-4">Post Scripts</h2>
+          <h2 className="text-white font-bold text-lg mb-1">Editorial Posts</h2>
+          <p className="text-slate-400 text-sm mb-4">Industry-led. Contextual. Arrive at the why — not the sell.</p>
           <div className="space-y-4">
-            {posts.map((p) => (
+            {posts.slice(0, 4).map((p) => (
+              <ScriptCard
+                key={p.title}
+                title={p.title}
+                script={p.text}
+                label="Editorial"
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-white font-bold text-lg mb-1">Direct Posts</h2>
+          <p className="text-slate-400 text-sm mb-4">Tighter, more direct — for when the audience already knows the problem.</p>
+          <div className="space-y-4">
+            {posts.slice(4).map((p) => (
               <ScriptCard
                 key={p.title}
                 title={p.title}
