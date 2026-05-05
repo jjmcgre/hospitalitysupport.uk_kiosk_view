@@ -488,6 +488,201 @@ If the timing isn't right, that's completely fine. But if it is — the link bel
   },
 ];
 
+const chefsCampaign: Stage[] = [
+  {
+    stage: 1,
+    label: "The Drift",
+    description: "Open on the uncomfortable truth — your best chefs are drowning in admin that has nothing to do with cooking. Make the reader feel it.",
+    emails: [
+      {
+        id: 1,
+        subject: "Your head chef is spending half their week not cooking",
+        preview: "The best hire you ever made. Now mostly a filing system.",
+        timing: "Day 1 — Cold send",
+        purpose: "Open with the human cost before the commercial one. Make the reader picture their best person buried in the wrong work.",
+        body: `Hi [First Name],
+
+Think about the person you hired as head chef.
+
+What you hired them for: flavour, creativity, craft, standards, consistency across the pass, mentoring the section chefs, pushing the menu forward.
+
+What they're actually doing this week: allergen queries from front of house, chasing training completions, recalculating dish costs because a supplier updated a price, updating specs because a menu item changed, building records because a compliance visit is due.
+
+None of that is cooking.
+
+None of it requires a chef.
+
+But it lands on a chef — because in most hospitality businesses, the kitchen carries the operational admin that no one else has time for. And the person who carries most of it is usually the one you can least afford to lose to a spreadsheet.
+
+HospitalitySupport.uk takes all of it off the kitchen. GP control, allergen management, compliance records, staff training — handled by a dedicated ops team, from £100 per kitchen per month.
+
+For the price of a coffee a day, your head chef gets their week back.
+
+The kitchen does what kitchens are for.`,
+        cta: "See how it works — 30 minutes →",
+      },
+    ],
+  },
+  {
+    stage: 2,
+    label: "The Commercial Leak",
+    description: "Margin, skill, and compliance — the three places where the status quo is quietly costing money. One email per angle.",
+    emails: [
+      {
+        id: 2,
+        subject: "The margin you're losing while your chef fields allergen calls",
+        preview: "It's not just their time. It's what they're not doing while they answer.",
+        timing: "Day 4 — No response to Email 1",
+        purpose: "Connect the time cost to a commercial cost. Every hour a chef spends on admin is an hour not spent on GP, quality, and consistency.",
+        body: `Hi [First Name],
+
+There's a direct line between operational admin and margin — it just runs through your chef's attention.
+
+Every hour your head chef spends on allergen queries, training admin, or compliance paperwork is an hour not spent on:
+
+— Tightening portion consistency across the section
+— Catching the dish that's drifted from spec
+— Working with the sous chef on menu development
+— Fixing the food cost on the table that's quietly underperforming
+
+These aren't abstract benefits. They're the things a skilled chef does when they have time to do them. And they show up in your GP and your repeat covers.
+
+The operational admin doesn't disappear when it's left undone — it just creates risk. And it doesn't get done well when it's squeezed into the gaps — it creates a different kind of risk.
+
+HospitalitySupport.uk removes it entirely. A dedicated GP Controller, Allergen Specialist, Compliance Lead, and Training Manager — handling everything that shouldn't be on the chef's list, from £100 per kitchen per month.
+
+That's the price of protecting the margin the chef should be focusing on.`,
+        cta: "Talk to us about what this looks like for your kitchen →",
+      },
+      {
+        id: 3,
+        subject: "Your kitchen is losing skill. Not because of recruitment.",
+        preview: "When your best people spend years doing the wrong work, the kitchen forgets how to be great.",
+        timing: "Day 7 — No response to Emails 1–2",
+        purpose: "The skill attrition angle — what happens over time when creative, technical people are buried in admin. Long-term and harder to quantify, which is exactly why it's worth naming.",
+        body: `Hi [First Name],
+
+Skill attrition in a kitchen doesn't always look like a resignation.
+
+Sometimes it looks like a head chef who used to develop three new dishes a month and now barely has time to review what's on the current menu.
+
+A sous chef who was promoted because of their food but now spends most of the job coordinating training records and fielding compliance queries.
+
+A kitchen that used to win on creativity and craft and now wins on nothing in particular — because the people who drove that are buried in operational repetition.
+
+You didn't hire them for that. They didn't become chefs for that.
+
+But the admin has to go somewhere. And in most kitchens, it goes to whoever can't say no — which is usually the most capable person in the room.
+
+HospitalitySupport.uk was built specifically to stop that drift. The operational work is handled. Properly. Continuously. By people who understand kitchens — so the people who understand kitchens can get back to the work they're actually good at.
+
+From £100 per kitchen per month. The cost of one hour of management time.`,
+        cta: "Let's talk about what your kitchen gets back →",
+      },
+    ],
+  },
+  {
+    stage: 3,
+    label: "The Compliance Reckoning",
+    description: "Compliance isn't a paperwork problem — it's a risk sitting in your kitchen right now. Make the cost of the current approach real.",
+    emails: [
+      {
+        id: 4,
+        subject: "£2,500 fine. Closure notice. Reputation hit. All preventable.",
+        preview: "The inspection didn't give notice. The records weren't in order. That's the whole story.",
+        timing: "Day 10 — No response to Emails 1–3",
+        purpose: "Hard commercial consequence of compliance failures. Not invented — these are real outcomes. No scare tactics needed; the facts land hard enough.",
+        body: `Hi [First Name],
+
+Environmental health visits don't give notice.
+
+When one happens, the question isn't whether your team intended to be compliant. It's whether the records are in order right now, today, as the officer walks through the door.
+
+For most kitchens, compliance is reactive. Records are updated before visits. Training completions are chased when someone remembers. Allergen documentation is current for the main menu — less certain for the specials, the seasonal items, the supplier substitutions from last week.
+
+That gap is where improvement notices, closure risks, and fines live.
+
+HospitalitySupport.uk treats compliance as a continuous system, not a pre-inspection task. Food safety records are maintained as the work happens. Allergen information updates when the menu changes. Training is evidenced as completions occur — not reconstructed from memory.
+
+When an officer arrives — announced or otherwise — everything is already in order. Not because someone prepared. Because it always is.
+
+From £100 per kitchen per month. Less than the cost of a single improvement notice. Considerably less than a closure.`,
+        cta: "See how compliance works in practice →",
+      },
+    ],
+  },
+  {
+    stage: 4,
+    label: "The Number",
+    description: "Make the price land. £100 is almost nothing. Make the reader feel how absurd it is not to do this.",
+    emails: [
+      {
+        id: 5,
+        subject: "£3.30 a day to give your chef their kitchen back",
+        preview: "Less than a round of coffees. More than any hire you could make.",
+        timing: "Day 14 — No response to Emails 1–4",
+        purpose: "Price anchoring done right — not 'it's cheap', but 'look what you're getting for that number'. Let the ratio do the work.",
+        body: `Hi [First Name],
+
+£3.30 a day.
+
+That's what HospitalitySupport.uk costs per kitchen.
+
+For that, every single day, your kitchen has access to:
+
+A GP & Cost Controller keeping your margins live as supplier prices move.
+An Allergen Specialist maintaining your allergen records as the menu changes.
+A Compliance Lead ensuring your food safety documentation is always current.
+A Training Manager handling new starter onboarding and completion tracking.
+A Menu Development Chef available when you need a fresh set of eyes on the food.
+
+Not a platform. Not a portal. A team — responding to your kitchen, handling the work, giving your head chef their time back.
+
+The alternative is your chef doing all of this between services, in the margins of a job they were hired to do something else. Or it doesn't get done. Or it gets done badly.
+
+£3.30 a day is not a budget decision. It's a decision about what your kitchen is for.
+
+We'd like to show you exactly what it looks like in practice — 30 minutes, your scenario, no sales pressure.`,
+        cta: "Book the 30 minutes →",
+      },
+    ],
+  },
+  {
+    stage: 5,
+    label: "The Call to Arms",
+    description: "Final email. Rallying cry for operators who care about their kitchens. This is a statement of belief, not a pitch.",
+    emails: [
+      {
+        id: 6,
+        subject: "Great kitchens deserve great chefs. Great chefs deserve to cook.",
+        preview: "This is why we built it. This is what it's for.",
+        timing: "Day 21 — Final email in sequence",
+        purpose: "Conviction close. Not a feature summary — a statement of what we believe about hospitality, what chefs are for, and what the industry deserves. Let it land without hedging.",
+        body: `Hi [First Name],
+
+The best thing a kitchen can do is cook extraordinary food.
+
+Not manage compliance records. Not build training decks. Not recalculate GP on seventeen dishes because a distributor changed their price list overnight.
+
+But that's what kitchens do — because no one else has taken it off them.
+
+We built HospitalitySupport.uk because we believe the hospitality industry is too good, and its people too skilled, to spend their careers buried in operational admin that any decent system should handle automatically.
+
+Your head chef should be in the kitchen.
+Your sous chef should be developing their craft.
+Your managers should be leading — not filing.
+
+For £100 a month per kitchen, we handle everything that's getting in the way of that. GP, allergens, compliance, training — continuously, accurately, without adding to your headcount.
+
+This isn't about efficiency. It's about what kitchens are for.
+
+If you agree — give us 30 minutes. We'll show you what it looks like when a kitchen gets to focus on the only thing that actually matters.`,
+        cta: "Book a call — let's talk about your kitchen →",
+      },
+    ],
+  },
+];
+
 function EmailCard({ email }: { email: Email; stageNum: number }) {
   const [open, setOpen] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
@@ -624,10 +819,16 @@ const campaigns = [
     description: 'Problem-led cold outreach. Builds commercial case across 5 stages.',
     data: campaign,
   },
+  {
+    id: 'chefs',
+    label: 'Campaign 3: Chefs Back to the Kitchen',
+    description: 'A call to arms. Margin, skill, compliance — and a rallying cry for what kitchens are actually for.',
+    data: chefsCampaign,
+  },
 ];
 
 export default function EmailPage() {
-  const [activeCampaign, setActiveCampaign] = useState<'outbound' | 'founders'>('founders');
+  const [activeCampaign, setActiveCampaign] = useState<'outbound' | 'founders' | 'chefs'>('founders');
   const current = campaigns.find((c) => c.id === activeCampaign)!;
   const totalEmails = current.data.reduce((acc, s) => acc + s.emails.length, 0);
 
@@ -646,7 +847,7 @@ export default function EmailPage() {
           {campaigns.map((c) => (
             <button
               key={c.id}
-              onClick={() => setActiveCampaign(c.id as 'outbound' | 'founders')}
+              onClick={() => setActiveCampaign(c.id as 'outbound' | 'founders' | 'chefs')}
               className={`flex-1 rounded-xl px-4 py-3 text-left transition-all ${
                 activeCampaign === c.id
                   ? 'bg-slate-700 border border-slate-500 shadow-sm'
