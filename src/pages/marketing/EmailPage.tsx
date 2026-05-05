@@ -372,47 +372,31 @@ We built this because we've been that chef. We know exactly how much is at stake
     emails: [
       {
         id: 4,
-        subject: "It just happens. Nobody chased it. Nobody managed it.",
-        preview: "This is what automatic actually means in a working kitchen.",
+        subject: "Your GP just dropped. Nobody told you. Nobody had to.",
+        preview: "Because by the time we told you, it was already fixed.",
         timing: "Day 10 — No response to Emails 1–3",
-        purpose: "Make the 'it just happens' point viscerally clear through stacked contrast — what used to need chasing versus what now simply exists.",
+        purpose: "Hit the commercial nerve first — GP, cost, margin. Then land the 'automatic' point through a single, vivid scenario rather than a list.",
         body: `Hi [First Name],
 
-A new starter joins on Monday.
+Supplier increases their price on a Tuesday.
 
-Their training plan is already on their phone. Role-specific. Your menu. Your allergen requirements. They completed it before they arrived.
+You don't get an email. You don't get an alert. You don't find out three weeks later when the GP report looks wrong and someone has to go digging.
 
-Nobody built it. Nobody sent it. Nobody chased the completion.
+The dish cost updates. The margin recalculates. If it pushes a dish below your target GP, it flags — with the exact price adjustment needed to bring it back.
 
-It happened.
+Before service. Before it costs you anything.
 
----
+You didn't ask for that. You didn't set up a workflow for it. It just happened — because that's what the system does.
 
-A supplier changes an ingredient mid-week.
+That's the difference between software you operate and support that operates for you.
 
-The allergen flag is updated. The dish cost is recalculated. The spec reflects it.
+Every day, without prompting: costs are live, allergens are current, compliance is evidenced, records are in order.
 
-Nobody noticed in time to action it — because there was nothing to notice. It was already done.
+Not because someone is on top of it.
 
-It happened.
+Because it doesn't need someone to be on top of it.
 
----
-
-An environmental health officer arrives unannounced on a Thursday morning.
-
-Every food safety record is in order. Every training completion is evidenced. Every allergen document is current.
-
-Nobody scrambled. Nobody built a folder the night before.
-
-It happened. Because it always happens. Because the system doesn't wait to be asked.
-
----
-
-That's what we built.
-
-Not a platform you manage. Not a checklist you maintain. An operation that runs itself — so your managers can run your business.
-
-From £100 per kitchen per month.`,
+From £100 per kitchen per month — for an operation that runs itself.`,
         cta: "See it working in 30 minutes →",
       },
     ],
