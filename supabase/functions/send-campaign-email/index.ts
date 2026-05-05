@@ -74,10 +74,19 @@ Deno.serve(async (req: Request) => {
     // Build HTML email
     const firstName = contact.name?.split(" ")[0] || contact.name || "there";
     const brochureUrl = `${siteUrl ?? "https://hospitality.support"}/brochure`;
-    const personalizedBody = body
-      .replace(/\[First Name\]/gi, firstName)
-      .replace(/\[BROCHURE_LINK\]/g, brochureUrl);
-    const htmlBody = personalizedBody
+
+    // Replace [link text][BROCHURE_LINK] with proper anchor in HTML, plain URL in text
+    const replaceBrochureHtml = (s: string) =>
+      s.replace(/\[([^\]]+)\]\[BROCHURE_LINK\]/g, `<a href="${brochureUrl}" style="color:#14b8a6;">$1</a>`);
+    const replaceBrochureText = (s: string) =>
+      s.replace(/\[([^\]]+)\]\[BROCHURE_LINK\]/g, `$1: ${brochureUrl}`);
+
+    const personalizedText = body
+      .replace(/\[First Name\]/gi, firstName);
+    const htmlSource = replaceBrochureHtml(personalizedText);
+    const plainSource = replaceBrochureText(personalizedText);
+
+    const htmlBody = htmlSource
       .split("\n")
       .map((line: string) => {
         if (line.trim() === "") return "<br/>";
@@ -121,7 +130,7 @@ ${htmlBody}
         to: [contact.email],
         subject,
         html: htmlEmail,
-        text: `${personalizedBody}\n\n${cta}`,
+        text: `${plainSource}\n\n${cta}`,
         tags: [
           { name: "campaign_id", value: campaignId },
           { name: "send_id", value: sendRow.id },
