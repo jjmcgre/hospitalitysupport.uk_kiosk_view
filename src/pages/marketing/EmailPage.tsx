@@ -613,21 +613,21 @@ function StageBlock({ stage }: { stage: Stage }) {
 
 const campaigns = [
   {
-    id: 'outbound',
-    label: 'Campaign 1: Outbound',
-    description: 'Problem-led cold outreach. Builds commercial case across 5 stages.',
-    data: campaign,
-  },
-  {
     id: 'founders',
-    label: 'Campaign 2: Founder Story',
+    label: 'Campaign 1: Founder Story',
     description: 'Authenticity-led. Built by operators who felt the pain — and built something better.',
     data: foundersCampaign,
+  },
+  {
+    id: 'outbound',
+    label: 'Campaign 2: Outbound',
+    description: 'Problem-led cold outreach. Builds commercial case across 5 stages.',
+    data: campaign,
   },
 ];
 
 export default function EmailPage() {
-  const [activeCampaign, setActiveCampaign] = useState<'outbound' | 'founders'>('outbound');
+  const [activeCampaign, setActiveCampaign] = useState<'outbound' | 'founders'>('founders');
   const current = campaigns.find((c) => c.id === activeCampaign)!;
   const totalEmails = current.data.reduce((acc, s) => acc + s.emails.length, 0);
 
