@@ -185,32 +185,37 @@ export default function DiaryPage() {
         {activeTab === 'calendar' && (
           <div className="space-y-6">
 
-            {/* Google Calendar booking embed */}
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Calendar size={15} className="text-teal-400" />
-                    <span className="text-white font-bold text-sm">Google Calendar — Demo Booking Page</span>
-                  </div>
-                  <p className="text-slate-500 text-xs mt-0.5">This is your live booking page. Prospects pick a slot directly here.</p>
+            {/* Google Calendar booking link */}
+            <div className="bg-slate-800 border border-teal-500/30 rounded-2xl overflow-hidden">
+              <div className="px-6 py-5 flex items-center gap-5">
+                <div className="w-14 h-14 rounded-2xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0">
+                  <Calendar size={24} className="text-teal-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-white font-bold text-base">Your live booking calendar</div>
+                  <p className="text-slate-400 text-sm mt-0.5">Prospects pick a slot directly from your Google Calendar. Opens in a new tab.</p>
+                  <p className="text-slate-600 text-xs mt-1 truncate">{GOOGLE_CAL_LINK}</p>
                 </div>
                 <a
                   href={GOOGLE_CAL_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-teal-400 hover:text-teal-300 transition-colors border border-teal-500/30 rounded-xl px-3 py-1.5 flex-shrink-0"
+                  className="flex-shrink-0 flex items-center gap-2 bg-teal-500 hover:bg-teal-400 transition-colors text-white font-bold text-sm rounded-xl px-5 py-3"
                 >
-                  Open <ExternalLink size={11} />
+                  Open calendar <ExternalLink size={14} />
                 </a>
               </div>
-              <div className="relative" style={{ height: '640px' }}>
-                <iframe
-                  src={GOOGLE_CAL_LINK}
-                  style={{ width: '100%', height: '100%', border: 'none' }}
-                  title="Book a demo"
-                  allow="camera; microphone"
-                />
+              <div className="border-t border-slate-700 px-6 py-4 grid grid-cols-3 gap-4 text-center">
+                {[
+                  { label: 'Send to prospects', desc: 'Include in follow-up emails' },
+                  { label: 'Share on campaigns', desc: 'Add to email CTAs' },
+                  { label: 'Use in the app', desc: 'Booking modal links here' },
+                ].map(tip => (
+                  <div key={tip.label}>
+                    <div className="text-white text-xs font-semibold">{tip.label}</div>
+                    <div className="text-slate-500 text-[11px] mt-0.5">{tip.desc}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
