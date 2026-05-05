@@ -50,7 +50,6 @@ function PageHeader({ n, total = 8 }: { n: number; total?: number }) {
       <span style={{ color: W, fontWeight: 900, fontSize: 11, letterSpacing: '-0.02em', fontFamily: F }}>
         HospitalitySupport<span style={{ color: TL }}>.uk</span>
       </span>
-      <span style={{ color: S5, fontSize: 8.5, fontFamily: F }}>{n} / {total}</span>
     </div>
   );
 }
@@ -62,7 +61,6 @@ function PageFooter({ text }: { text?: string }) {
       borderTop: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, position: 'relative', zIndex: 1,
     }}>
       <span style={{ color: '#1e3a4a', fontSize: 8, fontFamily: F }}>{text ?? 'hospitalitysupport.uk'}</span>
-      <span style={{ color: '#1e3a4a', fontSize: 8, fontFamily: F }}>Confidential · Not for distribution</span>
     </div>
   );
 }
@@ -241,7 +239,7 @@ function CoverPage() {
           </div>
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
-            <p style={{ color: '#1a3040', fontSize: 8, margin: 0, fontFamily: F }}>Confidential · Not for distribution · hospitalitysupport.uk</p>
+            <p style={{ color: '#1a3040', fontSize: 8, margin: 0, fontFamily: F }}>hospitalitysupport.uk</p>
           </div>
         </div>
 
@@ -800,9 +798,6 @@ function ClosePage() {
 
           <Rule />
 
-          <p style={{ color: '#0d1f2d', fontSize: 8.5, margin: 0, lineHeight: 1.6, fontFamily: F }}>
-            Confidential · Not for distribution
-          </p>
         </div>
       </div>
     </Page>
