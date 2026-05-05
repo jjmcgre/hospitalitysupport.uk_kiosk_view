@@ -679,6 +679,239 @@ If you agree — give us 30 minutes. We'll show you what it looks like when a ki
   },
 ];
 
+export const legacyCostCampaign: Stage[] = [
+  {
+    stage: 1,
+    label: "The Legacy Tax",
+    description: "Open on the uncomfortable truth — operators are still paying 2015 prices for 2015 software.",
+    emails: [
+      {
+        id: 1,
+        subject: "You're still paying legacy prices for legacy software",
+        preview: "The platforms haven't changed. Neither has their pricing logic.",
+        timing: "Day 1 — Cold send",
+        purpose: "Establish the core premise: incumbent platforms charge what the market bore years ago, not what the value is today.",
+        body: `Hi [First Name],
+
+The hospitality software market hasn't changed much in a decade.
+
+The same platforms. The same per-user pricing model. The same onboarding fees, the same annual contracts, the same training overhead before you can do anything useful. Prices that made sense when these systems were the only option — before anyone had seriously rethought how operations support could work.
+
+Most operators are still on those platforms. Not because they're the best option. Because switching felt harder than staying.
+
+We rewrote the approach from scratch.
+
+HospitalitySupport.uk isn't a legacy platform with a new interface. It's a full hospitality operations team — GP & Cost Controller, Menu Development Chef, Allergen Specialist, Training Manager, Compliance Lead — available around the clock, from £100 per kitchen per month.
+
+No per-user fees. No setup costs. No annual contract. No onboarding overhead.
+
+Just the work, done properly, from day one.
+
+I've put together a quick comparison of what the typical platforms charge versus what you get with us — worth a look before your next renewal lands.`,
+        cta: "See the full comparison →",
+      },
+    ],
+  },
+  {
+    stage: 2,
+    label: "The Numbers",
+    description: "Make the cost comparison impossible to ignore.",
+    emails: [
+      {
+        id: 2,
+        subject: "What you're actually paying for hospitality operations software",
+        preview: "We ran the numbers. The difference is harder to justify than you'd think.",
+        timing: "Day 4 — No response to Email 1",
+        purpose: "Lead with the cost comparison table. Let the numbers do the work.",
+        body: `Hi [First Name],
+
+We ran the numbers on what hospitality operators typically pay for the software that's supposed to support their operations.
+
+Here's how it stacks up against HospitalitySupport.uk:
+
+──────────────────────────────────────────────────────
+Platform              Typical cost        What you get
+──────────────────────────────────────────────────────
+Compliance platforms  £200–£400/mo        Forms & checklists
+                      + per user          you fill in yourself
+
+Recipe/costing tools  £150–£350/mo        A database you
+                      + setup fee         maintain manually
+
+Training platforms    £300–£600/mo        Content libraries
+                      + per learner       your team ignores
+
+Allergen software     £100–£250/mo        Static PDFs and
+                                          manual data entry
+
+Combined stack        £750–£1,600/mo      Four separate logins,
+                      per site            four sets of data,
+                                          someone to run it all
+
+──────────────────────────────────────────────────────
+HospitalitySupport.uk £100/mo per kitchen Everything above —
+                      No per-user fees    done for you, live,
+                      No setup costs      by a dedicated team
+──────────────────────────────────────────────────────
+
+The platforms charge what they charge because operators have kept paying it.
+
+We started with a blank sheet of paper and asked: what would this cost if we built it for how kitchens actually work today?
+
+The answer was £100 per kitchen per month. All in.
+
+You can see the full breakdown — including what's included and what the typical platforms don't cover — in our brochure here: [BROCHURE_LINK]`,
+        cta: "See the full comparison →",
+      },
+      {
+        id: 3,
+        subject: "Four platforms. Four logins. Four sets of data to maintain. One problem.",
+        preview: "The per-user model was never designed with your kitchen in mind.",
+        timing: "Day 7 — No response to Emails 1–2",
+        purpose: "Attack the structural problem with the incumbent model — fragmentation and admin overhead.",
+        body: `Hi [First Name],
+
+Here's what the legacy platform model actually looks like in practice.
+
+You subscribe to a compliance platform. It requires someone to log in and complete the checklists — the system doesn't do it, it just stores what a human enters.
+
+You subscribe to a recipe costing tool. Someone has to keep it updated when supplier prices change. If they don't, the numbers are wrong and you don't know it.
+
+You subscribe to a training platform. Someone has to build the content, assign it to the right people, and chase completions. The platform tracks what you load into it. No more.
+
+You subscribe to allergen software. Someone has to update it every time the menu changes. If they forget, the data is out of date.
+
+Four subscriptions. Four separate data problems. And the common thread: someone in your team is the system. The platform is just where they store the results.
+
+You're paying for tools. You still need the people to use them.
+
+HospitalitySupport.uk is different by design.
+
+The team does the work. You don't manage the system — you send a message, flag a task, ask a question. It gets handled. The records are kept. The margins are live. The compliance is current.
+
+One price. One team. Everything covered.
+
+See what's included: [BROCHURE_LINK]`,
+        cta: "See what's included →",
+      },
+    ],
+  },
+  {
+    stage: 3,
+    label: "The Rewrite",
+    description: "Explain the philosophy behind the new approach — not a feature list, a different model.",
+    emails: [
+      {
+        id: 4,
+        subject: "We didn't build a better version of what already exists",
+        preview: "We asked a different question entirely.",
+        timing: "Day 10 — No response to Emails 1–3",
+        purpose: "Position HS.uk as a category break, not an incremental improvement.",
+        body: `Hi [First Name],
+
+Most hospitality software is built on the same underlying assumption: give operators the tools, and they'll find the time to use them.
+
+That assumption was questionable when it was made. After fifteen years of watching busy kitchen teams deprioritise every platform they've ever been sold, it's clearly wrong.
+
+When we built HospitalitySupport.uk, we didn't ask "how do we build a better compliance platform?" or "how do we improve recipe costing software?"
+
+We asked: what does a hospitality business actually need — and what's the most useful form that support could take?
+
+The answer wasn't another dashboard. It was a team.
+
+A GP & Cost Controller who keeps your margins live as prices shift — without anyone in your kitchen having to trigger a recalculation.
+
+An Allergen Specialist who updates your allergen records when your menu changes — automatically, as the change happens.
+
+A Compliance Lead who maintains your food safety documentation continuously — so it's always in order, not just before a visit.
+
+A Training Manager who builds plans, sends them to staff, and tracks completions — without your managers coordinating any of it.
+
+A Menu Development Chef available when you need a fresh perspective on the food.
+
+One team. One price. From £100 per kitchen per month.
+
+Legacy platforms charge more than this for a fraction of it. We think that should bother operators more than it does.
+
+Full detail on what's included: [BROCHURE_LINK]`,
+        cta: "Read the full breakdown →",
+      },
+    ],
+  },
+  {
+    stage: 4,
+    label: "The Renewal Question",
+    description: "Target the moment operators question their existing contracts.",
+    emails: [
+      {
+        id: 5,
+        subject: "When does your current contract renew?",
+        preview: "Before it auto-renews, it's worth knowing what else is available.",
+        timing: "Day 14 — No response to Emails 1–4",
+        purpose: "Create a natural urgency trigger around renewal timing.",
+        body: `Hi [First Name],
+
+A straightforward question worth asking before your current hospitality software contracts renew.
+
+Are you getting full value from what you're paying?
+
+Not "are the tools useful in principle" — but are they actually being used, kept current, and delivering the outcomes you subscribed for?
+
+In our experience, most operators could answer honestly: probably not. The compliance system isn't updated between visits. The recipe costing tool drifted when someone left and hasn't been properly maintained since. The training platform has modules that were never completed.
+
+That's not a failure of intent. It's the predictable result of selling software to people who don't have time to operate it.
+
+Before the next renewal hits, it's worth knowing what £100 per kitchen per month actually covers with us — and how it compares to what you're currently spending across the platforms you have.
+
+We've laid out the full comparison in our brochure. It's a straightforward read: [BROCHURE_LINK]
+
+And if you'd like to see the system in practice — a 30-minute walkthrough, your scenario, no sales pressure — the link below puts time straight in the diary.`,
+        cta: "Book a walkthrough before your renewal →",
+      },
+    ],
+  },
+  {
+    stage: 5,
+    label: "Final Close",
+    description: "Direct, confident, low-friction close anchored to the price point.",
+    emails: [
+      {
+        id: 6,
+        subject: "£3.30 a day. Everything your kitchen operations need.",
+        preview: "Legacy platforms charge five times this. For a fraction of the outcome.",
+        timing: "Day 21 — Final email in sequence",
+        purpose: "Bring it back to the price point. Simple, direct, confident close.",
+        body: `Hi [First Name],
+
+Last note from me on this.
+
+£3.30 a day per kitchen.
+
+That's what HospitalitySupport.uk costs. All in — no per-user fees, no setup charge, no annual contract, no add-ons required to make the core function work.
+
+For that, every day, your kitchen has access to:
+
+→ Live GP and margin control as supplier prices move
+→ Allergen records maintained as your menu changes
+→ Continuous food safety compliance documentation
+→ Staff training built, assigned, and tracked automatically
+→ Menu development support when you need it
+
+The legacy platforms charge £300–£600 a month for individual pieces of this — and they require your team to operate them. The work still falls on your people.
+
+We handle the work. That's the difference.
+
+If you'd like to see exactly what that looks like for your business — what changes, what doesn't, and whether the transition is as straightforward as we say it is — the walkthrough takes 30 minutes.
+
+Our brochure covers the full detail if you'd like to read first: [BROCHURE_LINK]
+
+Either way — worth knowing what the alternative looks like before the next invoice arrives.`,
+        cta: "Book a 30-minute walkthrough →",
+      },
+    ],
+  },
+];
+
 export const campaigns = [
   {
     id: 'founders',
@@ -697,5 +930,11 @@ export const campaigns = [
     label: 'Campaign 3: Chefs Back to the Kitchen',
     description: 'A call to arms for operators who care about their kitchens.',
     data: chefsCampaign,
+  },
+  {
+    id: 'legacy-cost',
+    label: 'Campaign 4: Legacy Cost Comparison',
+    description: 'Cost-led. Exposes the legacy pricing model and demonstrates the new approach.',
+    data: legacyCostCampaign,
   },
 ];

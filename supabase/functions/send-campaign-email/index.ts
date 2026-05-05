@@ -73,7 +73,10 @@ Deno.serve(async (req: Request) => {
 
     // Build HTML email
     const firstName = contact.name?.split(" ")[0] || contact.name || "there";
-    const personalizedBody = body.replace(/\[First Name\]/gi, firstName);
+    const brochureUrl = `${siteUrl ?? "https://hospitality.support"}/brochure`;
+    const personalizedBody = body
+      .replace(/\[First Name\]/gi, firstName)
+      .replace(/\[BROCHURE_LINK\]/g, brochureUrl);
     const htmlBody = personalizedBody
       .split("\n")
       .map((line: string) => {
