@@ -67,8 +67,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const siteUrl = Deno.env.get("SITE_URL") ?? "https://hospitality.support";
-    const bookingUrl = `${siteUrl}/demo?book=1`;
+    const bookingUrl = "https://hospitality.support/demo?book=1";
     const trackPixelUrl = `${supabaseUrl}/functions/v1/email-tracking/pixel?sid=${sendRow.id}`;
     const trackClickUrl = `${supabaseUrl}/functions/v1/email-tracking/click?sid=${sendRow.id}&url=${encodeURIComponent(bookingUrl)}`;
     const unsubUrl = `${supabaseUrl}/functions/v1/email-tracking/unsub?cid=${contactId}`;
