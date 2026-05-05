@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck, Video } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
 
@@ -22,6 +22,8 @@ interface Enquiry {
   num_sites: string;
   message: string;
   created_at: string;
+  video_link: string;
+  status: string;
 }
 
 const TIMES = [
@@ -305,6 +307,19 @@ export default function DiaryPage() {
                             </div>
                           ) : (
                             <div className="text-slate-600 text-sm italic">No enquiry details linked to this slot.</div>
+                          )}
+
+                          {/* Video link */}
+                          {enq?.video_link && (
+                            <a
+                              href={enq.video_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center gap-2 w-full bg-teal-500/15 border border-teal-500/30 hover:bg-teal-500/25 transition-colors text-teal-300 text-xs font-bold py-3 rounded-xl"
+                            >
+                              <Video size={13} /> Join Google Meet
+                              <span className="text-teal-500/60 font-normal truncate max-w-[160px]">{enq.video_link}</span>
+                            </a>
                           )}
 
                           {/* Actions */}

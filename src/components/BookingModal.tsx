@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   X, ArrowRight, CheckCircle, Mail, Phone,
-  Building2, Users, AlertCircle, Calendar, Clock, ChevronLeft, ChevronRight,
+  Building2, Users, AlertCircle, Calendar, Clock, ChevronLeft, ChevronRight, Video,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { supabase } from '../lib/supabase';
@@ -72,6 +72,7 @@ export default function BookingModal() {
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [bookingId, setBookingId] = useState<string | null>(null);
+  const [videoLink, setVideoLink] = useState<string | null>(null);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
   const today = isoDate(new Date());
@@ -83,6 +84,7 @@ export default function BookingModal() {
       setError('');
       setSelectedSlot(null);
       setBookingId(null);
+      setVideoLink(null);
       setWeekBase(weekStart(new Date()));
     }
   }, [isOpen]);
@@ -143,10 +145,45 @@ export default function BookingModal() {
   async function confirmSlot() {
     if (!selectedSlot || !bookingId) return;
     setSubmitting(true);
-    await supabase
-      .from('demo_availability')
-      .update({ booked: true, booked_by_booking_id: bookingId })
-      .eq('id', selectedSlot.id);
+
+    // Generate a unique Google Meet link using a random room code
+    const roomCode = crypto.randomUUID().replace(/-/g, '').slice(0, 10);
+    const meetLink = `https://meet.google.com/${roomCode.slice(0,3)}-${roomCode.slice(3,7)}-${roomCode.slice(7,10)}`;
+
+    // Mark slot as booked and store video link on the booking
+    await Promise.all([
+      supabase
+        .from('demo_availability')
+        .update({ booked: true, booked_by_booking_id: bookingId })
+        .eq('id', selectedSlot.id),
+      supabase
+        .from('demo_bookings')
+        .update({ video_link: meetLink, status: 'confirmed' })
+        .eq('id', bookingId),
+    ]);
+
+    // Send confirmation emails (fire-and-forget — don't block confirmation screen)
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+    fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+      },
+      body: JSON.stringify({
+        to: form.email.trim(),
+        name: form.name.trim(),
+        businessName: form.business_name.trim(),
+        date: selectedSlot.slot_date,
+        time: selectedSlot.slot_time,
+        duration: selectedSlot.duration_mins,
+        videoLink: meetLink,
+        adminEmail: 'james@servicesupportgroup.uk',
+      }),
+    }).catch(() => { /* silent — don't break booking if email fails */ });
+
+    setVideoLink(meetLink);
     setSubmitting(false);
     setStep('confirmed');
   }
@@ -398,14 +435,15 @@ export default function BookingModal() {
 
         {/* ── Step 3: Confirmed ── */}
         {step === 'confirmed' && (
-          <div className="flex-1 flex flex-col px-7 py-10 text-center items-center justify-center gap-5 overflow-y-auto">
+          <div className="flex-1 flex flex-col px-7 py-8 text-center items-center justify-center gap-5 overflow-y-auto">
             <div className="w-20 h-20 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
               <CheckCircle size={40} className="text-teal-400" />
             </div>
             <div>
               <div className="text-white font-black text-2xl mb-2">Demo booked!</div>
               <div className="text-slate-400 text-sm leading-relaxed max-w-xs mx-auto">
-                We'll be in touch at <span className="text-white font-semibold">{form.email}</span> to confirm your video call link.
+                A confirmation email has been sent to{' '}
+                <span className="text-white font-semibold">{form.email}</span> with your video call link.
               </div>
             </div>
 
@@ -428,6 +466,17 @@ export default function BookingModal() {
                   <span className="text-white font-semibold">{form.business_name}</span>
                 </div>
               </div>
+            )}
+
+            {videoLink && (
+              <a
+                href={videoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full max-w-xs bg-teal-500 hover:bg-teal-400 transition-colors text-white font-black rounded-2xl py-3.5 text-sm flex items-center justify-center gap-2"
+              >
+                <Video size={15} /> Join video call
+              </a>
             )}
 
             <button
