@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import Cal, { getCalApi } from '@calcom/embed-react';
 import {
-  X, ArrowRight, CheckCircle, Loader2, Mail, Phone,
-  Building2, Users, AlertCircle, Video,
+  X, ArrowRight, CheckCircle, Mail, Phone,
+  Building2, Users, AlertCircle, ExternalLink,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { supabase } from '../lib/supabase';
@@ -20,7 +19,7 @@ const EMPTY: FormData = {
   name: '', email: '', phone: '', business_name: '', num_sites: '1', message: '',
 };
 
-const CAL_LINK = 'james-mcgregor-6cvfzq/30mins';
+const GOOGLE_CAL_LINK = 'https://calendar.app.google/qFyf25dnZVdiX5BW6';
 
 type Step = 'details' | 'cal' | 'confirmed';
 
@@ -48,16 +47,6 @@ export default function BookingModal() {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Wire up bookingSuccessful event via getCalApi
-  useEffect(() => {
-    if (step !== 'cal') return;
-    (async () => {
-      const cal = await getCalApi({ namespace: '30mins' });
-      cal('on', { action: 'bookingSuccessful', callback: () => saveBooking() });
-    })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
-
   async function saveBooking() {
     setSubmitting(true);
     await supabase.from('demo_bookings').insert([{
@@ -70,7 +59,7 @@ export default function BookingModal() {
       message: form.message.trim(),
     }]);
     setSubmitting(false);
-    setStep('confirmed');
+    setStep('cal');
   }
 
   if (!isOpen) return null;
@@ -86,7 +75,7 @@ export default function BookingModal() {
       setError('Please fill in your name, email, and business name.');
       return;
     }
-    setStep('cal');
+    await saveBooking();
   }
 
   return (
@@ -108,8 +97,8 @@ export default function BookingModal() {
             )}
             {step === 'cal' && (
               <>
-                <div className="text-white font-black text-lg leading-tight">Pick a time</div>
-                <div className="text-slate-500 text-xs mt-0.5">Choose a slot — a video call link is sent automatically.</div>
+                <div className="text-white font-black text-lg leading-tight">Choose a time</div>
+                <div className="text-slate-500 text-xs mt-0.5">Opens our Google Calendar booking page.</div>
               </>
             )}
             {step === 'confirmed' && (
@@ -230,45 +219,50 @@ export default function BookingModal() {
           </form>
         )}
 
-        {/* ── Step 2: Cal.com inline embed ── */}
+        {/* ── Step 2: Book via Google Calendar ── */}
         {step === 'cal' && (
-          <div className="flex flex-col" style={{ height: '680px', maxHeight: 'calc(96vh - 120px)' }}>
-            <div className="px-4 pt-3 pb-1 flex-shrink-0">
-              <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2">
-                <Video size={13} className="text-teal-400 flex-shrink-0" />
-                <span className="text-teal-300 text-xs font-semibold">
-                  A video call link will be sent to <span className="text-teal-200">{form.email}</span> once you confirm.
-                </span>
+          <div className="flex flex-col px-7 py-8 gap-6">
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center mx-auto">
+                <CheckCircle size={32} className="text-teal-400" />
+              </div>
+              <div className="text-white font-black text-xl">Details saved — pick your slot</div>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                We've noted your details. Click below to open our booking calendar and choose a time that works for you.
+              </p>
+            </div>
+
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Name</span>
+                <span className="text-white font-medium">{form.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Business</span>
+                <span className="text-white font-medium">{form.business_name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Email</span>
+                <span className="text-teal-400 font-medium">{form.email}</span>
               </div>
             </div>
 
-            {submitting && (
-              <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center z-10 rounded-3xl">
-                <div className="flex flex-col items-center gap-3 text-slate-400">
-                  <Loader2 size={28} className="animate-spin text-teal-400" />
-                  <span className="text-sm">Confirming your booking…</span>
-                </div>
-              </div>
-            )}
+            <a
+              href={GOOGLE_CAL_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setStep('confirmed')}
+              className="w-full bg-teal-500 hover:bg-teal-400 transition-colors rounded-2xl py-4 flex items-center justify-center gap-2 font-black text-white text-base"
+            >
+              Open booking calendar <ExternalLink size={16} />
+            </a>
 
-            <div className="flex-1 overflow-y-auto">
-              <Cal
-                namespace="30mins"
-                calLink={CAL_LINK}
-                calOrigin="https://app.cal.com"
-                config={{ layout: 'month_view' }}
-                style={{ width: '100%', height: '580px' }}
-              />
-            </div>
-
-            <div className="px-7 py-3 border-t border-white/5 flex-shrink-0">
-              <button
-                onClick={() => setStep('details')}
-                className="w-full bg-transparent text-slate-500 hover:text-slate-300 text-sm py-1.5 transition-colors"
-              >
-                ← Back to your details
-              </button>
-            </div>
+            <button
+              onClick={() => setStep('details')}
+              className="text-slate-500 hover:text-slate-300 text-sm transition-colors"
+            >
+              ← Back to your details
+            </button>
           </div>
         )}
 
@@ -293,12 +287,22 @@ export default function BookingModal() {
                 <div className="text-slate-400 text-xs mt-1">{form.business_name}</div>
               </div>
             </div>
-            <button
-              onClick={closeBooking}
-              className="w-full max-w-xs bg-teal-500 hover:bg-teal-400 transition-colors text-white font-black rounded-2xl py-3.5 text-base"
-            >
-              Done
-            </button>
+            <div className="flex flex-col gap-3 w-full max-w-xs">
+              <a
+                href={GOOGLE_CAL_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-teal-500 hover:bg-teal-400 transition-colors text-white font-black rounded-2xl py-3.5 text-base text-center flex items-center justify-center gap-2"
+              >
+                Open booking calendar <ExternalLink size={15} />
+              </a>
+              <button
+                onClick={closeBooking}
+                className="w-full bg-slate-800 hover:bg-slate-700 transition-colors text-slate-300 font-semibold rounded-2xl py-3 text-sm"
+              >
+                Close
+              </button>
+            </div>
             <div className="text-slate-600 text-xs">
               Questions?{' '}
               <a href="mailto:james@servicesupportgroup.uk" className="text-teal-500 hover:text-teal-400 transition-colors">
