@@ -67,7 +67,10 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const siteUrl = Deno.env.get("SITE_URL") ?? "https://hospitality.support";
+    const bookingUrl = `${siteUrl}/demo?book=1`;
     const trackPixelUrl = `${supabaseUrl}/functions/v1/email-tracking/pixel?sid=${sendRow.id}`;
+    const trackClickUrl = `${supabaseUrl}/functions/v1/email-tracking/click?sid=${sendRow.id}&url=${encodeURIComponent(bookingUrl)}`;
     const unsubUrl = `${supabaseUrl}/functions/v1/email-tracking/unsub?cid=${contactId}`;
 
     // Build HTML email
@@ -81,12 +84,18 @@ Deno.serve(async (req: Request) => {
       })
       .join("");
 
+    const ctaLabel = cta.replace(/\s*→\s*$/, '').trim();
     const htmlEmail = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"/></head>
 <body style="font-family:Georgia,serif;font-size:15px;color:#1a1a1a;max-width:600px;margin:0 auto;padding:32px 24px;background:#ffffff;">
 ${htmlBody}
-<p style="margin:24px 0 0;"><strong>${cta}</strong></p>
+<p style="margin:28px 0 0;">
+  <a href="${trackClickUrl}"
+     style="display:inline-block;background-color:#14b8a6;color:#ffffff;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;text-decoration:none;padding:14px 28px;border-radius:10px;letter-spacing:0.01em;">
+    ${ctaLabel} &rarr;
+  </a>
+</p>
 <hr style="border:none;border-top:1px solid #e5e5e5;margin:32px 0;"/>
 <p style="font-size:12px;color:#888;margin:0;">
   To unsubscribe from these emails, <a href="${unsubUrl}" style="color:#888;">click here</a>.

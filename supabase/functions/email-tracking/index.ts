@@ -79,6 +79,41 @@ async function handleUnsub(contactId: string): Promise<Response> {
   );
 }
 
+async function handleClick(sendId: string, redirectUrl: string): Promise<Response> {
+  if (sendId) {
+    const { data: send } = await supabase
+      .from("email_sends")
+      .select("id, contact_id, clicked_at, click_count")
+      .eq("id", sendId)
+      .maybeSingle();
+
+    if (send) {
+      const now = new Date().toISOString();
+      await supabase
+        .from("email_sends")
+        .update({
+          clicked_at: send.clicked_at ?? now,
+          click_count: (send.click_count ?? 0) + 1,
+        })
+        .eq("id", sendId);
+
+      await supabase.from("email_events").insert({
+        send_id: sendId,
+        contact_id: send.contact_id,
+        resend_message_id: "",
+        event_type: "clicked",
+        url: redirectUrl,
+        occurred_at: now,
+      });
+    }
+  }
+
+  return new Response(null, {
+    status: 302,
+    headers: { Location: redirectUrl || "https://hospitality.support/demo?book=1" },
+  });
+}
+
 async function handleWebhook(req: Request): Promise<Response> {
   try {
     const payload = await req.json();
@@ -150,6 +185,13 @@ Deno.serve(async (req: Request) => {
 
   if (pathname.endsWith("/unsub")) {
     return handleUnsub(url.searchParams.get("cid") ?? "");
+  }
+
+  if (pathname.endsWith("/click")) {
+    return handleClick(
+      url.searchParams.get("sid") ?? "",
+      url.searchParams.get("url") ?? "https://hospitality.support/demo?book=1"
+    );
   }
 
   if (pathname.endsWith("/webhook") && req.method === "POST") {

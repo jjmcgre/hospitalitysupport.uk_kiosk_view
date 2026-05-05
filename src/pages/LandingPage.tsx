@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import DishJourneySection from '../components/DishJourneySection';
 import BusinessAreasSection from '../components/BusinessAreasSection';
@@ -29,6 +31,15 @@ function Nav() {
 }
 
 function PageContent() {
+  const { openBooking } = useBooking();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('book') === '1') {
+      openBooking();
+    }
+  }, [searchParams, openBooking]);
+
   return (
     <div className="min-h-screen bg-white">
       <Nav />
