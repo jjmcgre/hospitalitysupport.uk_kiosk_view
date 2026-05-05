@@ -39,18 +39,10 @@ function isoDate(d: Date) {
   return d.toISOString().slice(0, 10);
 }
 
-const sitesLabel: Record<string, string> = {
-  '1': '1 site', '2-5': '2–5 sites', '6-15': '6–15 sites', '16+': '16+ sites',
-};
-
-// Estimate MRR from num_sites
-function estimateMrr(enqs: Enquiry[]) {
+function estimateArr(enqs: Enquiry[]) {
   return enqs.reduce((acc, e) => {
-    if (e.num_sites === '1') return acc + 100;
-    if (e.num_sites === '2-5') return acc + 300;
-    if (e.num_sites === '6-15') return acc + 900;
-    if (e.num_sites === '16+') return acc + 1600;
-    return acc + 100;
+    const sites = parseInt(e.num_sites, 10);
+    return acc + (isNaN(sites) ? 0 : sites * 1200);
   }, 0);
 }
 
@@ -129,11 +121,11 @@ export default function OverviewPage() {
   const last30 = enquiries.filter(e => e.created_at.slice(0, 10) >= thirtyDaysAgo).length;
   const bookedSlots = slots.filter(s => s.booked).length;
   const availableSlots = slots.filter(s => !s.booked).length;
-  const potentialMrr = estimateMrr(enquiries);
-
-  const siteCounts: Record<string, number> = {};
-  enquiries.forEach(e => { siteCounts[e.num_sites] = (siteCounts[e.num_sites] ?? 0) + 1; });
-  const maxSiteCount = Math.max(1, ...Object.values(siteCounts));
+  const potentialArr = estimateArr(enquiries);
+  const totalSites = enquiries.reduce((acc, e) => {
+    const n = parseInt(e.num_sites, 10);
+    return acc + (isNaN(n) ? 0 : n);
+  }, 0);
 
   const nextSlot = slots
     .filter(s => !s.booked && s.slot_date >= today)
@@ -141,8 +133,7 @@ export default function OverviewPage() {
 
   const recentEnquiries = enquiries.slice(0, 5);
 
-  // Pipeline value card colours
-  const pipelineColour = potentialMrr >= 1000 ? 'accent' : potentialMrr > 0 ? '' : '';
+  const pipelineColour = potentialArr >= 1000 ? 'accent' : potentialArr > 0 ? '' : '';
 
   return (
     <div className="min-h-full">
@@ -176,10 +167,10 @@ export default function OverviewPage() {
           <Stat icon={CalendarCheck} label="Demos booked" value={bookedSlots} sub={`${availableSlots} slots open`} warn={bookedSlots > 0} />
           <Stat
             icon={PoundSterling}
-            label="Pipeline MRR"
-            value={potentialMrr > 0 ? `£${potentialMrr.toLocaleString()}` : '—'}
+            label="Pipeline ARR"
+            value={potentialArr > 0 ? `£${potentialArr.toLocaleString()}` : '—'}
             sub="if all enquiries convert"
-            accent={potentialMrr > 0}
+            accent={potentialArr > 0}
           />
         </div>
 
@@ -225,7 +216,7 @@ export default function OverviewPage() {
                         <span className="text-slate-500 text-xs">{eq.email}</span>
                         {eq.num_sites && (
                           <span className="text-[10px] font-bold bg-teal-500/15 text-teal-300 border border-teal-500/20 rounded-full px-2 py-px">
-                            {sitesLabel[eq.num_sites] ?? eq.num_sites}
+                            {eq.num_sites} site{eq.num_sites !== '1' ? 's' : ''}
                           </span>
                         )}
                       </div>
@@ -335,43 +326,44 @@ export default function OverviewPage() {
             )}
           </div>
 
-          {/* Pipeline value breakdown */}
+          {/* Pipeline ARR breakdown */}
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-5">
               <PoundSterling size={15} className="text-teal-400" />
-              <h2 className="text-white font-bold text-sm">Pipeline value by tier</h2>
+              <h2 className="text-white font-bold text-sm">Pipeline ARR breakdown</h2>
             </div>
             {enquiries.length === 0 ? (
               <p className="text-slate-600 text-sm">No data yet.</p>
             ) : (
               <div className="space-y-3">
-                {[
-                  { key: '1', label: '1 site', mrr: 100 },
-                  { key: '2-5', label: '2–5 sites', mrr: 300 },
-                  { key: '6-15', label: '6–15 sites', mrr: 900 },
-                  { key: '16+', label: '16+ sites', mrr: 1600 },
-                ].map(({ key, label, mrr }) => {
-                  const count = siteCounts[key] ?? 0;
-                  const val = count * mrr;
+                {enquiries.slice(0, 5).map(e => {
+                  const sites = parseInt(e.num_sites, 10);
+                  const arr = isNaN(sites) ? 0 : sites * 1200;
                   return (
-                    <div key={key} className="flex items-center justify-between">
-                      <span className="text-slate-400 text-xs w-24 flex-shrink-0">{label}</span>
+                    <div key={e.id} className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0 mr-3">
+                        <span className="text-slate-300 text-xs truncate block">{e.business_name || e.name}</span>
+                        <span className="text-slate-500 text-xs">{isNaN(sites) ? '?' : sites} site{sites !== 1 ? 's' : ''}</span>
+                      </div>
                       <div className="flex-1 mx-3 h-2 bg-slate-700 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-teal-500 rounded-full transition-all duration-700"
-                          style={{ width: potentialMrr === 0 ? '0%' : `${(val / potentialMrr) * 100}%` }}
+                          style={{ width: potentialArr === 0 ? '0%' : `${(arr / potentialArr) * 100}%` }}
                         />
                       </div>
-                      <span className="text-white text-xs font-bold w-16 text-right">
-                        {val > 0 ? `£${val.toLocaleString()}/mo` : '—'}
+                      <span className="text-white text-xs font-bold w-20 text-right">
+                        {arr > 0 ? `£${arr.toLocaleString()}/yr` : '—'}
                       </span>
                     </div>
                   );
                 })}
                 <div className="pt-2 border-t border-slate-700 flex items-center justify-between">
-                  <span className="text-slate-400 text-xs font-bold">Total pipeline</span>
+                  <div>
+                    <span className="text-slate-400 text-xs font-bold">Total pipeline ARR</span>
+                    <span className="text-slate-500 text-xs block">{totalSites} sites × £1,200</span>
+                  </div>
                   <span className="text-teal-400 text-sm font-black">
-                    {potentialMrr > 0 ? `£${potentialMrr.toLocaleString()}/mo` : '—'}
+                    {potentialArr > 0 ? `£${potentialArr.toLocaleString()}/yr` : '—'}
                   </span>
                 </div>
               </div>

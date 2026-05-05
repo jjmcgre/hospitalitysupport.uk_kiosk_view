@@ -297,13 +297,15 @@ export default function BookingModal() {
               </Field>
 
               <Field label="Number of sites / kitchens" icon={<Users size={14} className="text-slate-600" />}>
-                <select value={form.num_sites} onChange={e => set('num_sites', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-white text-sm focus:outline-none focus:border-teal-500/50 transition-colors appearance-none">
-                  <option value="1" className="bg-slate-900">1 site</option>
-                  <option value="2-5" className="bg-slate-900">2–5 sites</option>
-                  <option value="6-15" className="bg-slate-900">6–15 sites</option>
-                  <option value="16+" className="bg-slate-900">16+ sites</option>
-                </select>
+                <input
+                  type="number"
+                  min="1"
+                  value={form.num_sites}
+                  onChange={e => set('num_sites', e.target.value)}
+                  placeholder="e.g. 3"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors"
+                  required
+                />
               </Field>
 
               <div>

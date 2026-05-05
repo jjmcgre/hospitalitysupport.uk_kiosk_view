@@ -54,12 +54,11 @@ export default function EnquiriesPage() {
 
   useEffect(() => { load(); }, []);
 
-  const sitesLabel: Record<string, string> = {
-    '1': '1 site',
-    '2-5': '2–5 sites',
-    '6-15': '6–15 sites',
-    '16+': '16+ sites',
-  };
+  function sitesDisplay(n: string) {
+    const count = parseInt(n, 10);
+    if (isNaN(count)) return n;
+    return `${count} site${count !== 1 ? 's' : ''}`;
+  }
 
   return (
     <div className="min-h-full">
@@ -74,8 +73,8 @@ export default function EnquiriesPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
             { label: 'Total enquiries', val: enquiries.length },
-            { label: '1-site venues', val: enquiries.filter(e => e.num_sites === '1').length },
-            { label: 'Multi-site groups', val: enquiries.filter(e => ['2-5','6-15','16+'].includes(e.num_sites)).length },
+            { label: '1-site venues', val: enquiries.filter(e => parseInt(e.num_sites, 10) === 1).length },
+            { label: 'Multi-site groups', val: enquiries.filter(e => parseInt(e.num_sites, 10) > 1).length },
             { label: 'With message', val: enquiries.filter(e => e.message?.trim()).length },
           ].map(s => (
             <div key={s.label} className="bg-slate-800 border border-slate-700 rounded-2xl p-5 text-center">
@@ -139,7 +138,7 @@ export default function EnquiriesPage() {
                       <span className="text-slate-400 text-xs truncate">{eq.business_name}</span>
                       {eq.num_sites && (
                         <span className="text-[10px] font-bold bg-teal-500/15 text-teal-300 border border-teal-500/25 rounded-full px-2 py-0.5">
-                          {sitesLabel[eq.num_sites] ?? eq.num_sites}
+                          {sitesDisplay(eq.num_sites)}
                         </span>
                       )}
                       {eq.message?.trim() && (
@@ -198,7 +197,7 @@ export default function EnquiriesPage() {
                         <Users size={14} className="text-teal-400 mt-0.5 flex-shrink-0" />
                         <div>
                           <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Sites</div>
-                          <div className="text-white text-sm">{sitesLabel[eq.num_sites] ?? eq.num_sites}</div>
+                          <div className="text-white text-sm">{sitesDisplay(eq.num_sites)}</div>
                         </div>
                       </div>
                     </div>
