@@ -138,6 +138,7 @@ function SendEmailModal({ contact, onClose, onSent }: { contact: Contact; onClos
           subject: selectedEmail.subject,
           body: selectedEmail.body,
           cta: selectedEmail.cta,
+          siteUrl: window.location.origin,
         }),
       });
       const data = await resp.json();

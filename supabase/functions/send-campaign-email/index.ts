@@ -18,7 +18,7 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { contactId, campaignId, emailId, stage, subject, body, cta } = await req.json();
+    const { contactId, campaignId, emailId, stage, subject, body, cta, siteUrl } = await req.json();
 
     if (!contactId || !subject || !body) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
@@ -67,7 +67,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const bookingUrl = "https://hospitality.support/demo?book=1";
+    const bookingUrl = `${siteUrl ?? "https://hospitality.support"}/demo?book=1`;
     const trackPixelUrl = `${supabaseUrl}/functions/v1/email-tracking/pixel?sid=${sendRow.id}`;
     const trackClickUrl = `${supabaseUrl}/functions/v1/email-tracking/click?sid=${sendRow.id}&url=${encodeURIComponent(bookingUrl)}`;
     const unsubUrl = `${supabaseUrl}/functions/v1/email-tracking/unsub?cid=${contactId}`;
