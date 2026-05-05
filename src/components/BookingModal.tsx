@@ -145,24 +145,24 @@ export default function BookingModal() {
   async function confirmSlot() {
     if (!selectedSlot || !bookingId) return;
     setSubmitting(true);
+    setError('');
 
-    // Generate a unique Google Meet link using a random room code
     const roomCode = crypto.randomUUID().replace(/-/g, '').slice(0, 10);
-    const meetLink = `https://meet.google.com/${roomCode.slice(0,3)}-${roomCode.slice(3,7)}-${roomCode.slice(7,10)}`;
+    const meetLink = `https://meet.google.com/${roomCode.slice(0, 3)}-${roomCode.slice(3, 7)}-${roomCode.slice(7, 10)}`;
 
-    // Mark slot as booked and store video link on the booking
-    await Promise.all([
-      supabase
-        .from('demo_availability')
-        .update({ booked: true, booked_by_booking_id: bookingId })
-        .eq('id', selectedSlot.id),
-      supabase
-        .from('demo_bookings')
-        .update({ video_link: meetLink, status: 'confirmed' })
-        .eq('id', bookingId),
-    ]);
+    const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
+      p_slot_id:    selectedSlot.id,
+      p_booking_id: bookingId,
+      p_video_link: meetLink,
+    });
 
-    // Send confirmation emails (fire-and-forget — don't block confirmation screen)
+    if (rpcError || !rpcResult?.ok) {
+      setError(rpcResult?.error ?? rpcError?.message ?? 'Failed to confirm booking. Please try again.');
+      setSubmitting(false);
+      return;
+    }
+
+    // Send confirmation emails (fire-and-forget)
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
     fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
@@ -181,7 +181,7 @@ export default function BookingModal() {
         videoLink: meetLink,
         adminEmail: 'james@servicesupportgroup.uk',
       }),
-    }).catch(() => { /* silent — don't break booking if email fails */ });
+    }).catch(() => {});
 
     setVideoLink(meetLink);
     setSubmitting(false);
@@ -416,6 +416,7 @@ export default function BookingModal() {
             </div>
 
             <div className="px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0 space-y-3">
+              {error && <ErrorBox msg={error} />}
               <button
                 onClick={confirmSlot}
                 disabled={!selectedSlot || submitting}
