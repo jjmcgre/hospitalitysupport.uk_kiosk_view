@@ -95,6 +95,10 @@ ${htmlBody}
 </body>
 </html>`;
 
+    // Determine from address — use verified domain if set, otherwise Resend test sender
+    const fromDomain = Deno.env.get("RESEND_FROM_EMAIL") ?? "onboarding@resend.dev";
+    const fromName = Deno.env.get("RESEND_FROM_NAME") ?? "HospitalitySupport.uk";
+
     // Send via Resend
     const resendResp = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -103,7 +107,7 @@ ${htmlBody}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "HospitalitySupport.uk <hello@hospitality.support>",
+        from: `${fromName} <${fromDomain}>`,
         to: [contact.email],
         subject,
         html: htmlEmail,
@@ -121,7 +125,8 @@ ${htmlBody}
     if (!resendResp.ok) {
       // Remove the pre-inserted send row on failure
       await supabase.from("email_sends").delete().eq("id", sendRow.id);
-      return new Response(JSON.stringify({ error: "Resend error", detail: resendData }), {
+      const resendMsg = resendData?.message ?? resendData?.name ?? JSON.stringify(resendData);
+      return new Response(JSON.stringify({ error: resendMsg, detail: resendData }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

@@ -142,7 +142,8 @@ function SendEmailModal({ contact, onClose, onSent }: { contact: Contact; onClos
       });
       const data = await resp.json();
       if (!resp.ok || data.error) {
-        setResult({ ok: false, msg: data.error ?? 'Failed to send' });
+        const detail = data.detail ? ` — ${JSON.stringify(data.detail)}` : '';
+        setResult({ ok: false, msg: (data.error ?? 'Failed to send') + detail });
       } else {
         setResult({ ok: true, msg: `Sent to ${contact.email}` });
         onSent();
