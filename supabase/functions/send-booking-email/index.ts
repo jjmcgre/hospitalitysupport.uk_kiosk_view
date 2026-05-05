@@ -155,22 +155,10 @@ Deno.serve(async (req: Request) => {
     const payload: BookingEmailPayload = await req.json();
     const adminEmail = payload.adminEmail || "james@servicesupportgroup.uk";
 
-    // Send confirmation to prospect
-    const prospectRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "HospitalitySupport.uk <onboarding@resend.dev>",
-        to: [payload.to],
-        subject: `Your demo is confirmed — ${formatDate(payload.date)} at ${payload.time}`,
-        html: prospectHtml(payload),
-      }),
-    });
+    const verifiedFrom = "onboarding@resend.dev";
+    const verifiedOwner = "james@retailremedy.com";
 
-    // Send alert to admin
+    // Always send admin alert to verified owner address
     const adminRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -178,15 +166,49 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "HospitalitySupport.uk <onboarding@resend.dev>",
-        to: [adminEmail],
+        from: `HospitalitySupport.uk <${verifiedFrom}>`,
+        to: [verifiedOwner],
         subject: `New demo: ${payload.name} (${payload.businessName}) — ${formatDate(payload.date)} at ${payload.time}`,
         html: adminHtml(payload),
       }),
     });
 
-    const prospectData = await prospectRes.json();
     const adminData = await adminRes.json();
+
+    // Attempt prospect email — will only succeed once a domain is verified in Resend
+    let prospectData: unknown = { skipped: "Domain not yet verified — prospect email not sent" };
+    if (payload.to !== verifiedOwner) {
+      const prospectRes = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: `HospitalitySupport.uk <${verifiedFrom}>`,
+          to: [payload.to],
+          subject: `Your demo is confirmed — ${formatDate(payload.date)} at ${payload.time}`,
+          html: prospectHtml(payload),
+        }),
+      });
+      prospectData = await prospectRes.json();
+    } else {
+      // Prospect IS the verified owner — send it
+      const prospectRes = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: `HospitalitySupport.uk <${verifiedFrom}>`,
+          to: [payload.to],
+          subject: `Your demo is confirmed — ${formatDate(payload.date)} at ${payload.time}`,
+          html: prospectHtml(payload),
+        }),
+      });
+      prospectData = await prospectRes.json();
+    }
 
     return new Response(
       JSON.stringify({ prospect: prospectData, admin: adminData }),
