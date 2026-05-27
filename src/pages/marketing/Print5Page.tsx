@@ -1111,9 +1111,9 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   const totalH = 5 * PAGE_H + 4 * GAP;
 
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
-      <div className="max-w-[900px] mx-auto" ref={outerRef}>
-        <div className="flex items-center justify-between mb-6 no-print">
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
+      <div className="max-w-[900px]" ref={outerRef}>
+        <div className="flex items-center justify-between mb-3 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
             {!standalone && (
@@ -1157,7 +1157,6 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
             width: Math.round(794 * scale),
             height: Math.round(totalH * scale),
             overflow: 'hidden',
-            margin: '0 auto',
           }}
         >
           <div style={{
