@@ -141,7 +141,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           {/* ── HEADER ── */}
           <div style={{
             position: 'relative', zIndex: 1, flexShrink: 0,
-            padding: '11px 26px',
+            padding: '8px 26px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             borderBottom: `1.5px solid ${T}`,
             background: 'rgba(8,15,26,0.9)',
@@ -161,34 +161,34 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           {/* ── HERO ── */}
           <div style={{
             position: 'relative', zIndex: 1, flexShrink: 0,
-            padding: '20px 26px 18px',
+            padding: '12px 26px 10px',
             background: `linear-gradient(160deg, ${DARK} 0%, rgba(12,20,32,0.95) 100%)`,
             borderBottom: '1px solid rgba(45,212,191,0.12)',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 22 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18 }}>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  display: 'inline-block', fontSize: 8, fontWeight: 800, color: TL,
-                  textTransform: 'uppercase', letterSpacing: '0.16em', marginBottom: 9,
-                  borderLeft: `2px solid ${T}`, paddingLeft: 9,
+                  display: 'inline-block', fontSize: 7.5, fontWeight: 800, color: TL,
+                  textTransform: 'uppercase', letterSpacing: '0.16em', marginBottom: 6,
+                  borderLeft: `2px solid ${T}`, paddingLeft: 8,
                 }}>
                   Built by chefs · for operators
                 </div>
                 <h1 style={{
-                  color: W, fontSize: 27, fontWeight: 900, margin: '0 0 10px',
+                  color: W, fontSize: 22, fontWeight: 900, margin: '0 0 7px',
                   lineHeight: 1.05, letterSpacing: '-0.03em',
                 }}>
                   Every area of your operation.<br />
                   <span style={{ color: TL }}>All connected. Always live.</span>
                 </h1>
-                <p style={{ color: S4, fontSize: 11, margin: 0, lineHeight: 1.6, maxWidth: 430 }}>
+                <p style={{ color: S4, fontSize: 10, margin: 0, lineHeight: 1.45, maxWidth: 430 }}>
                   Ingredient prices change without warning. Margin drift goes unnoticed. Training is inconsistent. Compliance depends on whoever's in that week.{' '}
                   <span style={{ color: S3, fontWeight: 700 }}>HospitalitySupport.uk closes every gap — automatically, for £3.30 a day.</span>
                 </p>
               </div>
 
               {/* Stats 2×2 */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, flexShrink: 0 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, flexShrink: 0 }}>
                 {[
                   { val: '3 min',   label: 'dish to live spec' },
                   { val: '< 1 sec', label: 'recost on change' },
@@ -198,10 +198,10 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                   <div key={s.label} style={{
                     background: 'rgba(20,184,166,0.07)',
                     border: '1px solid rgba(20,184,166,0.18)',
-                    borderRadius: 8, padding: '8px 12px', textAlign: 'center', minWidth: 90,
+                    borderRadius: 7, padding: '5px 10px', textAlign: 'center', minWidth: 82,
                   }}>
-                    <div style={{ color: TL, fontSize: 16, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-                    <div style={{ color: S5, fontSize: 8, marginTop: 4, lineHeight: 1.2 }}>{s.label}</div>
+                    <div style={{ color: TL, fontSize: 14, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+                    <div style={{ color: S5, fontSize: 7.5, marginTop: 3, lineHeight: 1.2 }}>{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -213,27 +213,27 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
             {/* LEFT */}
             <div style={{
-              padding: '14px 12px 14px 26px',
+              padding: '10px 10px 10px 22px',
               borderRight: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', flexDirection: 'column', gap: 14,
+              display: 'flex', flexDirection: 'column', gap: 10,
             }}>
 
               {/* Capabilities */}
               <div style={{ flexShrink: 0 }}>
-                <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>
+                <div style={{ fontSize: 7.5, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
                   What it covers
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
                   {caps.map((c, i) => (
                     <div key={i} style={{
-                      padding: '8px 10px',
+                      padding: '5px 8px',
                       background: 'rgba(255,255,255,0.03)',
                       border: '1px solid rgba(255,255,255,0.07)',
                       borderLeft: `2px solid ${TL}`,
-                      borderRadius: '0 7px 7px 0',
+                      borderRadius: '0 6px 6px 0',
                     }}>
-                      <div style={{ color: W, fontWeight: 800, fontSize: 11, marginBottom: 3 }}>{c.label}</div>
-                      <div style={{ color: S5, fontSize: 9.5, lineHeight: 1.4 }}>{c.note}</div>
+                      <div style={{ color: W, fontWeight: 800, fontSize: 9.5, marginBottom: 2 }}>{c.label}</div>
+                      <div style={{ color: S5, fontSize: 8.5, lineHeight: 1.3 }}>{c.note}</div>
                     </div>
                   ))}
                 </div>
@@ -241,23 +241,23 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
               {/* Scenarios — flex: 1 so it fills leftover height */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>
+                <div style={{ fontSize: 7.5, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
                   How it responds in practice
                 </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
                   {scenarios.map((s, i) => (
                     <div key={i} style={{
                       flex: 1,
-                      padding: '8px 10px',
+                      padding: '6px 8px',
                       background: 'rgba(255,255,255,0.03)',
                       border: '1px solid rgba(255,255,255,0.06)',
-                      borderRadius: 7,
-                      display: 'flex', gap: 9,
+                      borderRadius: 6,
+                      display: 'flex', gap: 7,
                     }}>
                       <div style={{ flexShrink: 0, width: 3, borderRadius: 3, background: 'rgba(248,113,113,0.55)', alignSelf: 'stretch' }} />
                       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <div style={{ color: '#fca5a5', fontSize: 12, fontWeight: 700, marginBottom: 3 }}>{s.trigger}</div>
-                        <div style={{ color: S4, fontSize: 10.5, lineHeight: 1.45 }}>{s.outcome}</div>
+                        <div style={{ color: '#fca5a5', fontSize: 10, fontWeight: 700, marginBottom: 2 }}>{s.trigger}</div>
+                        <div style={{ color: S4, fontSize: 9, lineHeight: 1.35 }}>{s.outcome}</div>
                       </div>
                     </div>
                   ))}
@@ -267,8 +267,8 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
             {/* RIGHT */}
             <div style={{
-              padding: '14px 26px 14px 12px',
-              display: 'flex', flexDirection: 'column', gap: 12,
+              padding: '10px 22px 10px 10px',
+              display: 'flex', flexDirection: 'column', gap: 9,
             }}>
 
               {/* Pricing */}
@@ -276,9 +276,9 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                 flexShrink: 0,
                 background: 'rgba(20,184,166,0.05)',
                 border: '1px solid rgba(20,184,166,0.20)',
-                borderRadius: 10, padding: '13px 14px',
+                borderRadius: 8, padding: '9px 12px',
               }}>
-                <div style={{ fontSize: 8, fontWeight: 800, color: TL, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 11 }}>
+                <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>
                   Pricing
                 </div>
                 {[
@@ -288,26 +288,26 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                 ].map((p, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    paddingTop: i > 0 ? 9 : 0, marginTop: i > 0 ? 9 : 0,
+                    paddingTop: i > 0 ? 7 : 0, marginTop: i > 0 ? 7 : 0,
                     borderTop: i > 0 ? '1px solid rgba(255,255,255,0.06)' : 'none',
                   }}>
                     <div>
-                      <div style={{ color: W, fontSize: 10.5, fontWeight: 800 }}>{p.tier}</div>
-                      <div style={{ color: S5, fontSize: 8.5, marginTop: 2 }}>{p.sub}</div>
+                      <div style={{ color: W, fontSize: 9.5, fontWeight: 800 }}>{p.tier}</div>
+                      <div style={{ color: S5, fontSize: 8, marginTop: 1 }}>{p.sub}</div>
                     </div>
                     <div style={{ textAlign: 'right', lineHeight: 1 }}>
-                      <span style={{ color: TL, fontSize: 19, fontWeight: 900 }}>{p.price}</span>
-                      <span style={{ color: S5, fontSize: 9, marginLeft: 2 }}>{p.period}</span>
+                      <span style={{ color: TL, fontSize: 16, fontWeight: 900 }}>{p.price}</span>
+                      <span style={{ color: S5, fontSize: 8.5, marginLeft: 2 }}>{p.period}</span>
                     </div>
                   </div>
                 ))}
-                <div style={{ marginTop: 10, paddingTop: 9, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                <div style={{ marginTop: 7, paddingTop: 7, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                   {['Per kitchen, not per user', 'Annual billing', 'No setup fees'].map((t) => (
                     <span key={t} style={{
-                      color: S6, fontSize: 8, fontWeight: 700,
+                      color: S6, fontSize: 7.5, fontWeight: 700,
                       background: 'rgba(255,255,255,0.04)',
                       border: '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: 999, padding: '2px 8px',
+                      borderRadius: 999, padding: '2px 7px',
                     }}>{t}</span>
                   ))}
                 </div>
@@ -318,12 +318,12 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                 flexShrink: 0,
                 background: 'rgba(255,255,255,0.03)',
                 border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: 10, padding: '11px 14px',
+                borderRadius: 8, padding: '8px 12px',
               }}>
-                <div style={{ fontSize: 8, fontWeight: 800, color: S4, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 9 }}>
+                <div style={{ fontSize: 7.5, fontWeight: 800, color: S4, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 7 }}>
                   Multi-site operators
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px 10px' }}>
                   {[
                     'Central visibility across every kitchen',
                     'Consistent standards — no site chasing',
@@ -332,16 +332,16 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                     'Shared supplier relationships group-wide',
                     'Group compliance reporting on demand',
                   ].map((t, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 5 }}>
                       <div style={{
-                        width: 12, height: 12, borderRadius: 3,
+                        width: 10, height: 10, borderRadius: 2,
                         background: 'rgba(20,184,166,0.15)',
                         border: '1px solid rgba(20,184,166,0.30)',
                         flexShrink: 0, marginTop: 1,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 7, color: TL, fontWeight: 900,
+                        fontSize: 6.5, color: TL, fontWeight: 900,
                       }}>✓</div>
-                      <span style={{ color: S3, fontSize: 10, lineHeight: 1.4 }}>{t}</span>
+                      <span style={{ color: S3, fontSize: 9, lineHeight: 1.35 }}>{t}</span>
                     </div>
                   ))}
                 </div>
@@ -349,23 +349,23 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
               {/* Why different — flex:1 fills remaining height */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>
+                <div style={{ fontSize: 7.5, fontWeight: 800, color: S5, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
                   Why it's different
                 </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
                   {comparisons.map((r, i) => (
                     <div key={i} style={{
                       flex: 1,
                       display: 'grid', gridTemplateColumns: '1fr 1fr',
                       background: 'rgba(255,255,255,0.025)',
                       border: '1px solid rgba(255,255,255,0.06)',
-                      borderRadius: 7, overflow: 'hidden',
+                      borderRadius: 6, overflow: 'hidden',
                     }}>
-                      <div style={{ padding: '0 10px', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center' }}>
-                        <span style={{ color: S6, fontSize: 11, textDecoration: 'line-through', lineHeight: 1.4 }}>{r.them}</span>
+                      <div style={{ padding: '0 8px', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center' }}>
+                        <span style={{ color: S6, fontSize: 9.5, textDecoration: 'line-through', lineHeight: 1.35 }}>{r.them}</span>
                       </div>
-                      <div style={{ padding: '0 10px', background: 'rgba(20,184,166,0.04)', display: 'flex', alignItems: 'center' }}>
-                        <span style={{ color: TL, fontSize: 11, fontWeight: 700, lineHeight: 1.4 }}>{r.us}</span>
+                      <div style={{ padding: '0 8px', background: 'rgba(20,184,166,0.04)', display: 'flex', alignItems: 'center' }}>
+                        <span style={{ color: TL, fontSize: 9.5, fontWeight: 700, lineHeight: 1.35 }}>{r.us}</span>
                       </div>
                     </div>
                   ))}
@@ -379,7 +379,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           <div style={{
             position: 'relative', zIndex: 1, flexShrink: 0,
             background: `linear-gradient(90deg, ${T} 0%, #0d9488 100%)`,
-            padding: '14px 26px',
+            padding: '10px 26px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
             <div>
