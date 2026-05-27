@@ -100,9 +100,9 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print-scale-wrap { width: 210mm !important; height: 297mm !important; overflow: hidden !important; margin: 0 !important; position: relative !important; }
-            .print-page { box-shadow: none !important; width: 794px !important; height: 1123px !important; transform: none !important; position: absolute !important; top: 0 !important; left: 0 !important; }
-            .print-inner { transform: scale(0.851) !important; transform-origin: top left !important; }
+            .print-scale-wrap { width: 210mm !important; height: 297mm !important; overflow: hidden !important; margin: 0 !important; }
+            .print-page { box-shadow: none !important; width: 210mm !important; height: 297mm !important; transform: none !important; overflow: visible !important; }
+            .print-inner { transform: scale(0.864) !important; transform-origin: top left !important; }
             .no-print { display: none !important; }
           }
           @page { size: A4 portrait; margin: 0; }
@@ -122,7 +122,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           style={{
             width: 794, height: 1123,
             fontFamily: F,
-            background: NAV, position: 'relative', overflow: 'visible',
+            background: NAV, position: 'relative', overflow: 'hidden',
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
           }}
@@ -138,13 +138,10 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
             background: 'rgba(20,184,166,0.06)', borderRadius: '50%',
             filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0,
           }} />
-          {/* Inner content scaled to always fit within 1123px */}
           <div className="print-inner" style={{
             position: 'absolute', top: 0, left: 0,
-            width: 794, height: 1320,
+            width: 794, height: 1123,
             display: 'flex', flexDirection: 'column',
-            transformOrigin: 'top left',
-            transform: 'scale(0.851)',
           }}>
 
           {/* ── HEADER ── */}
