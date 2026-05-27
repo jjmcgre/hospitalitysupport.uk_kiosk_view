@@ -1137,19 +1137,20 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   const scaledTotalH = Math.round(totalH * scale);
 
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 py-6 px-4`} ref={outerRef}>
+    <div className={`print5-outer ${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 py-6 px-4`} ref={outerRef}>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         @media print {
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          html, body { margin: 0; padding: 0; background: #080f1a !important; }
+          html, body { margin: 0 !important; padding: 0 !important; background: #080f1a !important; }
           .no-print { display: none !important; }
-          .print5-outer { padding: 0 !important; }
-          .print5-centering { display: block !important; width: 297mm !important; margin: 0 !important; }
+          .print5-outer { padding: 0 !important; margin: 0 !important; background: transparent !important; }
+          .print5-centering { width: auto !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
           .print5-scaler { width: 297mm !important; transform: none !important; }
-          .print-page { box-shadow: none !important; width: 297mm !important; height: 210mm !important; page-break-after: always; margin: 0 !important; }
-          .print-page:last-child { page-break-after: avoid; }
+          .print5-pages { gap: 0 !important; }
+          .print-page { box-shadow: none !important; width: 297mm !important; height: 210mm !important; break-after: page; page-break-after: always; margin: 0 !important; overflow: hidden !important; }
+          .print-page:last-child { break-after: avoid; page-break-after: avoid; }
         }
         @page { size: A4 landscape; margin: 0; }
       `}</style>
@@ -1197,7 +1198,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
             transform: `scale(${scale})`,
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
+          <div className="print5-pages" style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
             <Page1 />
             <Page2SpokeMap />
             <Page2 />
