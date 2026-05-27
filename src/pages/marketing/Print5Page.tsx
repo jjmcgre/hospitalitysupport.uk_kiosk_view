@@ -1097,7 +1097,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
 
   useEffect(() => {
     const update = () => {
-      const w = outerRef.current?.clientWidth;
+      const w = outerRef.current?.clientWidth ?? 0;
       if (!w) return;
       setScale(Math.min(1, w / 1123));
     };
@@ -1119,8 +1119,8 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   const totalH = 5 * PAGE_H + 4 * GAP;
 
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
-      <div className="w-full" ref={outerRef}>
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`} ref={outerRef}>
+      <div className="w-full">
         <div className="flex items-center justify-between mb-3 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
@@ -1159,15 +1159,20 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           @page { size: A4 landscape; margin: 0; }
         `}</style>
 
+        {/*
+          Scaling wrapper:
+          - outer: sits in normal flow, reserves the exact scaled height so the
+            page scrolls correctly. No overflow:hidden so nothing is clipped.
+          - inner: absolutely positioned at top-left, full 1123px wide, then
+            visually shrunk with transform. Because it's absolute it doesn't
+            push the outer height — the outer height handles that explicitly.
+        */}
         <div
           className="print5-scale-wrap"
-          style={{
-            width: Math.round(PAGE_W * scale),
-            height: Math.round(totalH * scale),
-            overflow: 'hidden',
-          }}
+          style={{ position: 'relative', height: Math.round(totalH * scale) }}
         >
           <div style={{
+            position: 'absolute', top: 0, left: 0,
             width: PAGE_W,
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
