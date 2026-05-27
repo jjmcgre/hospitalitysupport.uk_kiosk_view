@@ -22,12 +22,15 @@ const F     = "'Inter', system-ui, sans-serif";
 
 /* ── Shared primitives ──────────────────────────────────────────────── */
 
+const PW = 1123; // page width px (landscape)
+const PH = 794;  // page height px (landscape)
+
 function Page({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <div
       className="print-page shadow-2xl overflow-hidden"
       style={{
-        width: '1123px', minHeight: '794px', margin: '0 auto',
+        width: PW, height: PH, margin: '0 auto',
         fontFamily: F, display: 'flex', flexDirection: 'column',
         background: NAV, position: 'relative',
       }}
@@ -42,16 +45,17 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
       {/* Header */}
       <div style={{
         position: 'relative', zIndex: 1,
-        background: 'rgba(15,22,35,0.95)', padding: '8px 16mm',
+        background: 'rgba(15,22,35,0.95)', padding: '7px 20mm',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
       }}>
         <span style={{ color: W, fontWeight: 900, fontSize: 13, letterSpacing: '-0.02em' }}>
           HospitalitySupport<span style={{ color: TL }}>.uk</span>
         </span>
+        <span style={{ color: S6, fontSize: 8, fontWeight: 600 }}>Page {n} of 5</span>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative', zIndex: 1 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative', zIndex: 1, overflow: 'hidden' }}>
         {children}
       </div>
 
@@ -59,7 +63,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
       <div style={{
         position: 'relative', zIndex: 1,
         background: 'rgba(10,18,30,0.9)', borderTop: '1px solid rgba(255,255,255,0.05)',
-        padding: '6px 16mm', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0,
+        padding: '5px 20mm', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0,
       }}>
         <span style={{ color: S8, fontSize: 7.5 }}>Built by operators, for operators · No 6-week onboarding · No consultants</span>
         <span style={{ color: T, fontSize: 7.5, fontWeight: 700 }}>hospitalitysupport.uk</span>
@@ -140,54 +144,57 @@ function Rule() {
 ═══════════════════════════════════════════════════════════════════════ */
 
 function SpokeMap() {
-  const cx = 480, cy = 300;
+  // Centre point placed at roughly 55% x for visual balance with 8 spokes
+  const cx = 560, cy = 255;
+
   type CardDef = {
     col: string; title: string; lines: string[];
     x: number; y: number; w: number; sx: number; sy: number;
   };
 
+  // Cards repositioned for a 1100×480 landscape canvas
   const cards: CardDef[] = [
-    { col: T,        title: 'Recipe & Spec',
+    { col: T,         title: 'Recipe & Spec',
       lines: ['Full recipe, method & mise en place', 'Portions, yield & scaling', 'Batch notes per serving size'],
-      x: 310, y: 4, w: 228, sx: 480, sy: 68 },
+      x: 390, y: 6, w: 236, sx: 560, sy: 72 },
     { col: '#0284c7', title: 'Cost & GP',
       lines: ['Live ingredient costs vs your suppliers', 'GP auto-calculated per dish', 'Sell-price guidance & margin alerts'],
-      x: 638, y: 26, w: 228, sx: 658, sy: 84 },
+      x: 660, y: 20, w: 236, sx: 693, sy: 82 },
     { col: '#0891b2', title: 'Supplier Pricing',
       lines: ['Live price tracking from your suppliers', 'Invoice scan & match', 'Auto-recost when prices change', 'Direct supplier messaging'],
-      x: 700, y: 202, w: 230, sx: 726, sy: 268 },
+      x: 840, y: 168, w: 236, sx: 840, sy: 230 },
     { col: '#dc2626', title: 'Allergens & Nutrition',
       lines: ['14 allergens auto-generated per dish', "Natasha's Law compliant matrix", 'Nutrition per portion — auto-updated'],
-      x: 632, y: 462, w: 238, sx: 658, sy: 474 },
+      x: 662, y: 368, w: 238, sx: 694, sy: 378 },
     { col: '#d97706', title: 'HACCP & Safety',
       lines: ['CCPs generated per dish', 'Critical limits & corrective actions', 'Temp logs, evidence & inspection reports'],
-      x: 308, y: 512, w: 232, sx: 468, sy: 524 },
+      x: 388, y: 396, w: 232, sx: 538, sy: 396 },
     { col: '#059669', title: 'Training & Compliance',
       lines: ['Bespoke training from your menus & ops', 'Level 2 food hygiene included', 'All legal compliance checks built in', 'Cert tracking & auto-renewal alerts'],
-      x: 18, y: 444, w: 242, sx: 254, sy: 490 },
-    { col: TL,       title: 'Front of House',
+      x: 22, y: 340, w: 246, sx: 282, sy: 380 },
+    { col: TL,        title: 'Front of House',
       lines: ['Live menu knowledge for all staff', 'Instant allergen answers', 'Dish descriptions & wine pairings'],
-      x: 18, y: 208, w: 232, sx: 244, sy: 270 },
+      x: 22, y: 176, w: 236, sx: 268, sy: 248 },
     { col: '#ea580c', title: 'Ordering & Deliveries',
       lines: ['Shopping list auto-built from menu', 'One-click POs to suppliers', 'Delivery checker — scan vs PO', 'Discrepancy alerts & records'],
-      x: 18, y: 26, w: 236, sx: 248, sy: 88 },
+      x: 22, y: 18, w: 242, sx: 272, sy: 100 },
   ];
 
   const ROW = 15, HDR = 19, PAD = 7;
 
   return (
-    <svg viewBox="0 0 960 610" style={{ width: '100%', height: '100%', display: 'block' }}>
+    <svg viewBox="0 0 1100 485" style={{ width: '100%', height: '100%', display: 'block' }}>
       <defs>
-        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor={T} stopOpacity="0.10" />
+        <radialGradient id="glow5" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor={T} stopOpacity="0.12" />
           <stop offset="100%" stopColor={T} stopOpacity="0" />
         </radialGradient>
       </defs>
-      <ellipse cx={cx} cy={cy} rx={230} ry={210} fill="url(#glow)" />
+      <ellipse cx={cx} cy={cy} rx={200} ry={180} fill="url(#glow5)" />
 
       {cards.map(c => (
         <line key={c.title + 's'} x1={cx} y1={cy} x2={c.sx} y2={c.sy}
-          stroke={c.col} strokeWidth="0.8" strokeOpacity="0.20" strokeDasharray="3,5" />
+          stroke={c.col} strokeWidth="0.8" strokeOpacity="0.22" strokeDasharray="3,5" />
       ))}
 
       {cards.map(c => {
@@ -213,161 +220,117 @@ function SpokeMap() {
         );
       })}
 
-      <rect x={cx - 80} y={cy - 40} width={160} height={80} rx={8}
+      <rect x={cx - 85} y={cy - 44} width={170} height={88} rx={8}
         fill={NAV} stroke={TL} strokeWidth="2" />
-      <rect x={cx - 80} y={cy - 40} width={160} height={80} rx={8}
+      <rect x={cx - 85} y={cy - 44} width={170} height={88} rx={8}
         fill={T} fillOpacity="0.07" />
-      <text x={cx} y={cy - 12} textAnchor="middle" fill={W} fontSize="16" fontWeight="900" fontFamily={F}>Menu</text>
-      <text x={cx} y={cy + 7}  textAnchor="middle" fill={W} fontSize="16" fontWeight="900" fontFamily={F}>Development</text>
-      <text x={cx} y={cy + 23} textAnchor="middle" fill={TL} fontSize="8" fontWeight="700" fontFamily={F}>· everything starts here ·</text>
+      <text x={cx} y={cy - 13} textAnchor="middle" fill={W} fontSize="17" fontWeight="900" fontFamily={F}>Menu</text>
+      <text x={cx} y={cy + 8}  textAnchor="middle" fill={W} fontSize="17" fontWeight="900" fontFamily={F}>Development</text>
+      <text x={cx} y={cy + 25} textAnchor="middle" fill={TL} fontSize="8" fontWeight="700" fontFamily={F}>· everything starts here ·</text>
     </svg>
   );
 }
 
 function Page1() {
-  const noiseItems: { text: string }[] = [
-    { text: 'allergen spreadsheets' },
-    { text: 'HACCP paperwork' },
-    { text: "GP that's never right" },
-    { text: 'last-minute menu changes' },
-    { text: 'supplier invoice queries' },
-    { text: 'compliance checklists' },
-    { text: 'delivery discrepancies' },
-    { text: 'staff no-shows' },
-    { text: 'training records' },
-    { text: 'price increases you missed' },
-    { text: 'FOH asking about allergens' },
-    { text: 'certification renewals' },
-    { text: 'portion drift' },
-    { text: 'menu costing' },
+  const noiseItems = [
+    'allergen spreadsheets', 'HACCP paperwork', "GP that's never right",
+    'last-minute menu changes', 'supplier invoice queries', 'compliance checklists',
+    'delivery discrepancies', 'staff no-shows', 'training records',
+    'price increases you missed', 'FOH asking about allergens', 'certification renewals',
+    'portion drift', 'menu costing', 'spec sheets', 'food safety records',
   ];
 
   return (
     <Page n={1}>
-      <div style={{ display: 'grid', gridTemplateColumns: '52% 48%', flexShrink: 0 }}>
+      {/* Top strip — 3 columns */}
+      <div style={{ display: 'grid', gridTemplateColumns: '38% 32% 30%', flexShrink: 0, borderBottom: `2px solid ${T}` }}>
 
-        {/* Left — emotional hook */}
+        {/* Col 1 — emotional hook */}
         <div style={{
-          background: DARK, padding: '20px 20px 18px 16mm',
+          background: DARK, padding: '16px 18px 14px 20mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{
-              fontSize: 8, fontWeight: 800, color: TL,
-              textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 10,
-            }}>
+            <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 8 }}>
               Built by chefs · for chefs
             </div>
-            <p style={{
-              color: W, fontSize: 20, fontWeight: 900, lineHeight: 1.1,
-              letterSpacing: '-0.025em', margin: '0 0 10px', maxWidth: 260,
-            }}>
+            <p style={{ color: W, fontSize: 19, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.025em', margin: '0 0 9px' }}>
               You became a chef<br />because you love to cook.
             </p>
-            <p style={{ color: S4, fontSize: 10, lineHeight: 1.65, margin: '0 0 12px', maxWidth: 280 }}>
+            <p style={{ color: S4, fontSize: 9.5, lineHeight: 1.6, margin: '0 0 10px' }}>
               Somewhere between the first job and running your own kitchen, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The supplier calls that never end.
             </p>
             <p style={{
-              color: '#e2e8f0', fontSize: 10.5, fontWeight: 600, lineHeight: 1.55,
-              fontStyle: 'italic', borderLeft: `3px solid ${T}`,
-              paddingLeft: 11, margin: 0,
+              color: '#e2e8f0', fontSize: 10, fontWeight: 600, lineHeight: 1.5,
+              fontStyle: 'italic', borderLeft: `3px solid ${T}`, paddingLeft: 10, margin: 0,
             }}>
               "I didn't go to catering college to update an allergen spreadsheet at midnight."
             </p>
           </div>
-          <div style={{
-            display: 'flex', gap: 14, marginTop: 14,
-            paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            {[
-              { stat: '20+ yrs',     label: 'kitchen experience behind this' },
-              { stat: '5 min',       label: 'to go live — no training needed' },
-              { stat: 'plain English', label: "describe the dish. That's it." },
-            ].map(s => (
-              <div key={s.stat} style={{ flex: 1 }}>
-                <div style={{ color: TL, fontSize: 11, fontWeight: 900, lineHeight: 1 }}>{s.stat}</div>
-                <div style={{ color: S5, fontSize: 7.5, marginTop: 3, lineHeight: 1.35 }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Right — noise cloud */}
-        <div style={{ background: 'rgba(8,15,26,0.8)', padding: '18px 18px 14px 16px' }}>
-          <div style={{
-            fontSize: 8, fontWeight: 800, color: S8,
-            textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 12,
-          }}>
+        {/* Col 2 — noise cloud */}
+        <div style={{ background: 'rgba(8,15,26,0.85)', padding: '16px 16px 14px 16px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: S8, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 10 }}>
             What actually fills the day
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '7px 6px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '6px 5px' }}>
             {noiseItems.map((item, i) => (
               <span key={i} style={{
-                fontSize: 8.5, fontWeight: 600,
-                color: S4,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.10)',
-                borderRadius: 999, padding: '3px 9px',
-                whiteSpace: 'nowrap' as const,
+                fontSize: 8, fontWeight: 600, color: S4,
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)',
+                borderRadius: 999, padding: '3px 8px', whiteSpace: 'nowrap' as const,
               }}>
-                {item.text}
+                {item}
               </span>
             ))}
           </div>
-          <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <p style={{ color: S8, fontSize: 9, fontStyle: 'italic', margin: 0 }}>
+          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <p style={{ color: S8, fontSize: 8.5, fontStyle: 'italic', margin: 0 }}>
               None of this is why you got into hospitality.
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Pivot band */}
-      <div style={{
-        background: DARK, borderTop: `2px solid ${T}`,
-        borderBottom: '1px solid rgba(45,212,191,0.10)',
-        padding: '10px 16mm', display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between', flexShrink: 0, gap: 20,
-      }}>
-        <div style={{ flex: 1 }}>
-          <div style={{
-            fontSize: 7.5, fontWeight: 800, color: TL,
-            textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 3,
-          }}>
-            HospitalitySupport.uk
-          </div>
-          <p style={{
-            color: W, fontSize: 14.5, fontWeight: 900, lineHeight: 1.1,
-            letterSpacing: '-0.02em', margin: '0 0 3px',
-          }}>
-            Every area of your operation.{' '}
-            <span style={{ color: TL }}>All connected. Always live.</span>
-          </p>
-          <p style={{ color: S5, fontSize: 9, lineHeight: 1.5, margin: 0, maxWidth: 440 }}>
-            Describe a dish in plain English. The platform builds the recipe, costs it live, generates the allergen matrix, HACCP controls, and training notes — then recoasts everything automatically every time a supplier price changes.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-          {[
-            { val: '3 min',  label: 'Dish live',        hi: false },
-            { val: '14',     label: 'Allergens tracked', hi: false },
-            { val: '0',      label: 'Spreadsheets',      hi: false },
-            { val: '£3.30',  label: 'per kitchen / day', hi: true  },
-          ].map(s => (
-            <div key={s.label} style={{
-              background: s.hi ? T : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${s.hi ? T : 'rgba(255,255,255,0.08)'}`,
-              borderRadius: 7, padding: '6px 10px', textAlign: 'center' as const,
-            }}>
-              <div style={{ color: s.hi ? W : TL, fontSize: 13, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-              <div style={{ color: s.hi ? 'rgba(255,255,255,0.7)' : S5, fontSize: 7, marginTop: 2, lineHeight: 1.2 }}>{s.label}</div>
+        {/* Col 3 — stats + platform intro */}
+        <div style={{
+          background: 'rgba(20,184,166,0.04)', padding: '16px 20mm 14px 16px',
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        }}>
+          <div>
+            <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 8 }}>
+              The fix
             </div>
-          ))}
+            <p style={{ color: W, fontSize: 12.5, fontWeight: 900, lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 8px' }}>
+              Every area of your operation.{' '}
+              <span style={{ color: TL }}>All connected. Always live.</span>
+            </p>
+            <p style={{ color: S5, fontSize: 8.5, lineHeight: 1.55, margin: '0 0 12px' }}>
+              Describe a dish in plain English. Recipe, costing, allergens, HACCP, training — built and kept live automatically.
+            </p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            {[
+              { val: '3 min',   label: 'Dish live',         hi: false },
+              { val: '14',      label: 'Allergens tracked',  hi: false },
+              { val: '5 min',   label: 'To go live',         hi: false },
+              { val: '£3.30',   label: 'per kitchen / day',  hi: true  },
+            ].map(s => (
+              <div key={s.label} style={{
+                background: s.hi ? T : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${s.hi ? T : 'rgba(255,255,255,0.08)'}`,
+                borderRadius: 7, padding: '6px 8px', textAlign: 'center' as const,
+              }}>
+                <div style={{ color: s.hi ? W : TL, fontSize: 14, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+                <div style={{ color: s.hi ? 'rgba(255,255,255,0.7)' : S5, fontSize: 7, marginTop: 2, lineHeight: 1.2 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Spoke map */}
+      {/* Spoke map — fills remaining landscape height */}
       <div style={{ background: DARK, flex: 1, minHeight: 0 }}>
         <SpokeMap />
       </div>
@@ -381,33 +344,71 @@ function Page1() {
 function Page2() {
   return (
     <Page n={2}>
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
+      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '30% 38% 32%', minHeight: 0 }}>
 
-        {/* Left — dark mockups */}
+        {/* Col 1 — hero intro + before/after */}
         <div style={{
-          background: DARK, padding: '18px 14px 16px 16mm',
+          background: 'rgba(15,22,35,0.8)', padding: '16px 14px 14px 20mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
           <div>
-            <Badge text="Menu Development · Cost & GP · Allergens · HACCP" />
+            <Badge text="Menu · Cost · Allergens · HACCP" />
             <h2 style={{
-              color: W, fontSize: 21, fontWeight: 900, lineHeight: 1.1,
-              letterSpacing: '-0.025em', margin: '8px 0 4px',
+              color: W, fontSize: 20, fontWeight: 900, lineHeight: 1.1,
+              letterSpacing: '-0.025em', margin: '8px 0 6px',
             }}>
-              Full dish. Fully priced.<br />
+              Full dish.<br />Fully priced.<br />
               <span style={{ color: TL }}>Under 3 minutes.</span>
             </h2>
-            <p style={{ color: S4, fontSize: 9.5, lineHeight: 1.55, margin: 0 }}>
-              Describe the dish. The platform handles everything from recipe to compliance.
+            <p style={{ color: S4, fontSize: 9.5, lineHeight: 1.6, margin: 0 }}>
+              A head chef used to spend 2–3 hours per dish. Recipe, costing, allergen checks, HACCP, portioning — all separate, all manual. Describe it once and the platform handles everything.
             </p>
           </div>
 
+          <Card teal>
+            <div style={{ fontSize: 8, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 7 }}>
+              Generated per dish — automatically
+            </div>
+            <Arrows size={9} items={[
+              'Full recipe — portions, method, mise en place, batch notes',
+              'Ingredient list priced against live suppliers',
+              'GP calculation and sell-price recommendation',
+              '14-allergen matrix, auto-updated on any change',
+              'HACCP controls — CCPs, critical limits, corrective actions',
+              'Nutritional breakdown per portion',
+              'FOH dish description, wine pairings',
+              'Training notes for kitchen and front of house',
+              'Live GP recosted on every supplier price change',
+            ]} />
+          </Card>
+
+          <Card style={{ marginTop: 'auto' }}>
+            <div style={{ fontSize: 8, fontWeight: 800, color: S5, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 5 }}>
+              Before this platform
+            </div>
+            {[
+              '2–3 hrs per dish spec — every menu change',
+              'Allergen spreadsheets done manually, usually behind',
+              'HACCP copied from a generic template',
+              'GP recalculated at month end — if at all',
+            ].map(t => (
+              <div key={t} style={{ fontSize: 9, color: S5, textDecoration: 'line-through', marginBottom: 3 }}>{t}</div>
+            ))}
+          </Card>
+        </div>
+
+        {/* Col 2 — 4-step mockup flow */}
+        <div style={{
+          background: DARK, padding: '16px 14px 14px 14px',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex', flexDirection: 'column', gap: 9,
+        }}>
           <DarkWindow title="step 01 — describe your dish">
-            <div style={{ padding: '9px 12px' }}>
+            <div style={{ padding: '8px 12px' }}>
               <div style={{
                 background: 'rgba(45,212,191,0.06)', border: '1px solid rgba(45,212,191,0.18)',
-                borderRadius: 6, padding: '8px 10px', color: '#e2e8f0', fontSize: 9.5, lineHeight: 1.55,
+                borderRadius: 6, padding: '7px 10px', color: '#e2e8f0', fontSize: 9, lineHeight: 1.55,
               }}>
                 "Spring fish special — elegant, max 5 ingredients, 70%+ GP, works on a junior chef section, pairs well with white Burgundy."
               </div>
@@ -420,7 +421,7 @@ function Page2() {
               alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)',
               background: 'rgba(255,255,255,0.02)',
             }}>
-              <span style={{ color: '#e2e8f0', fontSize: 9, fontWeight: 700 }}>Pan-Seared Sea Trout, Lemon Beurre Blanc</span>
+              <span style={{ color: '#e2e8f0', fontSize: 8.5, fontWeight: 700 }}>Pan-Seared Sea Trout, Lemon Beurre Blanc</span>
               <span style={{ color: TL, fontSize: 10, fontWeight: 800 }}>GP 73%</span>
             </div>
             {[
@@ -430,21 +431,21 @@ function Page2() {
               { item: 'White wine 50ml',        cost: '£0.28', sup: 'Cellar Direct' },
               { item: 'Dill garnish 5g',        cost: '£0.09', sup: 'Fresh Direct' },
             ].map((r, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, padding: '4px 12px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ color: S4, fontSize: 9, flex: 1 }}>{r.item}</span>
-                <span style={{ color: TL, fontSize: 9, fontFamily: 'monospace', fontWeight: 700, width: 34, textAlign: 'right' as const }}>{r.cost}</span>
+              <div key={i} style={{ display: 'flex', gap: 8, padding: '3px 12px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <span style={{ color: S4, fontSize: 8.5, flex: 1 }}>{r.item}</span>
+                <span style={{ color: TL, fontSize: 8.5, fontFamily: 'monospace', fontWeight: 700, width: 34, textAlign: 'right' as const }}>{r.cost}</span>
                 <span style={{ color: S8, fontSize: 8, width: 72, textAlign: 'right' as const }}>{r.sup}</span>
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 12px' }}>
-              <span style={{ color: S5, fontSize: 8.5 }}>Total cost per portion</span>
-              <span style={{ color: W, fontSize: 9, fontWeight: 800 }}>£3.87 → sell £14.50</span>
+              <span style={{ color: S5, fontSize: 8 }}>Total cost per portion</span>
+              <span style={{ color: W, fontSize: 8.5, fontWeight: 800 }}>£3.87 → sell £14.50</span>
             </div>
           </DarkWindow>
 
           <DarkWindow title="step 03 — allergen matrix, auto-generated">
-            <div style={{ padding: '8px 12px' }}>
-              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, marginBottom: 6 }}>
+            <div style={{ padding: '7px 12px' }}>
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, marginBottom: 5 }}>
                 {[
                   { n: 'Fish', p: true }, { n: 'Dairy', p: true }, { n: 'Sulphites', p: true },
                   { n: 'Gluten', p: false }, { n: 'Eggs', p: false }, { n: 'Nuts', p: false },
@@ -452,7 +453,7 @@ function Page2() {
                   { n: 'Mustard', p: false }, { n: 'Crustaceans', p: false },
                 ].map(a => (
                   <span key={a.n} style={{
-                    fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 4,
+                    fontSize: 7.5, fontWeight: 700, padding: '2px 5px', borderRadius: 4,
                     background: a.p ? 'rgba(248,113,113,0.14)' : 'rgba(255,255,255,0.05)',
                     color: a.p ? '#fca5a5' : S6,
                     border: `1px solid ${a.p ? 'rgba(248,113,113,0.30)' : 'rgba(255,255,255,0.07)'}`,
@@ -461,14 +462,14 @@ function Page2() {
                   </span>
                 ))}
               </div>
-              <span style={{ color: T, fontSize: 8, fontWeight: 700 }}>
+              <span style={{ color: T, fontSize: 7.5, fontWeight: 700 }}>
                 14 allergens tracked · Natasha's Law compliant · Auto-updates on any ingredient change
               </span>
             </div>
           </DarkWindow>
 
           <DarkWindow title="step 04 — HACCP controls, per dish">
-            <div style={{ padding: '8px 12px' }}>
+            <div style={{ padding: '7px 12px' }}>
               {[
                 { ccp: 'CCP1', step: 'Receiving', control: 'Core temp ≤3°C on delivery',      action: 'Reject if above' },
                 { ccp: 'CCP2', step: 'Storage',   control: 'Fridge ≤5°C, covered, labelled',  action: 'Move/discard' },
@@ -481,7 +482,7 @@ function Page2() {
                     borderRadius: 3, flexShrink: 0, marginTop: 1,
                   }}>{c.ccp}</span>
                   <div>
-                    <div style={{ color: '#e2e8f0', fontSize: 9, fontWeight: 700 }}>
+                    <div style={{ color: '#e2e8f0', fontSize: 8.5, fontWeight: 700 }}>
                       {c.step} — <span style={{ color: S5, fontWeight: 400 }}>{c.control}</span>
                     </div>
                     <div style={{ color: '#fbbf24', fontSize: 8 }}>Corrective: {c.action}</div>
@@ -492,58 +493,64 @@ function Page2() {
           </DarkWindow>
         </div>
 
-        {/* Right — dark context */}
+        {/* Col 3 — full recipe output mockup */}
         <div style={{
-          background: 'rgba(15,22,35,0.8)', padding: '18px 16mm 16px 16px',
+          background: 'rgba(10,16,28,0.9)', padding: '16px 20mm 14px 14px',
           display: 'flex', flexDirection: 'column', gap: 9,
         }}>
-          <p style={{ color: S4, fontSize: 10.5, lineHeight: 1.65, margin: 0 }}>
-            A head chef used to spend 2–3 hours on this per dish. Recipe, costing, allergen checks, HACCP, portioning — all separate tasks, all manual. The platform handles every part from a single description.
-          </p>
-
-          <Card teal>
-            <div style={{
-              fontSize: 8.5, fontWeight: 800, color: TL,
-              textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 8,
-            }}>
-              Generated per dish — automatically
+          <DarkWindow title="full output — sea trout, beurre blanc" live>
+            <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {/* Method */}
+              <div>
+                <div style={{ color: TL, fontSize: 7.5, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 4 }}>Method</div>
+                {['Season fillet, heat pan until smoking.', 'Sear skin-side 3 min. Flip, add butter, baste 90 sec.', 'Rest 2 min. Core temp ≥63°C.', 'Reduce wine, add butter gradually, finish with lemon.'].map((s, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 3 }}>
+                    <span style={{ color: TL, fontSize: 7.5, fontWeight: 800, flexShrink: 0, width: 12 }}>{i + 1}.</span>
+                    <span style={{ color: S4, fontSize: 8.5, lineHeight: 1.4 }}>{s}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+              {/* Nutrition */}
+              <div>
+                <div style={{ color: TL, fontSize: 7.5, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 4 }}>Nutrition per portion</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 4 }}>
+                  {[{ l: 'Kcal', v: '312' }, { l: 'Protein', v: '28g' }, { l: 'Fat', v: '19g' }, { l: 'Carbs', v: '3g' }].map(n => (
+                    <div key={n.l} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 5, padding: '4px 0', textAlign: 'center' as const }}>
+                      <div style={{ color: W, fontSize: 11, fontWeight: 800, lineHeight: 1 }}>{n.v}</div>
+                      <div style={{ color: S6, fontSize: 7, marginTop: 1 }}>{n.l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+              {/* FOH desc */}
+              <div>
+                <div style={{ color: TL, fontSize: 7.5, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 4 }}>FOH Menu Description</div>
+                <div style={{ color: '#e2e8f0', fontSize: 8.5, fontStyle: 'italic', lineHeight: 1.5 }}>
+                  "Pan-seared sea trout fillet, golden crisp skin, lemon beurre blanc, fresh dill."
+                </div>
+              </div>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+              {/* Wine */}
+              <div>
+                <div style={{ color: TL, fontSize: 7.5, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 4 }}>Wine Pairing</div>
+                <div style={{ color: S4, fontSize: 8.5, lineHeight: 1.4 }}>Chablis Premier Cru or Pouilly-Fumé — crisp acidity cuts the beurre blanc.</div>
+              </div>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+              {/* Training */}
+              <div>
+                <div style={{ color: TL, fontSize: 7.5, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 4 }}>Training Note</div>
+                <div style={{ color: S4, fontSize: 8.5, lineHeight: 1.4 }}>Contains Fish, Dairy, Sulphites. Always confirm allergens at table before ordering.</div>
+              </div>
             </div>
-            <Arrows size={9.5} items={[
-              'Full recipe — portions, method, mise en place, batch notes',
-              'Ingredient list priced against your live suppliers',
-              'GP calculation and sell-price recommendation',
-              '14-allergen matrix, auto-updated on any change',
-              'HACCP controls: CCPs, critical limits, corrective actions',
-              'Nutritional breakdown per portion (kcal, protein, fat, carbs)',
-              'FOH dish description ready for menus and table cards',
-              'Wine and beverage pairings',
-              'Training notes for kitchen and front of house',
-              'Live GP tracking — recosted on every supplier price change',
-            ]} />
-          </Card>
-
-          <Card>
-            <div style={{
-              fontSize: 8.5, fontWeight: 800, color: S5,
-              textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: 6,
-            }}>
-              Before this platform
-            </div>
-            {[
-              '2–3 hours per dish spec — every time a menu changes',
-              'Allergen spreadsheets done manually — and usually behind',
-              'HACCP copied from a generic template',
-              'GP recalculated only at month end — if at all',
-            ].map(t => (
-              <div key={t} style={{ fontSize: 9.5, color: S5, textDecoration: 'line-through', marginBottom: 3 }}>{t}</div>
-            ))}
-          </Card>
+          </DarkWindow>
 
           <Card teal style={{ marginTop: 'auto' }}>
-            <div style={{ color: TL, fontSize: 11, fontWeight: 800, lineHeight: 1.4 }}>
+            <div style={{ color: TL, fontSize: 10.5, fontWeight: 800, lineHeight: 1.35 }}>
               From concept to fully priced, allergen-compliant, HACCP-controlled live dish.
             </div>
-            <div style={{ color: S5, fontSize: 9, marginTop: 4 }}>Under 3 minutes. Every time.</div>
+            <div style={{ color: S5, fontSize: 8.5, marginTop: 4 }}>Under 3 minutes. Every time.</div>
           </Card>
         </div>
       </div>
