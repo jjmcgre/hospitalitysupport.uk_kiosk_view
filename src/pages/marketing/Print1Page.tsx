@@ -22,15 +22,13 @@ const F    = "'Inter', system-ui, sans-serif";
 export default function Print1Page({ standalone = false }: { standalone?: boolean }) {
   const { openBooking } = useBooking();
   const [linkCopied, setLinkCopied] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const outerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const update = () => {
-      if (!wrapRef.current) return;
-      const available = wrapRef.current.parentElement?.clientWidth ?? 794;
-      const scale = Math.min(1, available / 794);
-      wrapRef.current.style.setProperty('--print1-scale', String(scale));
-      wrapRef.current.style.height = scale < 1 ? `${1123 * scale}px` : '';
+      const available = outerRef.current?.clientWidth ?? 794;
+      setScale(Math.min(1, available / 794));
     };
     update();
     window.addEventListener('resize', update);
@@ -69,7 +67,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
   ];
 
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`} ref={outerRef}>
       <div className="max-w-[900px] mx-auto">
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
@@ -97,20 +95,10 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-          .print1-wrap {
-            width: 794px;
-            margin: 0 auto;
-          }
-          @media (max-width: 860px) {
-            .print1-wrap {
-              transform-origin: top center;
-              transform: scale(var(--print1-scale, 1));
-            }
-          }
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print1-wrap { width: 210mm !important; transform: none !important; }
+            .print-scale-wrap { transform: none !important; width: 210mm !important; height: auto !important; }
             .print-page { box-shadow: none !important; width: 210mm !important; height: 297mm !important; }
             .no-print { display: none !important; }
           }
@@ -118,11 +106,19 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
         `}</style>
 
         {/* ── A4 PAGE ── */}
-        <div className="print1-wrap" ref={wrapRef}>
+        <div
+          className="print-scale-wrap"
+          style={{
+            width: 794,
+            height: 1123 * scale,
+            transformOrigin: 'top left',
+            transform: `scale(${scale})`,
+          }}
+        >
         <div
           className="print-page shadow-2xl"
           style={{
-            width: '794px', height: '1123px', margin: '0 auto',
+            width: 794, height: 1123,
             fontFamily: F, display: 'flex', flexDirection: 'column',
             background: NAV, position: 'relative', overflow: 'hidden',
           }}
@@ -419,7 +415,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           </div>
 
         </div>
-        </div>{/* print1-wrap */}
+        </div>{/* print-scale-wrap */}
       </div>
     </div>
   );

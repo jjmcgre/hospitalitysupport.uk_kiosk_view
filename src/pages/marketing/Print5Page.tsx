@@ -1085,19 +1085,13 @@ function Page5() {
 export default function Print5Page({ standalone = false }: { standalone?: boolean }) {
   const { openBooking } = useBooking();
   const [linkCopied, setLinkCopied] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const outerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const update = () => {
-      if (!wrapRef.current) return;
-      const available = wrapRef.current.parentElement?.clientWidth ?? 794;
-      const scale = Math.min(1, available / 794);
-      wrapRef.current.style.setProperty('--print5-scale', String(scale));
-      if (scale < 1) {
-        wrapRef.current.style.height = `${5 * 1123 * scale + 4 * 24 * scale}px`;
-      } else {
-        wrapRef.current.style.height = '';
-      }
+      const available = outerRef.current?.clientWidth ?? 794;
+      setScale(Math.min(1, available / 794));
     };
     update();
     window.addEventListener('resize', update);
@@ -1109,8 +1103,13 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 2000);
   };
+
+  const PAGE_H = 1123;
+  const GAP = 24;
+  const totalH = 5 * PAGE_H + 4 * GAP;
+
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`} ref={outerRef}>
       <div className="max-w-[900px] mx-auto">
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
@@ -1138,16 +1137,10 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
 
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-          .print5-wrap {
-            width: 794px;
-            margin: 0 auto;
-            transform-origin: top center;
-            transform: scale(var(--print5-scale, 1));
-          }
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print5-wrap { width: 210mm !important; transform: none !important; height: auto !important; }
+            .print5-scale-wrap { transform: none !important; width: 210mm !important; height: auto !important; }
             .print-page { box-shadow: none !important; width: 210mm !important; min-height: 297mm !important; page-break-after: always; }
             .print-page:last-child { page-break-after: avoid; }
             .no-print { display: none !important; }
@@ -1155,8 +1148,16 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           @page { size: A4 portrait; margin: 0; }
         `}</style>
 
-        <div className="print5-wrap" ref={wrapRef}>
-          <div className="space-y-6">
+        <div
+          className="print5-scale-wrap"
+          style={{
+            width: 794,
+            height: totalH * scale,
+            transformOrigin: 'top left',
+            transform: `scale(${scale})`,
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
             <Page1 />
             <Page2 />
             <Page3 />
