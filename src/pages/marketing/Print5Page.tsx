@@ -1132,8 +1132,8 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   const totalH = NUM_PAGES * PAGE_H + (NUM_PAGES - 1) * GAP;
 
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`} ref={outerRef}>
-      <div className="w-full">
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
+      <div className="w-full" ref={outerRef}>
         <div className="flex items-center justify-between mb-3 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">6-Page Brochure</h1>
@@ -1172,25 +1172,11 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           @page { size: A4 landscape; margin: 0; }
         `}</style>
 
-        {/*
-          Scaling wrapper:
-          - outer: sits in normal flow, reserves the exact scaled height so the
-            page scrolls correctly. No overflow:hidden so nothing is clipped.
-          - inner: absolutely positioned at top-left, full 1123px wide, then
-            visually shrunk with transform. Because it's absolute it doesn't
-            push the outer height — the outer height handles that explicitly.
-        */}
         <div
           className="print5-scale-wrap"
-          style={{ position: 'relative', height: Math.round(totalH * scale) }}
+          style={{ width: PAGE_W, transformOrigin: 'top left', transform: `scale(${scale})`, marginBottom: Math.round(totalH * (scale - 1)) }}
         >
-          <div style={{
-            position: 'absolute', top: 0, left: 0,
-            width: PAGE_W,
-            transformOrigin: 'top left',
-            transform: `scale(${scale})`,
-            display: 'flex', flexDirection: 'column', gap: GAP,
-          }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
             <Page1 />
             <Page2SpokeMap />
             <Page2 />
