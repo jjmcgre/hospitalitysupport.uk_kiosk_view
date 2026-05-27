@@ -122,7 +122,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           style={{
             width: 794, height: 1123,
             fontFamily: F,
-            background: NAV, position: 'relative', overflow: 'hidden',
+            background: NAV, position: 'relative', overflow: 'visible',
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
           }}
