@@ -27,7 +27,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
     <div
       className="print-page shadow-2xl overflow-hidden"
       style={{
-        width: '794px', minHeight: '1123px', margin: '0 auto',
+        width: '1123px', minHeight: '794px', margin: '0 auto',
         fontFamily: F, display: 'flex', flexDirection: 'column',
         background: NAV, position: 'relative',
       }}
@@ -1092,7 +1092,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
     const update = () => {
       const w = outerRef.current?.clientWidth;
       if (!w) return;
-      setScale(Math.min(1, w / 794));
+      setScale(Math.min(1, w / 1123));
     };
     update();
     const ro = new ResizeObserver(update);
@@ -1106,13 +1106,14 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
     setTimeout(() => setLinkCopied(false), 2000);
   };
 
-  const PAGE_H = 1123;
+  const PAGE_W = 1123;
+  const PAGE_H = 794;
   const GAP = 24;
   const totalH = 5 * PAGE_H + 4 * GAP;
 
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
-      <div className="max-w-[900px]" ref={outerRef}>
+      <div className="max-w-[1200px] mx-auto" ref={outerRef}>
         <div className="flex items-center justify-between mb-3 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
@@ -1142,25 +1143,25 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print5-scale-wrap { width: 210mm !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
-            .print5-scale-wrap > div { width: 210mm !important; transform: none !important; }
-            .print-page { box-shadow: none !important; width: 210mm !important; min-height: 297mm !important; page-break-after: always; }
+            .print5-scale-wrap { width: 297mm !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
+            .print5-scale-wrap > div { width: 297mm !important; transform: none !important; }
+            .print-page { box-shadow: none !important; width: 297mm !important; min-height: 210mm !important; page-break-after: always; }
             .print-page:last-child { page-break-after: avoid; }
             .no-print { display: none !important; }
           }
-          @page { size: A4 portrait; margin: 0; }
+          @page { size: A4 landscape; margin: 0; }
         `}</style>
 
         <div
           className="print5-scale-wrap"
           style={{
-            width: Math.round(794 * scale),
+            width: Math.round(PAGE_W * scale),
             height: Math.round(totalH * scale),
             overflow: 'hidden',
           }}
         >
           <div style={{
-            width: 794,
+            width: PAGE_W,
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
             display: 'flex', flexDirection: 'column', gap: GAP,
