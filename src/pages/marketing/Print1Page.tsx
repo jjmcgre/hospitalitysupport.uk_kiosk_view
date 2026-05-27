@@ -100,8 +100,8 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print-scale-wrap { transform: none !important; width: 210mm !important; height: auto !important; }
-            .print-page { box-shadow: none !important; width: 210mm !important; height: 297mm !important; }
+            .print-scale-wrap { width: 210mm !important; height: 297mm !important; overflow: visible !important; margin: 0 !important; }
+            .print-page { box-shadow: none !important; width: 210mm !important; height: 297mm !important; transform: none !important; }
             .no-print { display: none !important; }
           }
           @page { size: A4 portrait; margin: 0; }
@@ -111,10 +111,10 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
         <div
           className="print-scale-wrap"
           style={{
-            width: 794,
-            height: 1123 * scale,
-            transformOrigin: 'top left',
-            transform: `scale(${scale})`,
+            width: Math.round(794 * scale),
+            height: Math.round(1123 * scale),
+            overflow: 'hidden',
+            margin: '0 auto',
           }}
         >
         <div
@@ -123,6 +123,8 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
             width: 794, height: 1123,
             fontFamily: F, display: 'flex', flexDirection: 'column',
             background: NAV, position: 'relative', overflow: 'hidden',
+            transformOrigin: 'top left',
+            transform: `scale(${scale})`,
           }}
         >
           {/* Ambient glows */}

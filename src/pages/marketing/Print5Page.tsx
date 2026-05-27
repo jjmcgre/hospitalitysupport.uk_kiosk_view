@@ -1142,7 +1142,8 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print5-scale-wrap { transform: none !important; width: 210mm !important; height: auto !important; }
+            .print5-scale-wrap { width: 210mm !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
+            .print5-scale-wrap > div { width: 210mm !important; transform: none !important; }
             .print-page { box-shadow: none !important; width: 210mm !important; min-height: 297mm !important; page-break-after: always; }
             .print-page:last-child { page-break-after: avoid; }
             .no-print { display: none !important; }
@@ -1153,13 +1154,18 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
         <div
           className="print5-scale-wrap"
           style={{
-            width: 794,
-            height: totalH * scale,
-            transformOrigin: 'top left',
-            transform: `scale(${scale})`,
+            width: Math.round(794 * scale),
+            height: Math.round(totalH * scale),
+            overflow: 'hidden',
+            margin: '0 auto',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
+          <div style={{
+            width: 794,
+            transformOrigin: 'top left',
+            transform: `scale(${scale})`,
+            display: 'flex', flexDirection: 'column', gap: GAP,
+          }}>
             <Page1 />
             <Page2 />
             <Page3 />
