@@ -61,7 +61,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           <div>
             <h1 className="text-white font-black text-2xl">1-Page Summary</h1>
             {!standalone && (
-              <p className="text-slate-400 text-sm mt-1">Single A4 — save as PDF to email or print.</p>
+              <p className="text-slate-400 text-sm mt-1">Single A4 — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/one-pager</span></p>
             )}
           </div>
           <div className="flex items-center gap-2">

@@ -887,7 +887,7 @@ function Page4() {
 /* ═══════════════════════════════════════════════════════════════════════
    PAGE 5 — WHO IT'S FOR, MULTI-SITE, PRICING & CLOSE
 ═══════════════════════════════════════════════════════════════════════ */
-function Page5({ standalone = false }: { standalone?: boolean }) {
+function Page5() {
   return (
     <Page n={5}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
@@ -1097,7 +1097,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
             {!standalone && (
-              <p className="text-slate-400 text-sm mt-1">5 A4 pages — save as PDF to email or print.</p>
+              <p className="text-slate-400 text-sm mt-1">5 A4 pages — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/sales-pack</span></p>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -1134,7 +1134,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           <Page2 />
           <Page3 />
           <Page4 />
-          <Page5 standalone={standalone} />
+          <Page5 />
         </div>
       </div>
     </div>
