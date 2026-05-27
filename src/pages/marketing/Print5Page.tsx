@@ -242,27 +242,27 @@ function Page1() {
 
   return (
     <Page n={1}>
-      {/* Top strip — 3 columns */}
-      <div style={{ display: 'grid', gridTemplateColumns: '38% 32% 30%', flexShrink: 0, borderBottom: `2px solid ${T}` }}>
+      {/* Top strip — 3 columns — fixed height so spoke map always fills the rest */}
+      <div style={{ display: 'grid', gridTemplateColumns: '38% 32% 30%', flexShrink: 0, height: 240, overflow: 'hidden', borderBottom: `2px solid ${T}` }}>
 
         {/* Col 1 — emotional hook */}
         <div style={{
-          background: DARK, padding: '16px 18px 14px 20mm',
+          background: DARK, padding: '12px 14px 12px 20mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 8 }}>
+            <div style={{ fontSize: 7, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 6 }}>
               Built by chefs · for chefs
             </div>
-            <p style={{ color: W, fontSize: 19, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.025em', margin: '0 0 9px' }}>
+            <p style={{ color: W, fontSize: 17, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.025em', margin: '0 0 7px' }}>
               You became a chef<br />because you love to cook.
             </p>
-            <p style={{ color: S4, fontSize: 9.5, lineHeight: 1.6, margin: '0 0 10px' }}>
+            <p style={{ color: S4, fontSize: 9, lineHeight: 1.5, margin: '0 0 8px' }}>
               Somewhere between the first job and running your own kitchen, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The supplier calls that never end.
             </p>
             <p style={{
-              color: '#e2e8f0', fontSize: 10, fontWeight: 600, lineHeight: 1.5,
+              color: '#e2e8f0', fontSize: 9.5, fontWeight: 600, lineHeight: 1.4,
               fontStyle: 'italic', borderLeft: `3px solid ${T}`, paddingLeft: 10, margin: 0,
             }}>
               "I didn't go to catering college to update an allergen spreadsheet at midnight."
@@ -271,8 +271,8 @@ function Page1() {
         </div>
 
         {/* Col 2 — noise cloud */}
-        <div style={{ background: 'rgba(8,15,26,0.85)', padding: '16px 16px 14px 16px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize: 7.5, fontWeight: 800, color: S8, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 10 }}>
+        <div style={{ background: 'rgba(8,15,26,0.85)', padding: '12px 12px 10px 12px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: 7, fontWeight: 800, color: S8, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 8 }}>
             What actually fills the day
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '6px 5px' }}>
@@ -295,18 +295,18 @@ function Page1() {
 
         {/* Col 3 — stats + platform intro */}
         <div style={{
-          background: 'rgba(20,184,166,0.04)', padding: '16px 20mm 14px 16px',
+          background: 'rgba(20,184,166,0.04)', padding: '12px 20mm 12px 12px',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 8 }}>
+            <div style={{ fontSize: 7, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 6 }}>
               The fix
             </div>
-            <p style={{ color: W, fontSize: 12.5, fontWeight: 900, lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 8px' }}>
+            <p style={{ color: W, fontSize: 11.5, fontWeight: 900, lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 6px' }}>
               Every area of your operation.{' '}
               <span style={{ color: TL }}>All connected. Always live.</span>
             </p>
-            <p style={{ color: S5, fontSize: 8.5, lineHeight: 1.55, margin: '0 0 12px' }}>
+            <p style={{ color: S5, fontSize: 8, lineHeight: 1.5, margin: '0 0 10px' }}>
               Describe a dish in plain English. Recipe, costing, allergens, HACCP, training — built and kept live automatically.
             </p>
           </div>
