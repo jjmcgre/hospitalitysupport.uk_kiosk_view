@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PageHeader from './components/PageHeader';
 import ScriptCard from './components/ScriptCard';
 import CopyButton from './components/CopyButton';
+import WhatsAppButton from './components/WhatsAppButton';
 
 const videoBriefs = [
   {
@@ -134,7 +135,10 @@ function CopyListCard({ title, items }: CopyListCardProps) {
           {items.map((item, i) => (
             <div key={i} className="flex items-start justify-between gap-4 bg-slate-900/50 rounded-xl p-3 border border-slate-700">
               <p className="text-slate-300 text-sm flex-1">{item}</p>
-              <CopyButton text={item} />
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <WhatsAppButton text={item} />
+                <CopyButton text={item} />
+              </div>
             </div>
           ))}
         </div>

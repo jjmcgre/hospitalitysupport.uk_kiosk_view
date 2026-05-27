@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import CopyButton from './CopyButton';
+import WhatsAppButton from './WhatsAppButton';
 
 interface ScriptCardProps {
   title: string;
@@ -49,7 +50,10 @@ export default function ScriptCard({ title, hook, scene, script, cta, label }: S
             <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-700">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Opening hook</p>
-                <CopyButton text={hook} />
+                <div className="flex items-center gap-2">
+                  <WhatsAppButton text={hook} />
+                  <CopyButton text={hook} />
+                </div>
               </div>
               <p className="text-slate-300 text-sm">{hook}</p>
             </div>
@@ -59,7 +63,10 @@ export default function ScriptCard({ title, hook, scene, script, cta, label }: S
           <div>
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Script / Caption</p>
-              <CopyButton text={cleanCopy} />
+              <div className="flex items-center gap-2">
+                <WhatsAppButton text={cleanCopy} />
+                <CopyButton text={cleanCopy} />
+              </div>
             </div>
             <p className="text-slate-300 text-sm whitespace-pre-wrap bg-slate-900/40 rounded-xl p-4 border border-slate-700">{script}</p>
           </div>
@@ -68,7 +75,10 @@ export default function ScriptCard({ title, hook, scene, script, cta, label }: S
           {cta && (
             <div className="flex items-center justify-between bg-slate-900/40 rounded-xl px-4 py-3 border border-slate-700">
               <p className="text-teal-300 text-sm font-semibold">{cta}</p>
-              <CopyButton text={cta} />
+              <div className="flex items-center gap-2">
+                <WhatsAppButton text={cta} />
+                <CopyButton text={cta} />
+              </div>
             </div>
           )}
 
@@ -89,7 +99,10 @@ export default function ScriptCard({ title, hook, scene, script, cta, label }: S
                   </div>
                   <div className="pt-2 border-t border-slate-700/50">
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Full brief (copy for videographer)</p>
-                    <CopyButton text={fullBrief} />
+                    <div className="flex items-center gap-2">
+                      <WhatsAppButton text={fullBrief} />
+                      <CopyButton text={fullBrief} />
+                    </div>
                   </div>
                 </div>
               )}
