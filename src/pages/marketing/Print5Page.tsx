@@ -52,7 +52,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
         <span style={{ color: W, fontWeight: 900, fontSize: 13, letterSpacing: '-0.02em' }}>
           HospitalitySupport<span style={{ color: TL }}>.uk</span>
         </span>
-        <span style={{ color: S6, fontSize: 8, fontWeight: 600 }}>Page {n} of 5</span>
+        <span style={{ color: S6, fontSize: 8, fontWeight: 600 }}>Page {n} of 6</span>
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative', zIndex: 1 }}>
@@ -242,52 +242,50 @@ function Page1() {
 
   return (
     <Page n={1}>
-      {/* Top strip — 3 columns — fixed height so spoke map always fills the rest */}
-      <div style={{ display: 'grid', gridTemplateColumns: '38% 32% 30%', flexShrink: 0, height: 240, overflow: 'hidden', borderBottom: `2px solid ${T}` }}>
+      {/* Full-page 3-column intro */}
+      <div style={{ display: 'grid', gridTemplateColumns: '38% 32% 30%', flex: 1, minHeight: 0 }}>
 
         {/* Col 1 — emotional hook */}
         <div style={{
-          background: DARK, padding: '12px 14px 12px 20mm',
+          background: DARK, padding: '32px 24px 32px 20mm',
           borderRight: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
         }}>
-          <div>
-            <div style={{ fontSize: 7, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 6 }}>
-              Built by chefs · for chefs
-            </div>
-            <p style={{ color: W, fontSize: 17, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.025em', margin: '0 0 7px' }}>
-              You became a chef<br />because you love to cook.
-            </p>
-            <p style={{ color: S4, fontSize: 9, lineHeight: 1.5, margin: '0 0 8px' }}>
-              Somewhere between the first job and running your own kitchen, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The supplier calls that never end.
-            </p>
-            <p style={{
-              color: '#e2e8f0', fontSize: 9.5, fontWeight: 600, lineHeight: 1.4,
-              fontStyle: 'italic', borderLeft: `3px solid ${T}`, paddingLeft: 10, margin: 0,
-            }}>
-              "I didn't go to catering college to update an allergen spreadsheet at midnight."
-            </p>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.14em', marginBottom: 12 }}>
+            Built by chefs · for chefs
           </div>
+          <p style={{ color: W, fontSize: 28, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.025em', margin: '0 0 16px' }}>
+            You became a chef<br />because you love to cook.
+          </p>
+          <p style={{ color: S4, fontSize: 11, lineHeight: 1.65, margin: '0 0 20px' }}>
+            Somewhere between the first job and running your own kitchen, the cooking became the thing you squeeze in around everything else. The admin. The compliance. The costing. The supplier calls that never end.
+          </p>
+          <p style={{
+            color: '#e2e8f0', fontSize: 12, fontWeight: 600, lineHeight: 1.5,
+            fontStyle: 'italic', borderLeft: `4px solid ${T}`, paddingLeft: 14, margin: 0,
+          }}>
+            "I didn't go to catering college to update an allergen spreadsheet at midnight."
+          </p>
         </div>
 
         {/* Col 2 — noise cloud */}
-        <div style={{ background: 'rgba(8,15,26,0.85)', padding: '12px 12px 10px 12px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize: 7, fontWeight: 800, color: S8, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 8 }}>
+        <div style={{ background: 'rgba(8,15,26,0.85)', padding: '32px 20px', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: S4, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 16 }}>
             What actually fills the day
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '6px 5px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px 6px' }}>
             {noiseItems.map((item, i) => (
               <span key={i} style={{
-                fontSize: 8, fontWeight: 600, color: S4,
+                fontSize: 9.5, fontWeight: 600, color: S4,
                 background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)',
-                borderRadius: 999, padding: '3px 8px', whiteSpace: 'nowrap' as const,
+                borderRadius: 999, padding: '5px 11px', whiteSpace: 'nowrap' as const,
               }}>
                 {item}
               </span>
             ))}
           </div>
-          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <p style={{ color: S8, fontSize: 8.5, fontStyle: 'italic', margin: 0 }}>
+          <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <p style={{ color: S5, fontSize: 10, fontStyle: 'italic', margin: 0 }}>
               None of this is why you got into hospitality.
             </p>
           </div>
@@ -295,44 +293,58 @@ function Page1() {
 
         {/* Col 3 — stats + platform intro */}
         <div style={{
-          background: 'rgba(20,184,166,0.04)', padding: '12px 20mm 12px 12px',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          background: 'rgba(20,184,166,0.04)', padding: '32px 20mm 32px 20px',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
         }}>
-          <div>
-            <div style={{ fontSize: 7, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 6 }}>
-              The fix
-            </div>
-            <p style={{ color: W, fontSize: 11.5, fontWeight: 900, lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 6px' }}>
-              Every area of your operation.{' '}
-              <span style={{ color: TL }}>All connected. Always live.</span>
-            </p>
-            <p style={{ color: S5, fontSize: 8, lineHeight: 1.5, margin: '0 0 10px' }}>
-              Describe a dish in plain English. Recipe, costing, allergens, HACCP, training — built and kept live automatically.
-            </p>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: TL, textTransform: 'uppercase' as const, letterSpacing: '0.12em', marginBottom: 12 }}>
+            The fix
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+          <p style={{ color: W, fontSize: 18, fontWeight: 900, lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 12px' }}>
+            Every area of your operation.{' '}
+            <span style={{ color: TL }}>All connected. Always live.</span>
+          </p>
+          <p style={{ color: S5, fontSize: 10.5, lineHeight: 1.6, margin: '0 0 24px' }}>
+            Describe a dish in plain English. Recipe, costing, allergens, HACCP, training — built and kept live automatically.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {[
-              { val: '3 min',   label: 'Dish live',         hi: false },
-              { val: '14',      label: 'Allergens tracked',  hi: false },
-              { val: '5 min',   label: 'To go live',         hi: false },
-              { val: '£3.30',   label: 'per kitchen / day',  hi: true  },
+              { val: '3 min',  label: 'Dish live',         hi: false },
+              { val: '14',     label: 'Allergens tracked',  hi: false },
+              { val: '5 min',  label: 'To go live',         hi: false },
+              { val: '£3.30', label: 'per kitchen / day',  hi: true  },
             ].map(s => (
               <div key={s.label} style={{
                 background: s.hi ? T : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${s.hi ? T : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 7, padding: '6px 8px', textAlign: 'center' as const,
+                borderRadius: 8, padding: '10px 10px', textAlign: 'center' as const,
               }}>
-                <div style={{ color: s.hi ? W : TL, fontSize: 14, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
-                <div style={{ color: s.hi ? 'rgba(255,255,255,0.7)' : S5, fontSize: 7, marginTop: 2, lineHeight: 1.2 }}>{s.label}</div>
+                <div style={{ color: s.hi ? W : TL, fontSize: 20, fontWeight: 900, lineHeight: 1 }}>{s.val}</div>
+                <div style={{ color: s.hi ? 'rgba(255,255,255,0.7)' : S5, fontSize: 8.5, marginTop: 4, lineHeight: 1.2 }}>{s.label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
+    </Page>
+  );
+}
 
-      {/* Spoke map — fills remaining landscape height */}
-      <div style={{ background: DARK, flex: 1, minHeight: 0 }}>
-        <SpokeMap />
+/* ═══════════════════════════════════════════════════════════════════════
+   PAGE 2 — SPOKE MAP (platform overview)
+═══════════════════════════════════════════════════════════════════════ */
+function Page2SpokeMap() {
+  return (
+    <Page n={2}>
+      <div style={{ flex: 1, minHeight: 0, background: DARK, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '18px 20mm 8px', borderBottom: `2px solid ${T}`, flexShrink: 0 }}>
+          <p style={{ color: TL, fontSize: 8, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.12em', margin: '0 0 4px' }}>Platform overview</p>
+          <p style={{ color: W, fontSize: 16, fontWeight: 900, margin: 0, letterSpacing: '-0.02em' }}>
+            Everything starts with a dish. Everything else builds automatically.
+          </p>
+        </div>
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <SpokeMap />
+        </div>
       </div>
     </Page>
   );
@@ -343,7 +355,7 @@ function Page1() {
 ═══════════════════════════════════════════════════════════════════════ */
 function Page2() {
   return (
-    <Page n={2}>
+    <Page n={3}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '30% 38% 32%', minHeight: 0 }}>
 
         {/* Col 1 — hero intro + before/after */}
@@ -563,7 +575,7 @@ function Page2() {
 ═══════════════════════════════════════════════════════════════════════ */
 function Page3() {
   return (
-    <Page n={3}>
+    <Page n={4}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
         {/* Left — dark context */}
@@ -720,7 +732,7 @@ function Page3() {
 ═══════════════════════════════════════════════════════════════════════ */
 function Page4() {
   return (
-    <Page n={4}>
+    <Page n={5}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
         {/* Left — dark mockups */}
@@ -896,7 +908,7 @@ function Page4() {
 ═══════════════════════════════════════════════════════════════════════ */
 function Page5({ standalone, openBooking }: { standalone: boolean; openBooking: () => void }) {
   return (
-    <Page n={5}>
+    <Page n={6}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
 
         {/* Left — dark context */}
@@ -1116,16 +1128,17 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   const PAGE_W = 1123;
   const PAGE_H = 794;
   const GAP = 24;
-  const totalH = 5 * PAGE_H + 4 * GAP;
+  const NUM_PAGES = 6;
+  const totalH = NUM_PAGES * PAGE_H + (NUM_PAGES - 1) * GAP;
 
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`} ref={outerRef}>
       <div className="w-full">
         <div className="flex items-center justify-between mb-3 no-print">
           <div>
-            <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
+            <h1 className="text-white font-black text-2xl">6-Page Brochure</h1>
             {!standalone && (
-              <p className="text-slate-400 text-sm mt-1">5 A4 pages — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/sales-pack</span></p>
+              <p className="text-slate-400 text-sm mt-1">6 A4 pages — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/sales-pack</span></p>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -1179,6 +1192,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
             display: 'flex', flexDirection: 'column', gap: GAP,
           }}>
             <Page1 />
+            <Page2SpokeMap />
             <Page2 />
             <Page3 />
             <Page4 />
