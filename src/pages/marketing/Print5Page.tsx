@@ -1159,21 +1159,15 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           @page { size: A4 landscape; margin: 0; }
         `}</style>
 
-        {/* Outer reserves the scaled height in the document flow.
-            Inner is unscaled (1123px wide) and visually shrunk via transform. */}
         <div
           className="print5-scale-wrap"
           style={{
-            position: 'relative',
-            width: Math.floor(PAGE_W * scale),
-            height: Math.floor(totalH * scale),
-            overflow: 'visible',
+            width: Math.round(PAGE_W * scale),
+            height: Math.round(totalH * scale),
+            overflow: 'hidden',
           }}
         >
           <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
             width: PAGE_W,
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
