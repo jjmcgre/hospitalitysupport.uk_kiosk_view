@@ -1131,50 +1131,71 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   const NUM_PAGES = 6;
   const totalH = NUM_PAGES * PAGE_H + (NUM_PAGES - 1) * GAP;
 
+  // scaledW: how wide the 1123px content appears after scaling
+  const scaledW = Math.round(PAGE_W * scale);
+  // scaledTotalH: how tall all pages appear after scaling
+  const scaledTotalH = Math.round(totalH * scale);
+
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
-      <div className="w-full" ref={outerRef}>
-        <div className="flex items-center justify-between mb-3 no-print">
-          <div>
-            <h1 className="text-white font-black text-2xl">6-Page Brochure</h1>
-            {!standalone && (
-              <p className="text-slate-400 text-sm mt-1">6 A4 pages — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/sales-pack</span></p>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={copyLink}
-              className={`flex items-center gap-1.5 border font-semibold px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ${linkCopied ? 'bg-teal-500/20 text-teal-300 border-teal-500/40' : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600 hover:text-white'}`}
-            >
-              {linkCopied ? <Check size={14} /> : <Link size={14} />}
-              {linkCopied ? 'Link Copied!' : 'Copy Link'}
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="bg-teal-500 hover:bg-teal-400 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors"
-            >
-              Save as PDF / Print
-            </button>
-          </div>
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 py-6 px-4`} ref={outerRef}>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        @media print {
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          html, body { margin: 0; padding: 0; background: #080f1a !important; }
+          .no-print { display: none !important; }
+          .print5-outer { padding: 0 !important; }
+          .print5-centering { display: block !important; width: 297mm !important; margin: 0 !important; }
+          .print5-scaler { width: 297mm !important; transform: none !important; }
+          .print-page { box-shadow: none !important; width: 297mm !important; height: 210mm !important; page-break-after: always; margin: 0 !important; }
+          .print-page:last-child { page-break-after: avoid; }
+        }
+        @page { size: A4 landscape; margin: 0; }
+      `}</style>
+
+      {/* Toolbar */}
+      <div className="no-print flex items-center justify-between mb-5 max-w-screen-xl mx-auto">
+        <div>
+          <h1 className="text-white font-black text-2xl">6-Page Brochure</h1>
+          {!standalone && (
+            <p className="text-slate-400 text-sm mt-1">6 A4 landscape pages — save as PDF or print. Share via <span className="text-teal-400 font-mono">/sales-pack</span></p>
+          )}
         </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={copyLink}
+            className={`flex items-center gap-1.5 border font-semibold px-4 py-2.5 rounded-xl text-sm transition-all duration-200 ${linkCopied ? 'bg-teal-500/20 text-teal-300 border-teal-500/40' : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600 hover:text-white'}`}
+          >
+            {linkCopied ? <Check size={14} /> : <Link size={14} />}
+            {linkCopied ? 'Link Copied!' : 'Copy Link'}
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="bg-teal-500 hover:bg-teal-400 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors"
+          >
+            Save as PDF / Print
+          </button>
+        </div>
+      </div>
 
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-          @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            html, body { margin: 0; padding: 0; background: #080f1a !important; }
-            .print5-scale-wrap { width: 297mm !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
-            .print5-scale-wrap > div { width: 297mm !important; transform: none !important; }
-            .print-page { box-shadow: none !important; width: 297mm !important; min-height: 210mm !important; page-break-after: always; }
-            .print-page:last-child { page-break-after: avoid; }
-            .no-print { display: none !important; }
-          }
-          @page { size: A4 landscape; margin: 0; }
-        `}</style>
-
+      {/*
+        Centering container: fixed pixel dimensions so the browser knows exactly
+        how much space the scaled pages occupy. mx-auto centres it.
+        overflow-x: hidden prevents horizontal scroll when content is wider.
+      */}
+      <div
+        className="print5-centering mx-auto overflow-x-hidden"
+        style={{ width: scaledW, height: scaledTotalH }}
+      >
+        {/* Scale wrapper: full 1123px wide, scaled down from top-left */}
         <div
-          className="print5-scale-wrap"
-          style={{ width: PAGE_W, transformOrigin: 'top left', transform: `scale(${scale})`, marginBottom: Math.round(totalH * (scale - 1)) }}
+          className="print5-scaler"
+          style={{
+            width: PAGE_W,
+            transformOrigin: 'top left',
+            transform: `scale(${scale})`,
+          }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
             <Page1 />
