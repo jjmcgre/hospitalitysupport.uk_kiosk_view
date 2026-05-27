@@ -70,7 +70,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
-      <div className="max-w-[900px]" ref={outerRef}>
+      <div className="max-w-[900px] mx-auto" ref={outerRef}>
         <div className="flex items-center justify-between mb-3 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">1-Page Summary</h1>
