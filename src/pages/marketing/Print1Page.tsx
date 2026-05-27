@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, Check } from 'lucide-react';
 import { useBooking } from '../../context/BookingContext';
 
@@ -22,6 +22,20 @@ const F    = "'Inter', system-ui, sans-serif";
 export default function Print1Page({ standalone = false }: { standalone?: boolean }) {
   const { openBooking } = useBooking();
   const [linkCopied, setLinkCopied] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const update = () => {
+      if (!wrapRef.current) return;
+      const available = wrapRef.current.parentElement?.clientWidth ?? 794;
+      const scale = Math.min(1, available / 794);
+      wrapRef.current.style.setProperty('--print1-scale', String(scale));
+      wrapRef.current.style.height = scale < 1 ? `${1123 * scale}px` : '';
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
   const copyLink = async () => {
     await navigator.clipboard.writeText(`${window.location.origin}/one-pager`);
     setLinkCopied(true);
@@ -56,7 +70,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-[900px] mx-auto">
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">1-Page Summary</h1>
@@ -83,20 +97,32 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+          .print1-wrap {
+            width: 794px;
+            margin: 0 auto;
+          }
+          @media (max-width: 860px) {
+            .print1-wrap {
+              transform-origin: top center;
+              transform: scale(var(--print1-scale, 1));
+            }
+          }
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { margin: 0; background: #080f1a !important; }
-            .print-page { box-shadow: none !important; }
+            html, body { margin: 0; padding: 0; background: #080f1a !important; }
+            .print1-wrap { width: 210mm !important; transform: none !important; }
+            .print-page { box-shadow: none !important; width: 210mm !important; height: 297mm !important; }
             .no-print { display: none !important; }
           }
           @page { size: A4 portrait; margin: 0; }
         `}</style>
 
         {/* ── A4 PAGE ── */}
+        <div className="print1-wrap" ref={wrapRef}>
         <div
           className="print-page shadow-2xl"
           style={{
-            width: '210mm', height: '297mm', margin: '0 auto',
+            width: '794px', height: '1123px', margin: '0 auto',
             fontFamily: F, display: 'flex', flexDirection: 'column',
             background: NAV, position: 'relative', overflow: 'hidden',
           }}
@@ -393,6 +419,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
           </div>
 
         </div>
+        </div>{/* print1-wrap */}
       </div>
     </div>
   );

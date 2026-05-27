@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, Check } from 'lucide-react';
 import { useBooking } from '../../context/BookingContext';
 
@@ -27,7 +27,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
     <div
       className="print-page shadow-2xl overflow-hidden"
       style={{
-        width: '210mm', minHeight: '297mm', margin: '0 auto',
+        width: '794px', minHeight: '1123px', margin: '0 auto',
         fontFamily: F, display: 'flex', flexDirection: 'column',
         background: NAV, position: 'relative',
       }}
@@ -1085,6 +1085,25 @@ function Page5() {
 export default function Print5Page({ standalone = false }: { standalone?: boolean }) {
   const { openBooking } = useBooking();
   const [linkCopied, setLinkCopied] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const update = () => {
+      if (!wrapRef.current) return;
+      const available = wrapRef.current.parentElement?.clientWidth ?? 794;
+      const scale = Math.min(1, available / 794);
+      wrapRef.current.style.setProperty('--print5-scale', String(scale));
+      if (scale < 1) {
+        wrapRef.current.style.height = `${5 * 1123 * scale + 4 * 24 * scale}px`;
+      } else {
+        wrapRef.current.style.height = '';
+      }
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   const copyLink = async () => {
     await navigator.clipboard.writeText(`${window.location.origin}/sales-pack`);
     setLinkCopied(true);
@@ -1092,7 +1111,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
   };
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-[900px] mx-auto">
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
@@ -1119,22 +1138,31 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
 
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+          .print5-wrap {
+            width: 794px;
+            margin: 0 auto;
+            transform-origin: top center;
+            transform: scale(var(--print5-scale, 1));
+          }
           @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { margin: 0; background: #080f1a !important; }
-            .print-page { box-shadow: none !important; page-break-after: always; }
+            html, body { margin: 0; padding: 0; background: #080f1a !important; }
+            .print5-wrap { width: 210mm !important; transform: none !important; height: auto !important; }
+            .print-page { box-shadow: none !important; width: 210mm !important; min-height: 297mm !important; page-break-after: always; }
             .print-page:last-child { page-break-after: avoid; }
             .no-print { display: none !important; }
           }
           @page { size: A4 portrait; margin: 0; }
         `}</style>
 
-        <div className="space-y-6">
-          <Page1 />
-          <Page2 />
-          <Page3 />
-          <Page4 />
-          <Page5 />
+        <div className="print5-wrap" ref={wrapRef}>
+          <div className="space-y-6">
+            <Page1 />
+            <Page2 />
+            <Page3 />
+            <Page4 />
+            <Page5 />
+          </div>
         </div>
       </div>
     </div>
