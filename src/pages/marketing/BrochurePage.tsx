@@ -818,12 +818,12 @@ export default function BrochurePage({ standalone = false }: { standalone?: bool
 
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
-            {standalone
-              ? <p className="text-slate-400 text-sm">HospitalitySupport.uk · Sales Brochure</p>
-              : <><h1 className="text-white font-black text-2xl">Brochure</h1>
-                  <p className="text-slate-400 text-sm mt-1">250×200mm landscape — save as PDF or print. Share via <span className="text-teal-400 font-mono">/brochure</span></p>
-                </>
-            }
+            {!standalone && (
+              <>
+                <h1 className="text-white font-black text-2xl">Brochure</h1>
+                <p className="text-slate-400 text-sm mt-1">250×200mm landscape — save as PDF or print. Share via <span className="text-teal-400 font-mono">/brochure</span></p>
+              </>
+            )}
           </div>
           <button
             onClick={() => window.print()}
