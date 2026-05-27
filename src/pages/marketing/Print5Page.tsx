@@ -55,7 +55,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
         <span style={{ color: S6, fontSize: 8, fontWeight: 600 }}>Page {n} of 5</span>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative', zIndex: 1 }}>
         {children}
       </div>
 
@@ -1120,7 +1120,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
 
   return (
     <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 pt-4 pr-4 pb-6 pl-4`}>
-      <div className="max-w-[1200px] mx-auto" ref={outerRef}>
+      <div className="w-full" ref={outerRef}>
         <div className="flex items-center justify-between mb-3 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
@@ -1164,11 +1164,14 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           style={{
             width: Math.round(PAGE_W * scale),
             height: Math.round(totalH * scale),
-            overflow: 'hidden',
+            position: 'relative',
           }}
         >
           <div style={{
             width: PAGE_W,
+            position: 'absolute',
+            top: 0,
+            left: 0,
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
             display: 'flex', flexDirection: 'column', gap: GAP,
