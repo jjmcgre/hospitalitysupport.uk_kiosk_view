@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Inbox, CalendarDays, Copy, Check, ExternalLink } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Inbox, CalendarDays, Copy, Check, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const liveItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -167,99 +167,96 @@ function MobileShareCard({ label, path, description }: { label: string; path: st
 
 export default function MarketingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const navLink = (item: { to: string; label: string; icon: React.ElementType; end?: boolean }, closeMobile = false) => (
+    <NavLink
+      key={item.to}
+      to={item.to}
+      end={item.end}
+      onClick={() => closeMobile && setMobileOpen(false)}
+      title={collapsed ? item.label : undefined}
+      className={({ isActive }) =>
+        `flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+          collapsed ? 'justify-center px-0 py-3 w-10 mx-auto' : 'px-4 py-3'
+        } ${
+          isActive
+            ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
+            : 'text-slate-400 hover:text-white hover:bg-slate-800'
+        }`
+      }
+    >
+      <item.icon size={16} className="flex-shrink-0" />
+      {!collapsed && item.label}
+    </NavLink>
+  );
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 border-r border-slate-800 flex flex-col
-        transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-40 bg-slate-900 border-r border-slate-800 flex flex-col
+        transform transition-all duration-300 ease-in-out
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${collapsed ? 'lg:w-16' : 'lg:w-72'}
+        w-72
         lg:relative lg:translate-x-0 lg:flex
         print:hidden
       `}>
-        <div className="p-6 border-b border-slate-800">
-          <span className="text-white font-black text-base tracking-tight">
-            HospitalitySupport<span className="text-teal-400">.uk</span>
-          </span>
-          <div className="mt-3">
-            <h1 className="text-white font-bold text-lg leading-tight">Campaign Book</h1>
-            <p className="text-slate-500 text-xs mt-0.5">Internal use only</p>
-            <div className="mt-2 inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/30 rounded-full px-3 py-1">
-              <span className="w-2 h-2 rounded-full bg-teal-400"></span>
-              <span className="text-teal-300 text-xs font-semibold">£3.30 / day</span>
+        {/* Header */}
+        <div className={`border-b border-slate-800 transition-all duration-300 ${collapsed ? 'p-3' : 'p-6'}`}>
+          {collapsed ? (
+            <div className="flex justify-center">
+              <span className="text-teal-400 font-black text-lg">H</span>
             </div>
-          </div>
+          ) : (
+            <>
+              <span className="text-white font-black text-base tracking-tight">
+                HospitalitySupport<span className="text-teal-400">.uk</span>
+              </span>
+              <div className="mt-3">
+                <h1 className="text-white font-bold text-lg leading-tight">Campaign Book</h1>
+                <p className="text-slate-500 text-xs mt-0.5">Internal use only</p>
+                <div className="mt-2 inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/30 rounded-full px-3 py-1">
+                  <span className="w-2 h-2 rounded-full bg-teal-400"></span>
+                  <span className="text-teal-300 text-xs font-semibold">£3.30 / day</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           <div className="mb-1">
-            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1">Live</p>
-            {liveItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={'end' in item ? item.end : undefined}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`
-                }
-              >
-                <item.icon size={16} className="flex-shrink-0" />
-                {item.label}
-              </NavLink>
-            ))}
+            {!collapsed && <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1">Live</p>}
+            {liveItems.map((item) => navLink(item, true))}
           </div>
 
           <div className="border-t border-slate-800 pt-2">
-            <PublicLinks />
-            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-2">Campaign</p>
-            {campaignItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`
-                }
-              >
-                <item.icon size={16} className="flex-shrink-0" />
-                {item.label}
-              </NavLink>
-            ))}
+            {!collapsed && <PublicLinks />}
+            {!collapsed && <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-2">Campaign</p>}
+            {campaignItems.map((item) => navLink(item, true))}
           </div>
 
           <div className="border-t border-slate-800 pt-2">
-            <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Social</p>
-            {socialItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`
-                }
-              >
-                <item.icon size={16} className="flex-shrink-0" />
-                {item.label}
-              </NavLink>
-            ))}
+            {!collapsed && <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Social</p>}
+            {socialItems.map((item) => navLink(item, true))}
           </div>
-
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
+        {/* Collapse toggle — desktop only */}
+        <div className="hidden lg:flex p-3 border-t border-slate-800 items-center justify-between">
+          {!collapsed && <p className="text-slate-600 text-xs">HospitalitySupport.uk · Internal</p>}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={`p-2 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors ${collapsed ? 'mx-auto' : 'ml-auto'}`}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
+        </div>
+
+        {/* Mobile footer */}
+        <div className="lg:hidden p-4 border-t border-slate-800">
           <p className="text-slate-600 text-xs text-center">HospitalitySupport.uk · Internal</p>
         </div>
       </aside>
