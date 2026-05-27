@@ -1097,7 +1097,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           <div>
             <h1 className="text-white font-black text-2xl">5-Page Brochure</h1>
             {!standalone && (
-              <p className="text-slate-400 text-sm mt-1">5 A4 pages — save as PDF to email or print. Share via <span className="text-teal-400 font-mono">/sales-pack</span></p>
+              <p className="text-slate-400 text-sm mt-1">5 A4 pages — save as PDF to email or print.</p>
             )}
           </div>
           <div className="flex items-center gap-2">

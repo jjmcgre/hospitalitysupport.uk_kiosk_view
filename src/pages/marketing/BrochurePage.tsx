@@ -827,7 +827,7 @@ export default function BrochurePage({ standalone = false }: { standalone?: bool
           <div>
             <h1 className="text-white font-black text-2xl">Brochure</h1>
             {!standalone && (
-              <p className="text-slate-400 text-sm mt-1">250×200mm landscape — save as PDF or print. Share via <span className="text-teal-400 font-mono">/brochure</span></p>
+              <p className="text-slate-400 text-sm mt-1">250×200mm landscape — save as PDF or print.</p>
             )}
           </div>
           <div className="flex items-center gap-2">
