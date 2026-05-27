@@ -27,12 +27,14 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
 
   useEffect(() => {
     const update = () => {
-      const available = outerRef.current?.clientWidth ?? 794;
-      setScale(Math.min(1, available / 794));
+      const w = outerRef.current?.clientWidth;
+      if (!w) return;
+      setScale(Math.min(1, w / 794));
     };
     update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
+    const ro = new ResizeObserver(update);
+    if (outerRef.current) ro.observe(outerRef.current);
+    return () => ro.disconnect();
   }, []);
   const copyLink = async () => {
     await navigator.clipboard.writeText(`${window.location.origin}/one-pager`);
@@ -67,8 +69,8 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
   ];
 
   return (
-    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`} ref={outerRef}>
-      <div className="max-w-[900px] mx-auto">
+    <div className={`${standalone ? 'min-h-screen' : 'min-h-full'} bg-slate-950 p-6`}>
+      <div className="max-w-[900px] mx-auto" ref={outerRef}>
         <div className="flex items-center justify-between mb-6 no-print">
           <div>
             <h1 className="text-white font-black text-2xl">1-Page Summary</h1>
