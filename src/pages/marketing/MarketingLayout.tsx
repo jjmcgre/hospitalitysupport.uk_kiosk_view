@@ -108,6 +108,65 @@ function SharePanel() {
   );
 }
 
+function MobileHeader({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; setMobileOpen: (v: boolean) => void }) {
+  const [shareOpen, setShareOpen] = useState(false);
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+
+  return (
+    <header className="lg:hidden print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+      <div className="px-4 py-3 flex items-center gap-3">
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="text-slate-400 hover:text-white transition-colors p-1"
+        >
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+        <span className="text-white font-semibold text-sm">Campaign Book</span>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setShareOpen(!shareOpen)}
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${shareOpen ? 'text-teal-300 bg-teal-500/10 border-teal-500/30' : 'text-slate-400 border-slate-700 hover:text-white hover:border-slate-600'}`}
+          >
+            <Share2 size={13} />
+            Share
+          </button>
+          <span className="text-teal-300 text-xs font-semibold bg-teal-500/10 border border-teal-500/30 rounded-full px-3 py-1">£3.30 / day</span>
+        </div>
+      </div>
+
+      {shareOpen && (
+        <div className="px-3 pb-3 space-y-2 border-t border-slate-800 pt-3">
+          {shareLinks.map((link) => {
+            const fullUrl = `${origin}${link.path}`;
+            const shareText = `${link.name}\n${fullUrl}`;
+            return (
+              <div key={link.path} className="bg-slate-800/60 rounded-xl px-3 py-3">
+                <p className="text-white text-xs font-bold leading-snug mb-0.5">{link.name}</p>
+                <p className="text-slate-500 text-[10px] mb-2">{link.description}</p>
+                <div className="flex items-center gap-1">
+                  <CopyButton text={shareText} title="Copy name + link">
+                    <Copy size={14} />
+                  </CopyButton>
+                  <span className="text-slate-600 text-[10px] flex-1 font-mono truncate">{link.path}</span>
+                  <a
+                    href={link.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
+                  >
+                    <ExternalLink size={14} />
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+          <p className="text-slate-600 text-[10px] px-1 pt-0.5 leading-snug">Copy pastes the name and link together — ready to drop into WhatsApp or email.</p>
+        </div>
+      )}
+    </header>
+  );
+}
+
 export default function MarketingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -215,18 +274,7 @@ export default function MarketingLayout() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center gap-3">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="text-slate-400 hover:text-white transition-colors p-1"
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <span className="text-white font-semibold text-sm">Campaign Book</span>
-          <div className="ml-auto">
-            <span className="text-teal-300 text-xs font-semibold bg-teal-500/10 border border-teal-500/30 rounded-full px-3 py-1">£3.30 / day</span>
-          </div>
-        </header>
+        <MobileHeader mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
         <main className="flex-1 overflow-y-auto">
           <Outlet />
