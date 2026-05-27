@@ -1162,18 +1162,15 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
         <div
           className="print5-scale-wrap"
           style={{
-            width: Math.round(PAGE_W * scale),
-            height: Math.round(totalH * scale),
-            position: 'relative',
+            width: '100%',
+            overflowX: 'hidden',
           }}
         >
           <div style={{
             width: PAGE_W,
-            position: 'absolute',
-            top: 0,
-            left: 0,
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
+            marginBottom: `${totalH * scale - totalH}px`,
             display: 'flex', flexDirection: 'column', gap: GAP,
           }}>
             <Page1 />
