@@ -232,8 +232,7 @@ export default function MarketingLayout() {
           </div>
 
           <div className="border-t border-slate-800 pt-2">
-            {!collapsed && <PublicLinks />}
-            {!collapsed && <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-2">Campaign</p>}
+            {!collapsed && <p className="text-slate-600 text-xs font-semibold uppercase tracking-widest px-4 mb-1 mt-1">Campaign</p>}
             {campaignItems.map((item) => navLink(item, true))}
           </div>
 
