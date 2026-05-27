@@ -887,7 +887,7 @@ function Page4() {
 /* ═══════════════════════════════════════════════════════════════════════
    PAGE 5 — WHO IT'S FOR, MULTI-SITE, PRICING & CLOSE
 ═══════════════════════════════════════════════════════════════════════ */
-function Page5() {
+function Page5({ standalone = false }: { standalone?: boolean }) {
   return (
     <Page n={5}>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 0 }}>
@@ -1134,7 +1134,7 @@ export default function Print5Page({ standalone = false }: { standalone?: boolea
           <Page2 />
           <Page3 />
           <Page4 />
-          <Page5 />
+          <Page5 standalone={standalone} />
         </div>
       </div>
     </div>
