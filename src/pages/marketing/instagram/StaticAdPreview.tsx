@@ -194,7 +194,7 @@ function ChatMockup({ messages, accentColor, isDark }: {
         style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }}
       >
         <div className="w-3 h-3 rounded-full" style={{ background: accentColor }} />
-        <span className="text-[10px] font-bold" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#6b7280' }}>HospitalitySupport.uk</span>
+        <span className="text-[10px] font-bold" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#6b7280' }}>ServiceSupport.UK</span>
         <span className="text-[9px] ml-auto" style={{ color: accentColor }}>● Online</span>
       </div>
       <div className="p-3 space-y-2">

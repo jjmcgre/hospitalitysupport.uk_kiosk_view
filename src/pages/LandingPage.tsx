@@ -17,7 +17,7 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-slate-900/95 backdrop-blur border-b border-slate-800">
       <span className="text-white font-bold text-sm tracking-tight">
-        HospitalitySupport<span className="text-teal-400">.uk</span>
+        ServiceSupport<span className="text-teal-400">.UK</span>
       </span>
       <button
         onClick={openBooking}

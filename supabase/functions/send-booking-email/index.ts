@@ -38,7 +38,7 @@ function prospectHtml(p: BookingEmailPayload): string {
         <tr><td style="background:#134e4a;border-radius:16px 16px 0 0;padding:32px 36px 28px;">
           <div style="color:#5eead4;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Demo Confirmed</div>
           <div style="color:#ffffff;font-size:26px;font-weight:900;line-height:1.2;">You're booked in, ${p.name.split(" ")[0]}!</div>
-          <div style="color:#99f6e4;font-size:14px;margin-top:8px;">Your HospitalitySupport.uk demo is confirmed.</div>
+          <div style="color:#99f6e4;font-size:14px;margin-top:8px;">Your ServiceSupport.UK demo is confirmed.</div>
         </td></tr>
 
         <!-- Meeting card -->
@@ -155,7 +155,7 @@ Deno.serve(async (req: Request) => {
     const payload: BookingEmailPayload = await req.json();
     const adminEmail = payload.adminEmail || "james@servicesupportgroup.uk";
 
-    const fromAddress = "HospitalitySupport.uk <demos@servicesupportgroup.uk>";
+    const fromAddress = "ServiceSupport.UK <demos@servicesupportgroup.uk>";
 
     // Send confirmation to prospect
     const prospectRes = await fetch("https://api.resend.com/emails", {

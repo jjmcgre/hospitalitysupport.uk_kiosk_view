@@ -118,8 +118,8 @@ export default function InstagramPage() {
                 <ReelPlayer
                   key={reel.id}
                   reel={reel}
-                  username="HospitalitySupport.uk"
-                  handle="@hospitality.support.uk"
+                  username="ServiceSupport.UK"
+                  handle="@servicesupport.uk"
                 />
               </div>
 
@@ -250,8 +250,8 @@ export default function InstagramPage() {
                 <StaticAdPreview
                   key={ad.id}
                   ad={ad}
-                  username="HospitalitySupport.uk"
-                  handle="@hospitality.support.uk"
+                  username="ServiceSupport.UK"
+                  handle="@servicesupport.uk"
                 />
               </div>
 

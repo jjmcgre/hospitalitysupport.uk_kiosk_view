@@ -67,13 +67,13 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const bookingUrl = `${siteUrl ?? "https://hospitality.support"}/demo?book=1`;
+    const bookingUrl = `${siteUrl ?? "https://servicesupport.uk"}/demo?book=1`;
     const trackPixelUrl = `${supabaseUrl}/functions/v1/email-tracking/pixel?sid=${sendRow.id}`;
     const unsubUrl = `${supabaseUrl}/functions/v1/email-tracking/unsub?cid=${contactId}`;
 
     // Build HTML email
     const firstName = contact.name?.split(" ")[0] || contact.name || "there";
-    const overviewUrl = `${siteUrl ?? "https://hospitality.support"}/demo`;
+    const overviewUrl = `${siteUrl ?? "https://servicesupport.uk"}/demo`;
 
     // Replace [link text][OVERVIEW_LINK] with proper anchor in HTML, plain URL in text
     const replaceBrochureHtml = (s: string) =>
@@ -116,7 +116,7 @@ ${htmlBody}
 
     // Determine from address — use verified domain if set, otherwise Resend test sender
     const fromDomain = Deno.env.get("RESEND_FROM_EMAIL") ?? "onboarding@resend.dev";
-    const fromName = Deno.env.get("RESEND_FROM_NAME") ?? "HospitalitySupport.uk";
+    const fromName = Deno.env.get("RESEND_FROM_NAME") ?? "ServiceSupport.UK";
 
     // Send via Resend
     const resendResp = await fetch("https://api.resend.com/emails", {

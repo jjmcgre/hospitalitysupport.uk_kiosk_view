@@ -5,7 +5,7 @@ import { useBooking } from '../../context/BookingContext';
 /*
   5-Pager — A4 portrait, 794×1123px at 96dpi.
   Brand: dark navy #080f1a, teal #14b8a6 / #2dd4bf, white text.
-  Matches HospitalitySupport.uk landing page visual language exactly.
+  Matches ServiceSupport.UK landing page visual language exactly.
 */
 const NAV   = '#080f1a';
 const DARK  = '#0f1623';
@@ -50,7 +50,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
         borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
       }}>
         <span style={{ color: W, fontWeight: 900, fontSize: 13, letterSpacing: '-0.02em' }}>
-          HospitalitySupport<span style={{ color: TL }}>.uk</span>
+          ServiceSupport<span style={{ color: TL }}>.UK</span>
         </span>
         <span style={{ color: S6, fontSize: 8, fontWeight: 600 }}>Page {n} of 6</span>
       </div>
@@ -66,7 +66,7 @@ function Page({ n, children }: { n: number; children: React.ReactNode }) {
         padding: '5px 20mm', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0,
       }}>
         <span style={{ color: S8, fontSize: 7.5 }}>Built by operators, for operators · No 6-week onboarding · No consultants</span>
-        <span style={{ color: T, fontSize: 7.5, fontWeight: 700 }}>hospitalitysupport.uk</span>
+        <span style={{ color: T, fontSize: 7.5, fontWeight: 700 }}>servicesupport.uk</span>
       </div>
     </div>
   );
@@ -945,7 +945,7 @@ function Page5({ standalone, openBooking }: { standalone: boolean; openBooking: 
           {/* Comparison table */}
           <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, overflow: 'hidden', flex: 1 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: 'rgba(10,18,30,0.9)' }}>
-              <div style={{ padding: '6px 11px', color: TL, fontSize: 9, fontWeight: 800 }}>HospitalitySupport.uk</div>
+              <div style={{ padding: '6px 11px', color: TL, fontSize: 9, fontWeight: 800 }}>ServiceSupport.UK</div>
               <div style={{ padding: '6px 11px', color: S6, fontSize: 9, fontWeight: 800, borderLeft: '1px solid rgba(255,255,255,0.06)' }}>Everyone else</div>
             </div>
             {[

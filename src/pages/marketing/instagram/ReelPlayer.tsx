@@ -308,7 +308,7 @@ function BeatCard({ beat, accentColor, exiting, paused }: { beat: Beat; accentCo
         }}
         className="text-center"
       >
-        <p className="text-white/30 text-[11px] uppercase tracking-[0.25em] font-bold mb-1">HospitalitySupport.uk</p>
+        <p className="text-white/30 text-[11px] uppercase tracking-[0.25em] font-bold mb-1">ServiceSupport.UK</p>
         <p
           className="font-black leading-none"
           style={{
@@ -394,7 +394,7 @@ function EndCard({ accentColor }: { accentColor: string }) {
         className="px-6 py-3 rounded-2xl text-white text-sm font-black"
         style={{ background: accentColor, boxShadow: `0 0 30px ${accentColor}50` }}
       >
-        HospitalitySupport.uk
+        ServiceSupport.uk
       </div>
     </div>
   );

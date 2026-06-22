@@ -1,7 +1,7 @@
 import CopyButton from './components/CopyButton';
 import PageHeader from './components/PageHeader';
 
-const masterStatement = `HospitalitySupport.uk is a hospitality operations platform built from real industry expertise — covering menu development, GP control, allergen management, compliance, and training in one connected system. Everything updates automatically. From £3.30 a day, priced per kitchen, not per user.`;
+const masterStatement = `ServiceSupport.UK is a hospitality operations platform built from real industry expertise — covering menu development, GP control, allergen management, compliance, and training in one connected system. Everything updates automatically. From £3.30 a day, priced per kitchen, not per user.`;
 
 const headlines = [
   "The operations capability your kitchen has always needed — without the overhead.",
@@ -25,7 +25,7 @@ const straplines = [
 ];
 
 const messageHouse = {
-  mastermessage: "HospitalitySupport.uk is a hospitality operations platform built from real industry expertise — all functions connected, all data live, priced per kitchen so the whole team can use it from day one.",
+  mastermessage: "ServiceSupport.UK is a hospitality operations platform built from real industry expertise — all functions connected, all data live, priced per kitchen so the whole team can use it from day one.",
   pillars: [
     {
       name: "People",

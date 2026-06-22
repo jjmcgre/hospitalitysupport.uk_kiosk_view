@@ -209,7 +209,7 @@ export default function TikTokPlayer({ video }: Props) {
               <div
                 className="px-5 py-2.5 rounded-xl text-white text-xs font-black mt-1"
                 style={{ background: video.accentColor }}
-              >HospitalitySupport.uk</div>
+              >ServiceSupport.UK</div>
             </div>
           )}
 
@@ -228,7 +228,7 @@ export default function TikTokPlayer({ video }: Props) {
                 style={{ background: video.accentColor, color: '#fff' }}
               >{video.label}</span>
             </div>
-            <p className="text-white text-[11px] font-bold">@hospitalitysupport.uk</p>
+            <p className="text-white text-[11px] font-bold">@servicesupport.uk</p>
             <p className="text-white/50 text-[10px] leading-snug line-clamp-2 mt-0.5">{video.hook}</p>
             <div className="flex items-center gap-1 mt-1.5">
               <Music2 size={8} className="text-white/30" />
@@ -340,7 +340,7 @@ function BeatCard({ beat, accentColor, exiting }: { beat: TikTokBeat; accentColo
   if (beat.isBig) {
     return (
       <div style={{ animation: exiting ? exitAnim : enterAnim, willChange: 'transform, opacity' }} className="text-center">
-        <p className="text-white/25 text-[9px] uppercase tracking-[0.3em] font-bold mb-1">HospitalitySupport.uk</p>
+        <p className="text-white/25 text-[9px] uppercase tracking-[0.3em] font-bold mb-1">ServiceSupport.UK</p>
         <p
           className="font-black leading-none"
           style={{ fontSize: 80, color: accentColor, textShadow: `0 0 80px ${accentColor}80`, letterSpacing: '-0.03em' }}

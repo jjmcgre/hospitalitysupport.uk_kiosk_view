@@ -328,7 +328,7 @@ export default function DiaryPage() {
                           <div className="flex gap-2 pt-1">
                             {enq && (
                               <a
-                                href={`mailto:${enq.email}?subject=Your HospitalitySupport.uk Demo — ${formatDateLong(slot.slot_date)} at ${slot.slot_time}`}
+                                href={`mailto:${enq.email}?subject=Your ServiceSupport.UK Demo — ${formatDateLong(slot.slot_date)} at ${slot.slot_time}`}
                                 className="flex-1 text-center bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-bold py-2.5 rounded-xl"
                               >
                                 Email prospect
@@ -567,7 +567,7 @@ export default function DiaryPage() {
                           )}
                           <div className="flex gap-2">
                             <a
-                              href={`mailto:${eq.email}?subject=Your HospitalitySupport.uk Demo&body=Hi ${eq.name.split(' ')[0]},%0A%0AThanks for your interest in HospitalitySupport.uk.%0A%0ABest regards,%0AJames`}
+                              href={`mailto:${eq.email}?subject=Your ServiceSupport.UK Demo&body=Hi ${eq.name.split(' ')[0]},%0A%0AThanks for your interest in ServiceSupport.UK.%0A%0ABest regards,%0AJames`}
                               className="flex-1 text-center bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-bold py-2.5 rounded-xl"
                             >
                               Reply via email

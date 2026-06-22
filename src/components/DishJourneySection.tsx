@@ -301,7 +301,7 @@ export default function DishJourneySection() {
               <div className="w-2 h-2 rounded-full bg-red-500/50" />
               <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
               <div className="w-2 h-2 rounded-full bg-green-500/50" />
-              <span className="ml-2 text-slate-600 text-[10px] font-mono">hospitality support — {step.label.toLowerCase()}</span>
+              <span className="ml-2 text-slate-600 text-[10px] font-mono">service support — {step.label.toLowerCase()}</span>
             </div>
             {step.mock}
           </div>

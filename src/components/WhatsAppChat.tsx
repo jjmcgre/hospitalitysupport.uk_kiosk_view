@@ -126,7 +126,7 @@ export default function WhatsAppChat() {
             HS
           </div>
           <div>
-            <div className="font-semibold text-sm sm:text-base">HospitalitySupport.uk</div>
+            <div className="font-semibold text-sm sm:text-base">ServiceSupport.UK</div>
             <div className="text-xs text-teal-100">Always on. Always accurate.</div>
           </div>
         </div>

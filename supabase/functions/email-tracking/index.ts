@@ -73,7 +73,7 @@ async function handleUnsub(contactId: string): Promise<Response> {
   return new Response(
     `<!DOCTYPE html><html><body style="font-family:sans-serif;max-width:480px;margin:80px auto;text-align:center;color:#333;">
       <h2>You've been unsubscribed</h2>
-      <p>You won't receive any more emails from HospitalitySupport.uk.</p>
+      <p>You won't receive any more emails from ServiceSupport.UK.</p>
     </body></html>`,
     { status: 200, headers: { "Content-Type": "text/html" } }
   );
@@ -110,7 +110,7 @@ async function handleClick(sendId: string, redirectUrl: string): Promise<Respons
 
   return new Response(null, {
     status: 302,
-    headers: { Location: redirectUrl || "https://hospitality.support/demo?book=1" },
+    headers: { Location: redirectUrl || "https://servicesupport.uk/demo?book=1" },
   });
 }
 
@@ -190,7 +190,7 @@ Deno.serve(async (req: Request) => {
   if (pathname.endsWith("/click")) {
     return handleClick(
       url.searchParams.get("sid") ?? "",
-      url.searchParams.get("url") ?? "https://hospitality.support/demo?book=1"
+      url.searchParams.get("url") ?? "https://servicesupport.uk/demo?book=1"
     );
   }
 

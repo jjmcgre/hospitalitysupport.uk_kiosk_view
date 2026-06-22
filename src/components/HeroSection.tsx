@@ -29,7 +29,7 @@ export default function HeroSection() {
 
           <div className="inline-flex items-center gap-2 border border-teal-500/30 bg-teal-500/10 rounded-full px-4 py-1.5 mb-8 sm:mb-10">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-            <span className="text-teal-300 text-xs font-bold tracking-widest uppercase">HospitalitySupport.uk</span>
+            <span className="text-teal-300 text-xs font-bold tracking-widest uppercase">ServiceSupport.UK</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-6 sm:mb-8">

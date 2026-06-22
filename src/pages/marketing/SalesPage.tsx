@@ -6,7 +6,7 @@ import { useBooking } from '../../context/BookingContext';
 const talkingPoints = [
   {
     point: "It does the work — you don't operate it.",
-    detail: "Most hospitality platforms require trained users, ongoing maintenance, and discipline to stay current. HospitalitySupport.uk handles the work automatically. You send a message or ask a question — it responds with accurate, live information built from your actual operation.",
+    detail: "Most hospitality platforms require trained users, ongoing maintenance, and discipline to stay current. ServiceSupport.UK handles the work automatically. You send a message or ask a question — it responds with accurate, live information built from your actual operation.",
   },
   {
     point: "Priced per kitchen, not per user.",
@@ -30,7 +30,7 @@ const talkingPoints = [
   },
   {
     point: "It builds around you — not the other way around.",
-    detail: "You don't restructure your business around HospitalitySupport.uk. It works alongside your existing workflows, your existing systems, how your operation already runs.",
+    detail: "You don't restructure your business around ServiceSupport.UK. It works alongside your existing workflows, your existing systems, how your operation already runs.",
   },
   {
     point: "Multi-site clarity without multi-site overhead.",
@@ -42,14 +42,14 @@ const talkingPoints = [
   },
   {
     point: "It doesn't change what hospitality is. It changes what you personally have to carry.",
-    detail: "The industry is still hard. Margins are still tight. Teams still change. HospitalitySupport.uk removes the operational work you shouldn't have to do — so you can focus on the work only you can do.",
+    detail: "The industry is still hard. Margins are still tight. Teams still change. ServiceSupport.UK removes the operational work you shouldn't have to do — so you can focus on the work only you can do.",
   },
 ];
 
 const objections = [
   {
     objection: "We already have systems in place.",
-    response: "HospitalitySupport.uk doesn't replace your POS, your booking system, or your supplier portal. It works alongside them. It's the operations layer that holds everything together — the part most operators are currently doing manually or not at all.",
+    response: "ServiceSupport.UK doesn't replace your POS, your booking system, or your supplier portal. It works alongside them. It's the operations layer that holds everything together — the part most operators are currently doing manually or not at all.",
   },
   {
     objection: "We can't afford it right now.",
@@ -57,11 +57,11 @@ const objections = [
   },
   {
     objection: "Our team won't use new technology.",
-    response: "There's no new technology to use. If your team can send a message, they can use HospitalitySupport.uk. No training. No login flows. No dashboards they'll ignore after the first week.",
+    response: "There's no new technology to use. If your team can send a message, they can use ServiceSupport.UK. No training. No login flows. No dashboards they'll ignore after the first week.",
   },
   {
     objection: "We're too small to need something like this.",
-    response: "The problems HospitalitySupport.uk solves — GP drift, compliance gaps, training inconsistency — exist in businesses with 5 staff as much as 50. The smaller the team, the more each person is relying on to hold things together. This takes the load off.",
+    response: "The problems ServiceSupport.UK solves — GP drift, compliance gaps, training inconsistency — exist in businesses with 5 staff as much as 50. The smaller the team, the more each person is relying on to hold things together. This takes the load off.",
   },
   {
     objection: "What does it actually do?",
@@ -69,19 +69,19 @@ const objections = [
   },
   {
     objection: "We tried something like this before and it didn't work.",
-    response: "Most hospitality tech fails because it assumes the business will change to fit the tool. HospitalitySupport.uk is designed to fit around how you already operate. No implementation project. No change management. It just works.",
+    response: "Most hospitality tech fails because it assumes the business will change to fit the tool. ServiceSupport.UK is designed to fit around how you already operate. No implementation project. No change management. It just works.",
   },
   {
     objection: "We need to think about it.",
-    response: "That's fair. While you're thinking, it's worth asking: how much did GP drift cost you last month? How long did your last new starter take to train properly? When was your allergen data last updated? HospitalitySupport.uk is solving problems that are already costing you — the question is whether that cost continues.",
+    response: "That's fair. While you're thinking, it's worth asking: how much did GP drift cost you last month? How long did your last new starter take to train properly? When was your allergen data last updated? ServiceSupport.UK is solving problems that are already costing you — the question is whether that cost continues.",
   },
   {
     objection: "Our chef handles all of this.",
-    response: "Your head chef is one person carrying a full shift. HospitalitySupport.uk runs continuously — when your chef is on the pass, dealing with a delivery, or managing a Saturday service, the GP is still live, the allergens are still current, and the compliance is still in order. The knowledge doesn't walk out the door when they do.",
+    response: "Your head chef is one person carrying a full shift. ServiceSupport.UK runs continuously — when your chef is on the pass, dealing with a delivery, or managing a Saturday service, the GP is still live, the allergens are still current, and the compliance is still in order. The knowledge doesn't walk out the door when they do.",
   },
   {
     objection: "Is this AI? We're not sure about AI.",
-    response: "HospitalitySupport.uk is built from real hospitality expertise. The outputs are practical, accurate, and grounded in how real kitchens work — not generic answers from a chatbot. The question isn't whether you trust the technology. It's whether the results are reliable. And they are.",
+    response: "ServiceSupport.UK is built from real hospitality expertise. The outputs are practical, accurate, and grounded in how real kitchens work — not generic answers from a chatbot. The question isn't whether you trust the technology. It's whether the results are reliable. And they are.",
   },
   {
     objection: "We'd need a demo first.",
@@ -89,13 +89,13 @@ const objections = [
   },
 ];
 
-const shortPitch = `HospitalitySupport.uk is a hospitality operations platform built from real industry expertise. Menu development, GP control, allergen management, compliance, and training — all connected, all automatic, built around how you already work. From £3.30 a day, priced per kitchen, not per user.`;
+const shortPitch = `ServiceSupport.UK is a hospitality operations platform built from real industry expertise. Menu development, GP control, allergen management, compliance, and training — all connected, all automatic, built around how you already work. From £3.30 a day, priced per kitchen, not per user.`;
 
 const longPitch = `Running a hospitality business today means managing three relentless problems: skill erosion, compliance pressure, and margin protection.
 
 Most operators manage all of this manually — spreadsheets, paper records, tribal knowledge, and constant supervision. It's expensive, inconsistent, and entirely dependent on a few experienced people staying on top of it.
 
-HospitalitySupport.uk is a different model.
+ServiceSupport.UK is a different model.
 
 It's not a platform you configure and maintain. It's not a dashboard you have to remember to check. It does the work automatically — GP tracked as supplier prices move, allergens updated as the menu changes, compliance evidenced as work happens, training built and sent from your actual operation.
 

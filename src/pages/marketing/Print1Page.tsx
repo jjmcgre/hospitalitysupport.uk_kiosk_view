@@ -174,7 +174,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
               background: 'rgba(10,17,32,0.98)',
             }}>
               <span style={{ color: W, fontWeight: 900, fontSize: 14, letterSpacing: '-0.02em' }}>
-                HospitalitySupport<span style={{ color: TL }}>.uk</span>
+                ServiceSupport<span style={{ color: TL }}>.UK</span>
               </span>
               <span style={{
                 color: TL, fontSize: 8.5, fontWeight: 800,
@@ -211,7 +211,7 @@ export default function Print1Page({ standalone = false }: { standalone?: boolea
                   </h1>
                   <p style={{ color: S4, fontSize: 11, margin: 0, lineHeight: 1.6, maxWidth: 400 }}>
                     Ingredient prices change without warning. Margin drift goes unnoticed. Training is inconsistent. Compliance depends on whoever's in that week.{' '}
-                    <span style={{ color: S3, fontWeight: 700 }}>HospitalitySupport.uk closes every gap — automatically, for £3.30 a day.</span>
+                    <span style={{ color: S3, fontWeight: 700 }}>ServiceSupport.UK closes every gap — automatically, for £3.30 a day.</span>
                   </p>
                 </div>
 

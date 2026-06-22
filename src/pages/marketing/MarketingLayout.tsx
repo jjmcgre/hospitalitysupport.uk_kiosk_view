@@ -25,10 +25,10 @@ const socialItems = [
 ];
 
 const shareLinks = [
-  { name: 'HospitalitySupport.uk — Product Overview', path: '/demo', description: 'Full product kiosk / landing page' },
-  { name: 'HospitalitySupport.uk — Brochure', path: '/brochure', description: '8-page square PDF, ready to print' },
-  { name: 'HospitalitySupport.uk — 1-Page Summary', path: '/one-pager', description: 'A4 single page, email or print' },
-  { name: 'HospitalitySupport.uk — Sales Pack', path: '/sales-pack', description: '5-page A4, full detail' },
+  { name: 'ServiceSupport.UK — Product Overview', path: '/demo', description: 'Full product kiosk / landing page' },
+  { name: 'ServiceSupport.UK — Brochure', path: '/brochure', description: '8-page square PDF, ready to print' },
+  { name: 'ServiceSupport.UK — 1-Page Summary', path: '/one-pager', description: 'A4 single page, email or print' },
+  { name: 'ServiceSupport.UK — Sales Pack', path: '/sales-pack', description: '5-page A4, full detail' },
 ];
 
 function CopyButton({ text, title, children }: { text: string; title: string; children: React.ReactNode }) {
@@ -122,7 +122,7 @@ export default function MarketingLayout() {
       `}>
         <div className="p-6 border-b border-slate-800">
           <span className="text-white font-black text-base tracking-tight">
-            HospitalitySupport<span className="text-teal-400">.uk</span>
+            ServiceSupport<span className="text-teal-400">.UK</span>
           </span>
           <div className="mt-3">
             <h1 className="text-white font-bold text-lg leading-tight">Campaign Book</h1>
@@ -203,7 +203,7 @@ export default function MarketingLayout() {
         </nav>
 
         <div className="p-4 border-t border-slate-800">
-          <p className="text-slate-600 text-xs text-center">HospitalitySupport.uk · Internal</p>
+          <p className="text-slate-600 text-xs text-center">ServiceSupport.UK · Internal</p>
         </div>
       </aside>
 

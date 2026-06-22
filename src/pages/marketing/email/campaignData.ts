@@ -35,9 +35,9 @@ Not last month's figures. Today's. With this week's supplier prices.
 
 For most hospitality businesses that question is genuinely hard to answer. Ingredient costs shift. Suppliers update prices without much notice. The margin on a dish can quietly erode for weeks before anyone spots it — if anyone spots it at all.
 
-HospitalitySupport.uk was built to close that gap.
+ServiceSupport.UK was built to close that gap.
 
-HospitalitySupport.uk is a platform built from real hospitality expertise — covering GP control, menu development, allergen management, compliance, and staff training — all connected, all live, from £100 per kitchen per month.
+ServiceSupport.UK is a platform built from real hospitality expertise — covering GP control, menu development, allergen management, compliance, and staff training — all connected, all live, from £100 per kitchen per month.
 
 You ask a question, flag a problem, or request a task. It's handled. Automatically and accurately.
 
@@ -71,7 +71,7 @@ It's not negligence. It's the reality of running a busy kitchen without the syst
 
 The question isn't whether this happens — it's how long it goes unnoticed, and how often.
 
-HospitalitySupport.uk works from your live supplier data. When prices shift, the impact is calculated immediately. You get a clear decision — adjust the spec, change the price, or accept the margin — not a retrospective report.
+ServiceSupport.UK works from your live supplier data. When prices shift, the impact is calculated immediately. You get a clear decision — adjust the spec, change the price, or accept the margin — not a retrospective report.
 
 One message. Decision made. Spec updated. Margin protected.
 
@@ -96,7 +96,7 @@ Training records that exist at head office but not at the site. Allergen documen
 
 An environmental health visit doesn't give notice. Neither does an allergen incident.
 
-HospitalitySupport.uk treats compliance as an ongoing system, not a pre-inspection task.
+ServiceSupport.UK treats compliance as an ongoing system, not a pre-inspection task.
 
 Food safety records are maintained continuously. Allergen information is updated when your menu changes. Training completions are logged and evidenced as they happen — not reconstructed afterwards.
 
@@ -126,7 +126,7 @@ Onboarding a new starter from scratch. Fielding allergen queries from front of h
 
 Each of these is necessary. None of them need a manager to do them.
 
-HospitalitySupport.uk handles all of it — accurately, consistently, without adding to your headcount.
+ServiceSupport.UK handles all of it — accurately, consistently, without adding to your headcount.
 
 Training plans built for specific roles and sent directly to staff. Allergen queries resolved the same day. GP calculations updated as ingredient costs change. Compliance records maintained as work actually happens.
 
@@ -147,7 +147,7 @@ I'd be glad to show you what a typical week looks like in practice.`,
 
 A practical example of how this works.
 
-Two new starters joining on Monday. Friday afternoon, one message to HospitalitySupport.uk with their roles and start date.
+Two new starters joining on Monday. Friday afternoon, one message to ServiceSupport.UK with their roles and start date.
 
 By the end of the day, two training plans are ready — built around their specific roles, your current menu specs, and your allergen requirements.
 
@@ -159,7 +159,7 @@ Monday morning, your managers spend their time running service — not onboardin
 
 That's not a pitch. That's the task done. And it happens the same way every time, for every new starter, across every site.
 
-HospitalitySupport.uk — unlimited staff access, one flat monthly price per kitchen.
+ServiceSupport.UK — unlimited staff access, one flat monthly price per kitchen.
 
 Happy to walk through the training function specifically if that's the most relevant part for your business.`,
         cta: "See training in action →",
@@ -187,7 +187,7 @@ The question isn't whether the systems exist. It's whether they keep up automati
 
 Static systems — spreadsheets, printed records, recurring check-ins — require someone to update them. In a busy operation, that someone is usually already stretched. Things drift. Not because people are careless, but because the pace doesn't allow for it.
 
-HospitalitySupport.uk doesn't replace what you have. It handles the parts that depend on someone finding the time — automatically, accurately, without adding to your headcount.
+ServiceSupport.UK doesn't replace what you have. It handles the parts that depend on someone finding the time — automatically, accurately, without adding to your headcount.
 
 If your current setup already handles all of that without friction, there may not be a gap to close. But if there is — it's worth knowing what it's costing.
 
@@ -206,7 +206,7 @@ I won't keep filling your inbox — you've heard from me a few times and the tim
 
 One thing worth leaving with you before I stop.
 
-Every week HospitalitySupport.uk isn't in place is a week where the gaps are still open:
+Every week ServiceSupport.UK isn't in place is a week where the gaps are still open:
 
 → GP is checked manually — when someone has time to check it
 → Training is delivered by whoever's available, not by a consistent process
@@ -239,7 +239,7 @@ This is the last email in this sequence — I won't keep landing in your inbox a
 
 I'll keep it short.
 
-HospitalitySupport.uk handles GP control, menu development, allergen management, compliance, and staff training — all connected, all live, from £100 per kitchen per month.
+ServiceSupport.UK handles GP control, menu development, allergen management, compliance, and staff training — all connected, all live, from £100 per kitchen per month.
 
 If you'd like to see it working before making any decision, I'm happy to do a no-agenda 30-minute walkthrough. I'll show you the platform running on a real scenario, answer whatever questions come up, and leave you to decide whether it's relevant.
 
@@ -260,7 +260,7 @@ The conventional model for growing a hospitality estate is well understood: more
 
 The question operators are asking more often now is whether that ratio has to hold.
 
-HospitalitySupport.uk gives every kitchen in your estate the same capability — GP control, menu development, allergen management, compliance, training — for a flat fee per kitchen. The same fee whether you have two sites or twenty.
+ServiceSupport.UK gives every kitchen in your estate the same capability — GP control, menu development, allergen management, compliance, training — for a flat fee per kitchen. The same fee whether you have two sites or twenty.
 
 Standards are consistent across every location because the system that maintains them is the same system. Compliance is evidenced at every site. Training happens the same way everywhere. GP visibility doesn't depend on which manager happens to be thorough.
 
@@ -289,13 +289,13 @@ export const foundersCampaign: Stage[] = [
 
 I'll be straight with you.
 
-HospitalitySupport.uk wasn't built by developers who spotted a gap in the market. It was built by people who've worked in kitchens, managed multi-site operations, dealt with EHO visits on a bad week, and spent far too many late nights trying to reconcile GP figures that should have been obvious.
+ServiceSupport.UK wasn't built by developers who spotted a gap in the market. It was built by people who've worked in kitchens, managed multi-site operations, dealt with EHO visits on a bad week, and spent far too many late nights trying to reconcile GP figures that should have been obvious.
 
 We used the existing solutions. The expensive software that required three days of training to set up. The compliance systems that were technically impressive but completely disconnected from how a busy kitchen actually operates. The training platforms that looked great in a demo and gathered dust two weeks in.
 
 None of them were built by people who'd actually had to run a pass on a Saturday night.
 
-So we built HospitalitySupport.uk differently.
+So we built ServiceSupport.UK differently.
 
 It's not a platform you manage. It's a platform that does the work — GP control, menu development, allergen management, compliance, staff training — built from real operational expertise, available around the clock, from £100 per kitchen per month.
 
@@ -329,7 +329,7 @@ The training platforms work if you have an L&D team to build the content and cha
 
 None of them were built by people who'd actually had to use them under pressure. You can feel it in every click.
 
-HospitalitySupport.uk was built by operators who'd lived with that frustration long enough to do something about it.
+ServiceSupport.UK was built by operators who'd lived with that frustration long enough to do something about it.
 
 It works the way it should — you ask for something, it's done properly, without you having to manage the process or update a system.
 
@@ -354,7 +354,7 @@ That moment — the uncertainty, the pressure, the calculation of risk — is so
 
 It's not a system failure. It's the reality of hospitality operations running faster than documentation can keep pace with.
 
-HospitalitySupport.uk keeps allergen information current as your menu changes. A query like that gets a clear, evidenced answer immediately — not a search through a folder, not a phone call to someone who might know.
+ServiceSupport.UK keeps allergen information current as your menu changes. A query like that gets a clear, evidenced answer immediately — not a search through a folder, not a phone call to someone who might know.
 
 We built this because we've been that chef. We know exactly how much is at stake in that moment.`,
         cta: "See how allergen management actually works →",
@@ -412,13 +412,13 @@ From £100 per kitchen per month — for an operation that runs itself.`,
 
 We don't say this lightly, and we don't say it to everyone.
 
-Give us 30 minutes — a live walkthrough of HospitalitySupport.uk on a real scenario from your business — and we guarantee it will be the most useful half hour you've invested in your operation in a long time.
+Give us 30 minutes — a live walkthrough of ServiceSupport.UK on a real scenario from your business — and we guarantee it will be the most useful half hour you've invested in your operation in a long time.
 
 Not because we have a polished deck. Because we know what your problems actually feel like.
 
 We've managed the kitchens. We've dealt with the compliance visits. We've sat with the spreadsheets at midnight trying to work out where the margin went. We've watched good managers leave because the operational admin was relentless.
 
-We built HospitalitySupport.uk to fix the things that were genuinely unfixable with everything else we tried.
+We built ServiceSupport.UK to fix the things that were genuinely unfixable with everything else we tried.
 
 In 30 minutes we'll show you it working on a real task — your menu, your margins, your training requirements. Not a demo environment. The actual thing.
 
@@ -443,7 +443,7 @@ They built tools. Not support.
 
 The difference shows up in how it actually works. Not in a feature comparison — in what happens when a problem lands on your desk at the wrong moment and the platform already has the context to handle it accurately.
 
-We built HospitalitySupport.uk because we were the ones who needed it and couldn't find it.
+We built ServiceSupport.UK because we were the ones who needed it and couldn't find it.
 
 If you'd like to see why that difference matters in practice, the walkthrough takes 30 minutes. We'll cover whatever's most relevant to your business — GP, allergens, compliance, training, or all of it.
 
@@ -467,7 +467,7 @@ No obligation. Just the conversation.`,
 
 Last one from me, and I'll keep it honest.
 
-We built HospitalitySupport.uk because we spent years working in kitchens and operations, watching good businesses run harder than they needed to because the support available to them was either too expensive, too complicated, or too far removed from how a kitchen actually works.
+We built ServiceSupport.UK because we spent years working in kitchens and operations, watching good businesses run harder than they needed to because the support available to them was either too expensive, too complicated, or too far removed from how a kitchen actually works.
 
 We know the problems from the inside. That's what makes this different. Not just different from other software — different from having to figure it all out yourself.
 
@@ -510,7 +510,7 @@ None of it requires a chef.
 
 But it lands on a chef — because in most hospitality businesses, the kitchen carries the operational admin that no one else has time for. And the person who carries most of it is usually the one you can least afford to lose to a spreadsheet.
 
-HospitalitySupport.uk takes all of it off the kitchen. GP control, allergen management, compliance records, staff training — handled automatically by a platform built from real hospitality expertise, from £100 per kitchen per month.
+ServiceSupport.UK takes all of it off the kitchen. GP control, allergen management, compliance records, staff training — handled automatically by a platform built from real hospitality expertise, from £100 per kitchen per month.
 
 For the price of a coffee a day, your head chef gets their week back.
 
@@ -545,7 +545,7 @@ These aren't abstract benefits. They're the things a skilled chef does when they
 
 The operational admin doesn't disappear when it's left undone — it just creates risk. And it doesn't get done well when it's squeezed into the gaps — it creates a different kind of risk.
 
-HospitalitySupport.uk removes it entirely. GP control, allergen management, compliance, and training — all handled automatically, everything that shouldn't be on the chef's list, from £100 per kitchen per month.
+ServiceSupport.UK removes it entirely. GP control, allergen management, compliance, and training — all handled automatically, everything that shouldn't be on the chef's list, from £100 per kitchen per month.
 
 That's the price of protecting the margin the chef should be focusing on.`,
         cta: "Talk to us about what this looks like for your kitchen →",
@@ -570,7 +570,7 @@ You didn't hire them for that. They didn't become chefs for that.
 
 But the admin has to go somewhere. And in most kitchens, it goes to whoever can't say no — which is usually the most capable person in the room.
 
-HospitalitySupport.uk was built specifically to stop that drift. The operational work is handled automatically — properly, continuously — so the people who understand kitchens can get back to the work they're actually good at.
+ServiceSupport.UK was built specifically to stop that drift. The operational work is handled automatically — properly, continuously — so the people who understand kitchens can get back to the work they're actually good at.
 
 From £100 per kitchen per month. The cost of one hour of management time.`,
         cta: "Let's talk about what your kitchen gets back →",
@@ -598,7 +598,7 @@ For most kitchens, compliance is reactive. Records are updated before visits. Tr
 
 That gap is where improvement notices, closure risks, and fines live.
 
-HospitalitySupport.uk treats compliance as a continuous system, not a pre-inspection task. Food safety records are maintained as the work happens. Allergen information updates when the menu changes. Training is evidenced as completions occur — not reconstructed from memory.
+ServiceSupport.UK treats compliance as a continuous system, not a pre-inspection task. Food safety records are maintained as the work happens. Allergen information updates when the menu changes. Training is evidenced as completions occur — not reconstructed from memory.
 
 When an officer arrives — announced or otherwise — everything is already in order. Not because someone prepared. Because it always is.
 
@@ -622,7 +622,7 @@ From £100 per kitchen per month. Less than the cost of a single improvement not
 
 £3.30 a day.
 
-That's what HospitalitySupport.uk costs per kitchen.
+That's what ServiceSupport.UK costs per kitchen.
 
 For that, every single day, your kitchen has:
 
@@ -658,7 +658,7 @@ Not manage compliance records. Not build training decks. Not recalculate GP on s
 
 But that's what kitchens do — because no one else has taken it off them.
 
-We built HospitalitySupport.uk because we believe the hospitality industry is too good, and its people too skilled, to spend their careers buried in operational admin that any decent system should handle automatically.
+We built ServiceSupport.UK because we believe the hospitality industry is too good, and its people too skilled, to spend their careers buried in operational admin that any decent system should handle automatically.
 
 Your head chef should be in the kitchen.
 Your sous chef should be developing their craft.
@@ -695,7 +695,7 @@ Most operators are still on those platforms. Not because they're the best option
 
 We rewrote the approach from scratch.
 
-HospitalitySupport.uk isn't a legacy platform with a new interface. It's a platform that does the work — GP control, menu development, allergen management, compliance, staff training — built from real hospitality expertise, available around the clock, from £100 per kitchen per month.
+ServiceSupport.UK isn't a legacy platform with a new interface. It's a platform that does the work — GP control, menu development, allergen management, compliance, staff training — built from real hospitality expertise, available around the clock, from £100 per kitchen per month.
 
 No per-user fees. No setup costs. No annual contract. No onboarding overhead. Just the work, done properly, from day one.
 
@@ -723,7 +723,7 @@ Compliance platforms run £200–£400 a month plus per-user fees. What you get:
 
 Run the full stack and you're looking at £750–£1,600 a month per site — four separate logins, four sets of data, and someone in your team carrying the admin burden for all of it.
 
-HospitalitySupport.uk is £100 per kitchen per month, all in. No per-user fees. No setup costs. And unlike the platforms above, the work gets done automatically — not stored in a tool waiting for someone to operate it.
+ServiceSupport.UK is £100 per kitchen per month, all in. No per-user fees. No setup costs. And unlike the platforms above, the work gets done automatically — not stored in a tool waiting for someone to operate it.
 
 The platforms charge what they charge because operators have kept paying it. We started with a blank sheet and asked what this should actually cost. The answer was £100 a month.
 
@@ -746,7 +746,7 @@ Four subscriptions. Four separate data problems. And the common thread: someone 
 
 You're paying for tools. You still need the people to use them.
 
-HospitalitySupport.uk is different by design. The team does the work. You send a message, flag a task, ask a question — it gets handled. The records are kept. The margins are live. The compliance is current. One price. One team. Everything covered.
+ServiceSupport.UK is different by design. The team does the work. You send a message, flag a task, ask a question — it gets handled. The records are kept. The margins are live. The compliance is current. One price. One team. Everything covered.
 
 See exactly what's included in our brochure — [download here][OVERVIEW_LINK].`,
         cta: "See what's included →",
@@ -768,7 +768,7 @@ See exactly what's included in our brochure — [download here][OVERVIEW_LINK].`
 
 Most hospitality software is built on the same underlying assumption: give operators the tools, and they'll find the time to use them. After fifteen years of watching busy kitchen teams deprioritise every platform they've ever been sold, it's clear that assumption is wrong.
 
-When we built HospitalitySupport.uk, we didn't ask how to build a better compliance platform or improve recipe costing software. We asked what a hospitality business actually needs — and what's the most useful form that support could take.
+When we built ServiceSupport.UK, we didn't ask how to build a better compliance platform or improve recipe costing software. We asked what a hospitality business actually needs — and what's the most useful form that support could take.
 
 The answer wasn't another dashboard. It was a team.
 
@@ -824,7 +824,7 @@ If you'd like to see the system in practice, a 30-minute walkthrough covers your
 
 Last note from me on this.
 
-£3.30 a day per kitchen. That's what HospitalitySupport.uk costs — all in, with no per-user fees, no setup charge, no annual contract, and no add-ons required to make the core function work.
+£3.30 a day per kitchen. That's what ServiceSupport.UK costs — all in, with no per-user fees, no setup charge, no annual contract, and no add-ons required to make the core function work.
 
 For that, every day, your kitchen has live GP and margin control as supplier prices move, allergen records maintained as the menu changes, continuous food safety compliance documentation, staff training built and tracked automatically, and menu development support on demand.
 

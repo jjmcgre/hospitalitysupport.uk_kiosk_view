@@ -50,7 +50,7 @@ function PageHeader({ n, total = 8 }: { n: number; total?: number }) {
       borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, position: 'relative', zIndex: 1,
     }}>
       <span style={{ color: W, fontWeight: 900, fontSize: 11, letterSpacing: '-0.02em', fontFamily: F }}>
-        HospitalitySupport<span style={{ color: TL }}>.uk</span>
+        ServiceSupport<span style={{ color: TL }}>.UK</span>
       </span>
     </div>
   );
@@ -62,7 +62,7 @@ function PageFooter({ text }: { text?: string }) {
       padding: '8px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       borderTop: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, position: 'relative', zIndex: 1,
     }}>
-      <span style={{ color: '#1e3a4a', fontSize: 8, fontFamily: F }}>{text ?? 'hospitalitysupport.uk'}</span>
+      <span style={{ color: '#1e3a4a', fontSize: 8, fontFamily: F }}>{text ?? 'servicesupport.uk'}</span>
     </div>
   );
 }
@@ -215,7 +215,7 @@ function CoverPage({ onBook }: { onBook: () => void }) {
               <div style={{ width: 10, height: 10, borderRadius: 2, background: W, opacity: 0.9 }} />
             </div>
             <span style={{ color: W, fontWeight: 900, fontSize: 13, letterSpacing: '-0.02em', fontFamily: F }}>
-              HospitalitySupport<span style={{ color: TL }}>.uk</span>
+              ServiceSupport<span style={{ color: TL }}>.UK</span>
             </span>
           </div>
 
@@ -241,7 +241,7 @@ function CoverPage({ onBook }: { onBook: () => void }) {
           </div>
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
-            <p style={{ color: '#1a3040', fontSize: 8, margin: 0, fontFamily: F }}>hospitalitysupport.uk</p>
+            <p style={{ color: '#1a3040', fontSize: 8, margin: 0, fontFamily: F }}>servicesupport.uk</p>
           </div>
         </div>
 
@@ -264,7 +264,7 @@ function CoverPage({ onBook }: { onBook: () => void }) {
             <button onClick={onBook} style={{ width: '100%', padding: 0, border: 'none', cursor: 'pointer', background: 'transparent', display: 'block' }}>
               <Card teal style={{ padding: '12px 14px', textAlign: 'center' as const }}>
                 <div style={{ color: W, fontWeight: 900, fontSize: 10, marginBottom: 3, fontFamily: F }}>Book a 30-minute demo</div>
-                <div style={{ color: TL, fontWeight: 900, fontSize: 12, fontFamily: F }}>hospitalitysupport.uk →</div>
+                <div style={{ color: TL, fontWeight: 900, fontSize: 12, fontFamily: F }}>servicesupport.uk →</div>
               </Card>
             </button>
           </div>
@@ -336,7 +336,7 @@ function ProblemPage() {
         <Card teal style={{ marginTop: 14 }}>
           <p style={{ color: W, fontWeight: 900, fontSize: 11, margin: 0, fontFamily: F, lineHeight: 1.5 }}>
             "Every challenge a hospitality operator faces traces back to people, process, or profit.
-            <span style={{ color: TL }}> HospitalitySupport.uk is built to solve all three.</span>"
+            <span style={{ color: TL }}> ServiceSupport.UK is built to solve all three.</span>"
           </p>
         </Card>
       </div>
@@ -361,7 +361,7 @@ function SolutionPage() {
             Most hospitality technology is built for trained users with time, discipline, and structure. It assumes a stable team with capacity to configure and maintain a system. That's not the reality of running a kitchen.
           </Body>
           <Body size={10.5}>
-            HospitalitySupport.uk behaves like a competent operations team — built from real hospitality expertise, available around the clock, designed for real kitchens under real pressure. You don't configure it. You just use it.
+            ServiceSupport.UK behaves like a competent operations team — built from real hospitality expertise, available around the clock, designed for real kitchens under real pressure. You don't configure it. You just use it.
           </Body>
 
           <Rule />
@@ -695,16 +695,16 @@ function ComparisonPage() {
       <div style={{ flex: 1, padding: '24px 40px 18px', display: 'flex', gap: 32, position: 'relative', zIndex: 1 }}>
 
         <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column' }}>
-          <Badge text="Why HospitalitySupport.uk" />
+          <Badge text="Why ServiceSupport.UK" />
           <H2>Simple, intuitive, <Teal>built around how kitchens actually operate.</Teal></H2>
           <Body size={10}>
-            Most platforms were built by developers who studied hospitality from the outside. They require implementation projects and training — then sit unused. HospitalitySupport.uk was built by people who have run kitchens.
+            Most platforms were built by developers who studied hospitality from the outside. They require implementation projects and training — then sit unused. ServiceSupport.UK was built by people who have run kitchens.
           </Body>
 
           <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, overflow: 'hidden', flex: 1 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '30% 35% 35%', background: S9 }}>
               <div style={{ padding: '7px 12px', color: S5, fontSize: 8, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontFamily: F }}>Capability</div>
-              <div style={{ padding: '7px 12px', color: TL, fontSize: 9, fontWeight: 900, borderLeft: '1px solid rgba(255,255,255,0.05)', fontFamily: F }}>HospitalitySupport.uk</div>
+              <div style={{ padding: '7px 12px', color: TL, fontSize: 9, fontWeight: 900, borderLeft: '1px solid rgba(255,255,255,0.05)', fontFamily: F }}>ServiceSupport.UK</div>
               <div style={{ padding: '7px 12px', color: S5, fontSize: 8.5, fontWeight: 700, borderLeft: '1px solid rgba(255,255,255,0.05)', fontFamily: F }}>Traditional platforms</div>
             </div>
             {rows.map((row, i) => (
@@ -796,7 +796,7 @@ function ClosePage({ onBook }: { onBook: () => void }) {
               We'll show your actual dishes recosting live against your supplier prices. No slides. No generic demo. Your data, your operation, in real time.
             </p>
             <button onClick={onBook} style={{ width: '100%', background: T, color: W, fontWeight: 900, fontSize: 13, padding: '12px 0', borderRadius: 10, textAlign: 'center' as const, letterSpacing: '-0.01em', fontFamily: F, cursor: 'pointer', border: 'none' }}>
-              Book a demo → hospitalitysupport.uk
+              Book a demo → servicesupport.uk
             </button>
           </div>
 
