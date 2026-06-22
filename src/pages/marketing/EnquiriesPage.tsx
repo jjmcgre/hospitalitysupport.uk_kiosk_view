@@ -19,8 +19,6 @@ interface Enquiry {
   sourced_by_name: string | null;
 }
 
-const SITES_OPTIONS = ['1', '2', '3', '4', '5', '6–10', '11–20', '20+'];
-
 const emptyForm = {
   name: '',
   email: '',
@@ -159,22 +157,13 @@ function AddLeadModal({ onClose, onSaved, userId, sourcedByName }: AddLeadModalP
 
           <div>
             <label className={labelClass}>Number of sites</label>
-            <div className="flex flex-wrap gap-2">
-              {SITES_OPTIONS.map(opt => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => set('num_sites', opt)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                    form.num_sites === opt
-                      ? 'bg-teal-500/20 border-teal-500/40 text-teal-300'
-                      : 'border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-            </div>
+            <input
+              type="text"
+              value={form.num_sites}
+              onChange={e => set('num_sites', e.target.value)}
+              placeholder="e.g. 3"
+              className={inputClass}
+            />
           </div>
 
           <div>
