@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Inbox, CalendarDays, Copy, Check, ExternalLink, Share2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin, Mail, MessageSquare, Palette, BookOpen, FileText, Files, Inbox, CalendarDays, Copy, Check, ExternalLink, Share2, LogOut, User, Pencil } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 const liveItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -76,18 +78,13 @@ function SharePanel() {
             const shareText = `${link.name}\n${fullUrl}`;
             return (
               <div key={link.path} className="bg-slate-800/60 rounded-xl px-3 py-3">
-                {/* Name — this is what gets shared */}
                 <p className="text-white text-xs font-bold leading-snug mb-0.5">{link.name}</p>
                 <p className="text-slate-500 text-[10px] mb-2">{link.description}</p>
-
-                {/* Actions row */}
                 <div className="flex items-center gap-1">
-                  {/* Copy name + URL together — primary action */}
                   <CopyButton text={shareText} title="Copy name + link (paste into WhatsApp / email)">
                     <Copy size={14} />
                   </CopyButton>
                   <span className="text-slate-600 text-[10px] flex-1 font-mono truncate">{window.location.host}{link.path}</span>
-                  {/* Open in tab */}
                   <a
                     href={link.path}
                     target="_blank"
@@ -108,11 +105,101 @@ function SharePanel() {
   );
 }
 
+interface Profile {
+  display_name: string;
+}
+
 export default function MarketingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileName, setProfileName] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from('user_profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (data) {
+        setProfile(data);
+        setProfileName(data.display_name);
+      } else {
+        setShowProfileModal(true);
+      }
+    })();
+  }, [user]);
+
+  async function saveProfile() {
+    if (!user || !profileName.trim()) return;
+    setSavingProfile(true);
+    await supabase.from('user_profiles').upsert({
+      id: user.id,
+      display_name: profileName.trim(),
+    });
+    setProfile({ display_name: profileName.trim() });
+    setShowProfileModal(false);
+    setSavingProfile(false);
+  }
+
+  async function handleSignOut() {
+    await signOut();
+    navigate('/login');
+  }
+
+  const displayName = profile?.display_name || user?.email?.split('@')[0] || 'You';
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
+      {/* Profile setup modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-8 w-full max-w-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center">
+                <User size={18} className="text-teal-400" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-base">Set your display name</h2>
+                <p className="text-slate-500 text-xs mt-0.5">Used to track leads you bring in</p>
+              </div>
+            </div>
+            <input
+              type="text"
+              autoFocus
+              value={profileName}
+              onChange={e => setProfileName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') saveProfile(); }}
+              placeholder="e.g. James Smith"
+              maxLength={40}
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors mb-4"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={saveProfile}
+                disabled={!profileName.trim() || savingProfile}
+                className="flex-1 bg-teal-500 hover:bg-teal-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
+              >
+                {savingProfile ? 'Saving...' : 'Save name'}
+              </button>
+              <button
+                onClick={() => setShowProfileModal(false)}
+                className="px-4 text-slate-500 hover:text-slate-300 text-sm transition-colors"
+              >
+                Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <aside className={`
         fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 border-r border-slate-800 flex flex-col
         transform transition-transform duration-300 ease-in-out
@@ -199,11 +286,56 @@ export default function MarketingLayout() {
               </NavLink>
             ))}
           </div>
-
         </nav>
 
+        {/* User footer */}
         <div className="p-4 border-t border-slate-800">
-          <p className="text-slate-600 text-xs text-center">ServiceSupport.UK · Internal</p>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0 text-teal-400 font-black text-sm">
+              {initial}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="text-white text-xs font-bold truncate">{displayName}</p>
+                {!profile?.display_name && (
+                  <button
+                    onClick={() => setShowProfileModal(true)}
+                    title="Set display name"
+                    className="text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0"
+                  >
+                    <Pencil size={11} />
+                  </button>
+                )}
+              </div>
+              <p className="text-slate-600 text-[10px] truncate">{user?.email}</p>
+            </div>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {profile?.display_name && (
+                <button
+                  onClick={() => { setProfileName(profile.display_name); setShowProfileModal(true); }}
+                  title="Edit name"
+                  className="p-1.5 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-slate-800 transition-colors"
+                >
+                  <Pencil size={13} />
+                </button>
+              )}
+              <button
+                onClick={handleSignOut}
+                title="Sign out"
+                className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              >
+                <LogOut size={13} />
+              </button>
+            </div>
+          </div>
+          {!profile?.display_name && (
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="mt-2 w-full text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg py-1.5 hover:bg-amber-500/15 transition-colors"
+            >
+              Set your display name for lead tracking
+            </button>
+          )}
         </div>
       </aside>
 
