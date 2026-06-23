@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Plus, Trash2, Mail, Send, CheckCircle, XCircle, Loader2,
   UserPlus, X, Eye, MousePointer, AlertTriangle, ChevronRight,
-  Clock, Building2, Phone, FileText, Play, Square, Zap,
+  Clock, Building2, Phone, FileText, Play, Square, Zap, Tag,
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { campaigns, type Email } from './campaignData';
@@ -15,6 +15,7 @@ interface Contact {
   phone: string;
   notes: string;
   status: string;
+  pipeline_stage: string;
   current_campaign_id: string;
   current_stage: number;
   created_at: string;
@@ -23,6 +24,24 @@ interface Contact {
   automation_next_email_id: number | null;
   automation_next_send_at: string | null;
   automation_paused: boolean;
+}
+
+const PIPELINE_STAGES = [
+  { id: 'prospect',      label: 'Prospect',       colour: 'text-slate-300 bg-slate-700 border-slate-600',         dot: 'bg-slate-400' },
+  { id: 'demo_booked',   label: 'Demo booked',    colour: 'text-sky-300 bg-sky-500/10 border-sky-500/25',         dot: 'bg-sky-400' },
+  { id: 'post_demo',     label: 'Post-demo',      colour: 'text-teal-300 bg-teal-500/10 border-teal-500/25',      dot: 'bg-teal-400' },
+  { id: 'proposal_sent', label: 'Proposal sent',  colour: 'text-amber-300 bg-amber-500/10 border-amber-500/25',   dot: 'bg-amber-400' },
+  { id: 'customer',      label: 'Customer',       colour: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/25', dot: 'bg-emerald-400' },
+] as const;
+
+function pipelineBadge(stage: string) {
+  const s = PIPELINE_STAGES.find(p => p.id === stage) ?? PIPELINE_STAGES[0];
+  return (
+    <span className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider border rounded-full px-2 py-px ${s.colour}`}>
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} />
+      {s.label}
+    </span>
+  );
 }
 
 interface SendRecord {
@@ -125,6 +144,10 @@ function EnrollModal({ contact, onClose, onEnrolled }: { contact: Contact; onClo
   const enroll = async () => {
     setEnrolling(true); setResult(null);
     try {
+      const campaign = campaigns.find(c => c.id === selectedCampaignId)!;
+      const sequence = campaign.data.flatMap(s =>
+        s.emails.map(e => ({ emailId: e.id, stage: s.stage, subject: e.subject, body: e.body, cta: e.cta }))
+      );
       const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/automated-campaign/enroll`, {
         method: 'POST',
         headers: {
@@ -134,6 +157,7 @@ function EnrollModal({ contact, onClose, onEnrolled }: { contact: Contact; onClo
         body: JSON.stringify({
           contactId: contact.id,
           campaignId: selectedCampaignId,
+          sequence,
           siteUrl: window.location.origin,
         }),
       });
@@ -338,6 +362,7 @@ function ContactPanel({
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [unenrolling, setUnenrolling] = useState(false);
+  const [updatingStage, setUpdatingStage] = useState(false);
 
   const loadSends = useCallback(async () => {
     setLoadingSends(true);
@@ -373,6 +398,13 @@ function ContactPanel({
     } finally {
       setUnenrolling(false);
     }
+  };
+
+  const handlePipelineStage = async (stageId: string) => {
+    setUpdatingStage(true);
+    await supabase.from('email_contacts').update({ pipeline_stage: stageId }).eq('id', contact.id);
+    onRefresh(contact.id);
+    setUpdatingStage(false);
   };
 
   const totalSends = sends.length;
@@ -456,6 +488,31 @@ function ContactPanel({
               <span>Start automated email sequence</span>
             </button>
           ) : null}
+
+          {/* Pipeline stage */}
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Tag size={10} />Pipeline stage
+              {updatingStage && <Loader2 size={10} className="animate-spin" />}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {PIPELINE_STAGES.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => handlePipelineStage(s.id)}
+                  disabled={updatingStage}
+                  className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider border rounded-full px-3 py-1 transition-all disabled:opacity-50 ${
+                    contact.pipeline_stage === s.id
+                      ? s.colour + ' ring-1 ring-offset-1 ring-offset-slate-900 ring-current'
+                      : 'text-slate-500 bg-slate-800 border-slate-700 hover:border-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} />
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Contact info */}
           <div className="grid grid-cols-2 gap-3">
@@ -685,6 +742,7 @@ export default function ContactsTab() {
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
                   <p className="text-white font-semibold text-sm">{c.name}</p>
                   {statusBadge(c.status)}
+                  {pipelineBadge(c.pipeline_stage ?? 'prospect')}
                   {c.automation_active && (
                     <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/25 rounded-full px-2 py-px">
                       <Zap size={8} />Auto

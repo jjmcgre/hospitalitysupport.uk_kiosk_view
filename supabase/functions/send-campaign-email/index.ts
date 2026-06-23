@@ -7,6 +7,46 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+// Maps a pipeline stage (or auto-detected booking state) to a CTA button label + URL suffix.
+function resolveCta(
+  pipelineStage: string,
+  hasFutureBooking: boolean,
+  hasPastBooking: boolean,
+  originalCtaLabel: string,
+  baseUrl: string,
+): { label: string; url: string } {
+  const stage = hasFutureBooking ? "demo_booked" : hasPastBooking && pipelineStage === "prospect" ? "post_demo" : pipelineStage;
+
+  switch (stage) {
+    case "demo_booked":
+      return {
+        label: "Your demo is confirmed — we look forward to speaking with you",
+        url: baseUrl,
+      };
+    case "post_demo":
+      return {
+        label: "Speak to us about getting started",
+        url: `${baseUrl}/#contact`,
+      };
+    case "proposal_sent":
+      return {
+        label: "Review our proposal",
+        url: `${baseUrl}/#contact`,
+      };
+    case "customer":
+      return {
+        label: "Access the platform",
+        url: baseUrl,
+      };
+    default:
+      // prospect — use the original booking link and CTA label from the campaign
+      return {
+        label: originalCtaLabel.replace(/\s*→\s*$/, "").trim(),
+        url: `${baseUrl}/demo?book=1`,
+      };
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -30,7 +70,7 @@ Deno.serve(async (req: Request) => {
     // Fetch contact
     const { data: contact, error: contactErr } = await supabase
       .from("email_contacts")
-      .select("id, name, email, status")
+      .select("id, name, email, status, pipeline_stage")
       .eq("id", contactId)
       .maybeSingle();
 
@@ -48,6 +88,20 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Check for existing demo bookings to auto-detect pipeline stage
+    const today = new Date().toISOString().split("T")[0];
+    const { data: bookings } = await supabase
+      .from("demo_bookings")
+      .select("slot_date, status")
+      .eq("email", contact.email);
+
+    const hasFutureBooking = (bookings ?? []).some(
+      (b: { slot_date: string; status: string }) => b.slot_date >= today && b.status !== "cancelled"
+    );
+    const hasPastBooking = (bookings ?? []).some(
+      (b: { slot_date: string }) => b.slot_date < today
+    );
+
     // Pre-insert send row to get the send ID for the tracking pixel
     const { data: sendRow, error: sendInsertErr } = await supabase
       .from("email_sends")
@@ -57,7 +111,7 @@ Deno.serve(async (req: Request) => {
         email_id: emailId,
         stage,
         subject,
-        resend_message_id: "", // will update after Resend responds
+        resend_message_id: "",
       })
       .select("id")
       .single();
@@ -67,22 +121,28 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const bookingUrl = `${siteUrl ?? "https://servicesupport.uk"}/demo?book=1`;
+    const baseUrl = siteUrl ?? "https://servicesupport.uk";
     const trackPixelUrl = `${supabaseUrl}/functions/v1/email-tracking/pixel?sid=${sendRow.id}`;
     const unsubUrl = `${supabaseUrl}/functions/v1/email-tracking/unsub?cid=${contactId}`;
 
+    const resolvedCta = resolveCta(
+      contact.pipeline_stage ?? "prospect",
+      hasFutureBooking,
+      hasPastBooking,
+      cta,
+      baseUrl,
+    );
+
     // Build HTML email
     const firstName = contact.name?.split(" ")[0] || contact.name || "there";
-    const overviewUrl = `${siteUrl ?? "https://servicesupport.uk"}/demo`;
+    const overviewUrl = `${baseUrl}/demo`;
 
-    // Replace [link text][OVERVIEW_LINK] with proper anchor in HTML, plain URL in text
     const replaceBrochureHtml = (s: string) =>
       s.replace(/\[([^\]]+)\]\[OVERVIEW_LINK\]/g, `<a href="${overviewUrl}" style="color:#14b8a6;">$1</a>`);
     const replaceBrochureText = (s: string) =>
       s.replace(/\[([^\]]+)\]\[OVERVIEW_LINK\]/g, `$1: ${overviewUrl}`);
 
-    const personalizedText = body
-      .replace(/\[First Name\]/gi, firstName);
+    const personalizedText = body.replace(/\[First Name\]/gi, firstName);
     const htmlSource = replaceBrochureHtml(personalizedText);
     const plainSource = replaceBrochureText(personalizedText);
 
@@ -94,16 +154,15 @@ Deno.serve(async (req: Request) => {
       })
       .join("");
 
-    const ctaLabel = cta.replace(/\s*→\s*$/, '').trim();
     const htmlEmail = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"/></head>
 <body style="font-family:Georgia,serif;font-size:15px;color:#1a1a1a;max-width:600px;margin:0 auto;padding:32px 24px;background:#ffffff;">
 ${htmlBody}
 <p style="margin:28px 0 0;">
-  <a href="${bookingUrl}"
+  <a href="${resolvedCta.url}"
      style="display:inline-block;background-color:#14b8a6;color:#ffffff;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;text-decoration:none;padding:14px 28px;border-radius:10px;letter-spacing:0.01em;">
-    ${ctaLabel} &rarr;
+    ${resolvedCta.label} &rarr;
   </a>
 </p>
 <hr style="border:none;border-top:1px solid #e5e5e5;margin:32px 0;"/>
@@ -114,11 +173,9 @@ ${htmlBody}
 </body>
 </html>`;
 
-    // Determine from address — use verified domain if set, otherwise Resend test sender
     const fromDomain = Deno.env.get("RESEND_FROM_EMAIL") ?? "onboarding@resend.dev";
     const fromName = Deno.env.get("RESEND_FROM_NAME") ?? "ServiceSupport.UK";
 
-    // Send via Resend
     const resendResp = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -130,7 +187,7 @@ ${htmlBody}
         to: [contact.email],
         subject,
         html: htmlEmail,
-        text: `${plainSource}\n\n${cta}`,
+        text: `${plainSource}\n\n${resolvedCta.label} → ${resolvedCta.url}`,
         tags: [
           { name: "campaign_id", value: campaignId },
           { name: "send_id", value: sendRow.id },
@@ -142,7 +199,6 @@ ${htmlBody}
     const resendData = await resendResp.json();
 
     if (!resendResp.ok) {
-      // Remove the pre-inserted send row on failure
       await supabase.from("email_sends").delete().eq("id", sendRow.id);
       const resendMsg = resendData?.message ?? resendData?.name ?? JSON.stringify(resendData);
       return new Response(JSON.stringify({ error: resendMsg, detail: resendData }), {
@@ -151,13 +207,11 @@ ${htmlBody}
       });
     }
 
-    // Update send row with the Resend message ID
     await supabase
       .from("email_sends")
       .update({ resend_message_id: resendData.id ?? "" })
       .eq("id", sendRow.id);
 
-    // Update contact stage
     await supabase
       .from("email_contacts")
       .update({ current_campaign_id: campaignId, current_stage: stage, updated_at: new Date().toISOString() })
