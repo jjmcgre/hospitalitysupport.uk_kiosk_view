@@ -37,9 +37,21 @@ const USPS = [
 ];
 
 const STEPS = [
-  { step: '1', label: 'Log the lead', detail: 'Add the business to the pipeline with a name, location, and contact.' },
-  { step: '2', label: 'Run the demo', detail: 'Show them the platform — typically 20–30 minutes, often on a call.' },
-  { step: '3', label: 'Get them live', detail: 'Once signed up and active, the deal is marked Won and commission is approved.' },
+  {
+    step: '1',
+    label: 'Make the introduction',
+    detail: 'Connect us with someone in the right role at a hospitality business — a manager, owner, or ops lead who\'d benefit from having this data.',
+  },
+  {
+    step: '2',
+    label: 'We take it from there',
+    detail: 'We handle the demo and the sales process. You don\'t need to know the product inside out — just make the introduction and we do the rest.',
+  },
+  {
+    step: '3',
+    label: 'They sign up, you get paid',
+    detail: 'Once the business is live on the platform, the commission is confirmed and paid. No chasing, no paperwork.',
+  },
 ];
 
 export default function CommissionStructurePage() {
@@ -49,7 +61,7 @@ export default function CommissionStructurePage() {
       {/* Header */}
       <div className="border-b border-slate-800">
         <div className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between">
-          <span className="text-white font-black text-lg tracking-tight">MenuMetrics</span>
+          <span className="text-white font-black text-lg tracking-tight">ServiceSupport.UK</span>
           <span className="text-slate-500 text-sm">Partner commission</span>
         </div>
       </div>
@@ -62,27 +74,27 @@ export default function CommissionStructurePage() {
             Referral partner programme
           </div>
           <h1 className="text-3xl sm:text-4xl font-black leading-tight">
-            Introduce hospitality businesses.<br />
+            Introduce the right people.<br />
             <span className="text-teal-400">Get paid when they sign up.</span>
           </h1>
           <p className="text-slate-400 text-lg leading-relaxed max-w-xl">
-            We pay a straightforward commission for every new account you bring in during their first year with us.
-            No complexity, no chasing — just log your leads, run your demos, and get paid.
+            We pay a straightforward commission for every new account introduced through you during their first year with us.
+            Your job is the introduction — we handle everything else.
           </p>
         </div>
 
         {/* What is it */}
         <div className="space-y-5">
-          <h2 className="text-white font-bold text-xl">What is MenuMetrics?</h2>
+          <h2 className="text-white font-bold text-xl">What is ServiceSupport.UK?</h2>
           <p className="text-slate-400 leading-relaxed">
-            MenuMetrics is an operations platform for food and drink businesses — pubs, restaurants, hotels,
+            ServiceSupport.UK is an operations platform for food and drink businesses — pubs, restaurants, hotels,
             cafes, and multi-site groups. It brings dish tracking, waste management, margins, and team
             performance into one dashboard that operators actually use every day.
           </p>
           <p className="text-slate-400 leading-relaxed">
             The pitch is simple: most hospitality operators are running on gut feel and spreadsheets.
-            MenuMetrics gives them the numbers they need to cut waste, protect margins, and run a tighter operation.
-            The platform pays for itself quickly — and that makes selling it straightforward.
+            ServiceSupport.UK gives them the numbers they need to cut waste, protect margins, and run a tighter operation.
+            The platform pays for itself quickly — and the demo makes that obvious.
           </p>
         </div>
 
@@ -115,12 +127,12 @@ export default function CommissionStructurePage() {
                 Multi-site groups count as a single account at the number of venues they run.
               </p>
               <p className="text-slate-300 leading-relaxed">
-                You earn <span className="text-white font-bold">15% of the first year's contract value</span> for every account that goes live.
-                There's a minimum of <span className="text-white font-bold">£200 per account</span> — so even a small single-site venue pays.
+                You earn <span className="text-white font-bold">15% of the first year's contract value</span> for every account you introduce,
+                with a minimum of <span className="text-white font-bold">£200 per account</span> — whichever is greater.
               </p>
               <p className="text-slate-300 leading-relaxed">
-                Commission is calculated on the <span className="text-white font-bold">first year only</span>.
-                Once an account is signed up and active, the deal is confirmed and commission is approved by our team.
+                Commission is based on the <span className="text-white font-bold">first year only</span>.
+                Once an account is signed up and live, the deal is confirmed and commission is approved by our team.
               </p>
             </div>
 
@@ -128,9 +140,9 @@ export default function CommissionStructurePage() {
               <p className="text-white font-bold text-sm">Introducer bonus</p>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Bring another partner onto the programme and you earn{' '}
-                <span className="text-white font-semibold">5% of the first-year ARR</span> on every account they close,
-                for as long as those accounts remain live in year one.
-                It's a bonus for growing the team — straightforward and capped to the accounts you helped bring in.
+                <span className="text-white font-semibold">5% of the first-year contract value</span> on every account they introduce
+                that goes live — for as long as those accounts remain active in year one.
+                It's a bonus for growing the network, calculated on the same basis as the main commission.
               </p>
             </div>
           </div>
@@ -172,7 +184,7 @@ export default function CommissionStructurePage() {
         {/* What you need to do */}
         <div className="space-y-5">
           <h2 className="text-white font-bold text-xl">What you need to do</h2>
-          <p className="text-slate-400">Three steps. That's it.</p>
+          <p className="text-slate-400">Three steps — and only the first one is yours.</p>
           <div className="space-y-3">
             {STEPS.map(({ step, label, detail }) => (
               <div key={step} className="flex items-start gap-4 bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4">
@@ -190,15 +202,14 @@ export default function CommissionStructurePage() {
             <div className="flex items-start gap-3">
               <CheckCircle2 size={16} className="text-teal-400 flex-shrink-0 mt-0.5" />
               <p className="text-slate-300 text-sm leading-relaxed">
-                Everything runs through our internal pipeline — you log leads, track progress, and see your commission
-                all in one place. There's no separate process or paperwork. If you've logged it and moved it through,
-                the system has the record.
+                Your introductions are logged in our pipeline so there's a clear record of every lead you've brought in.
+                You can see the status of each one and track what's been paid — no guesswork.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Rules / fair play */}
+        {/* Rules */}
         <div className="space-y-4">
           <h2 className="text-white font-bold text-xl">The rules</h2>
           <div className="space-y-3 text-sm text-slate-400 leading-relaxed">
@@ -209,15 +220,15 @@ export default function CommissionStructurePage() {
             <p className="flex items-start gap-2">
               <span className="text-teal-400 font-bold flex-shrink-0">—</span>
               If two partners claim the same venue, our team reviews the pipeline history and resolves it before anything is paid.
-              First one to have properly logged and progressed the relationship is usually the right call.
+              The partner with the clearest, earliest record of the introduction is the right call.
             </p>
             <p className="flex items-start gap-2">
               <span className="text-teal-400 font-bold flex-shrink-0">—</span>
-              Commission is signed off by an admin once a deal is confirmed live. You'll see the status in the pipeline.
+              Commission is confirmed by our team once an account is live. You'll see the status in your pipeline view.
             </p>
             <p className="flex items-start gap-2">
               <span className="text-teal-400 font-bold flex-shrink-0">—</span>
-              The introducer bonus tracks back to year-one accounts only — it's not a perpetual override.
+              The introducer bonus applies to year-one accounts only — it is not an ongoing arrangement beyond that.
             </p>
           </div>
         </div>
@@ -225,7 +236,7 @@ export default function CommissionStructurePage() {
         {/* Footer CTA */}
         <div className="border-t border-slate-800 pt-10 text-center space-y-3">
           <p className="text-slate-500 text-sm">
-            Ready to get started? Get access to the pipeline and log your first lead.
+            Ready to get started? Log in to the pipeline and record your first introduction.
           </p>
           <a
             href="/login"
