@@ -11,6 +11,8 @@ interface FormData {
   email: string;
   phone: string;
   business_name: string;
+  city: string;
+  postcode: string;
   num_sites: string;
   message: string;
 }
@@ -23,7 +25,7 @@ interface Slot {
 }
 
 const EMPTY: FormData = {
-  name: '', email: '', phone: '', business_name: '', num_sites: '1', message: '',
+  name: '', email: '', phone: '', business_name: '', city: '', postcode: '', num_sites: '1', message: '',
 };
 
 type Step = 'details' | 'slot' | 'confirmed';
@@ -133,6 +135,8 @@ export default function BookingModal() {
       email: form.email.trim(),
       phone: form.phone.trim(),
       business_name: form.business_name.trim(),
+      city: form.city.trim() || null,
+      postcode: form.postcode.trim() || null,
       num_sites: form.num_sites,
       message: form.message.trim(),
     }]);
@@ -295,6 +299,19 @@ export default function BookingModal() {
                   placeholder="The Crown, Manchester"
                   className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" required />
               </Field>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Town / City" optional>
+                  <input type="text" value={form.city} onChange={e => set('city', e.target.value)}
+                    placeholder="Manchester"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" />
+                </Field>
+                <Field label="Postcode" optional>
+                  <input type="text" value={form.postcode} onChange={e => set('postcode', e.target.value)}
+                    placeholder="M1 1AA"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" />
+                </Field>
+              </div>
 
               <Field label="Number of sites / kitchens" icon={<Users size={14} className="text-slate-600" />}>
                 <input
