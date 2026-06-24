@@ -1,38 +1,38 @@
 import { calcARR, calcL1Commission, calcL2Commission, fmtGbp, PRICE_PER_SITE } from '../lib/commission';
-import { CheckCircle2, TrendingUp, Users, Zap, Shield, BarChart3, Utensils } from 'lucide-react';
+import { CheckCircle2, ClipboardList, GraduationCap, BarChart3, Layers, PoundSterling } from 'lucide-react';
 
 const exampleSites = [1, 2, 3, 5, 8, 10, 15, 20];
 
 const USPS = [
   {
-    icon: Utensils,
-    title: 'Built for hospitality',
-    body: 'Every feature is designed around how kitchens and front-of-house actually work — not adapted from a generic platform.',
-  },
-  {
-    icon: Zap,
-    title: 'Up and running in minutes',
-    body: 'No lengthy onboarding, no IT project. A venue can be live the same day they sign up.',
-  },
-  {
     icon: BarChart3,
-    title: 'One view of the whole operation',
-    body: 'Dish tracking, waste, margins, team performance — all in one place. No more spreadsheets or disconnected tools.',
+    title: 'Menu management & live margin tracking',
+    body: 'Operators build and manage their menus in the platform, with live food cost and margin data updating as prices change. No more spreadsheet guesswork — they see their numbers in real time.',
   },
   {
-    icon: Shield,
-    title: 'Scales with the group',
-    body: 'Single-site operators and multi-site groups use the same platform. Adding a new venue takes seconds.',
+    icon: ClipboardList,
+    title: 'Compliance',
+    body: 'Build and manage compliance processes directly in the platform. Custom checklists, sign-offs, and records — all in one place and fully tailored to how each venue operates.',
   },
   {
-    icon: TrendingUp,
-    title: 'Measurable ROI from day one',
-    body: 'Operators see real food cost and margin data immediately. The numbers make the case for you.',
+    icon: GraduationCap,
+    title: 'Training',
+    body: 'Create bespoke training content in minutes. Operators write their own courses, attach them to their own dishes and processes, and roll them out to their team — no third-party tools needed.',
   },
   {
-    icon: Users,
+    icon: Layers,
+    title: 'Fully bespoke output',
+    body: 'Everything in the platform is theirs. Import existing dishes, write their own compliance, build their own training. It reflects how they actually work, not a generic template.',
+  },
+  {
+    icon: CheckCircle2,
+    title: 'Up and running in minutes',
+    body: 'No IT project, no lengthy onboarding. A venue can be live the same day they sign up — and importing what they already have is straightforward.',
+  },
+  {
+    icon: PoundSterling,
     title: 'Priced to be a no-brainer',
-    body: `£${PRICE_PER_SITE.toLocaleString()} per venue per year — less than £${Math.round(PRICE_PER_SITE / 365)} a day. The first improvement in food cost covers it.`,
+    body: `£${PRICE_PER_SITE.toLocaleString()} per venue per year — around £3.29 a day. One meaningful margin improvement and it's paid for.`,
   },
 ];
 
@@ -88,13 +88,18 @@ export default function CommissionStructurePage() {
           <h2 className="text-white font-bold text-xl">What is ServiceSupport.UK?</h2>
           <p className="text-slate-400 leading-relaxed">
             ServiceSupport.UK is an operations platform for food and drink businesses — pubs, restaurants, hotels,
-            cafes, and multi-site groups. It brings dish tracking, waste management, margins, and team
-            performance into one dashboard that operators actually use every day.
+            cafes, and multi-site groups. It covers three areas: <span className="text-slate-300">menu management and live margin tracking</span>,{' '}
+            <span className="text-slate-300">compliance</span>, and <span className="text-slate-300">training</span>.
           </p>
           <p className="text-slate-400 leading-relaxed">
-            The pitch is simple: most hospitality operators are running on gut feel and spreadsheets.
-            ServiceSupport.UK gives them the numbers they need to cut waste, protect margins, and run a tighter operation.
-            The platform pays for itself quickly — and the demo makes that obvious.
+            The key is that it's fully bespoke to each operator — they create their own dishes, write their own compliance processes,
+            and build their own training content, or import what they already have. The platform then manages it all going forward.
+            No generic templates, no workarounds. Just how they actually work, in one place.
+          </p>
+          <p className="text-slate-400 leading-relaxed">
+            Most hospitality operators are running on gut feel and spreadsheets.
+            ServiceSupport.UK gives them the numbers and the structure they need.
+            The demo makes the value obvious — which is why the introduction is the hardest part, not the close.
           </p>
         </div>
 
