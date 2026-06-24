@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
+import CommissionStructurePage from './pages/CommissionStructurePage';
 import MarketingLayout from './pages/marketing/MarketingLayout';
 import OverviewPage from './pages/marketing/OverviewPage';
 import PipelinePage from './pages/marketing/PipelinePage';
@@ -43,6 +44,7 @@ function App() {
             <Route path="/view/brochure" element={<BrochurePage standalone />} />
             <Route path="/view/1-pager" element={<Print1Page standalone />} />
             <Route path="/view/5-pager" element={<Print5Page standalone />} />
+            <Route path="/commission-structure" element={<CommissionStructurePage />} />
 
             {/* Internal pipeline — requires login */}
             <Route

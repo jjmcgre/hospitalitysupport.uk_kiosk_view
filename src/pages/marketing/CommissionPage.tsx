@@ -1,15 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import {
   PoundSterling, CheckCircle2, AlertTriangle, XCircle, Clock,
-  RefreshCw, TrendingUp, ChevronRight,
+  RefreshCw, ChevronRight, ExternalLink,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
 import {
-  PRICE_PER_SITE, calcARR, calcL1Commission, calcL2Commission, fmtGbp,
-  STAGE_LABELS, Stage, CommissionStatus,
+  calcARR, calcL1Commission, calcL2Commission, fmtGbp,
+  Stage, CommissionStatus,
 } from '../../lib/commission';
 
 interface DealRow {
@@ -136,13 +136,28 @@ export default function CommissionPage() {
   const pendingApproval = deals.filter(d => d.commission_status === 'pending' && d.stage === 'won');
   const approvedUnpaid = deals.filter(d => d.commission_status === 'approved' && !d.commission_paid_at && d.stage === 'won');
 
-  const exampleSites = [1, 2, 3, 5, 8, 10, 15, 20];
-
   return (
     <div className="min-h-full">
-      <PageHeader title="Commission" subtitle="How it works, what you're owed, what needs approving." />
+      <PageHeader title="Commission" subtitle="What you're owed and what needs approving." />
 
       <div className="px-4 py-6 sm:px-8 space-y-8">
+
+        {/* Share link */}
+        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-white text-sm font-bold">Commission structure</p>
+            <p className="text-slate-500 text-xs mt-0.5">Share this link with anyone you're bringing onto the team.</p>
+          </div>
+          <a
+            href="/commission-structure"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors flex-shrink-0"
+          >
+            <ExternalLink size={12} />
+            Open page
+          </a>
+        </div>
 
         {/* My commission summary */}
         <div>
@@ -273,78 +288,6 @@ export default function CommissionPage() {
             )}
           </div>
         )}
-
-        {/* Commission structure */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp size={14} className="text-teal-400" />
-            <h2 className="text-white font-bold text-sm">The deal</h2>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-            <div className="space-y-2 text-sm text-slate-300 leading-relaxed">
-              <p>
-                You earn <span className="text-white font-bold">15% of annual contract value</span> for every account you bring in.
-                Minimum <span className="text-white font-bold">£200</span> per account regardless of size.
-              </p>
-              <p>
-                Each venue pays <span className="text-teal-400 font-bold">£{PRICE_PER_SITE.toLocaleString()}/year</span>. Multi-site groups are a single account at the number of sites they run.
-              </p>
-              <p>
-                If you introduce another salesperson and they bring in accounts,
-                you earn <span className="text-white font-bold">5% of their ARR</span> — indefinitely,
-                for as long as those accounts stay live.
-              </p>
-              <p className="text-slate-500">
-                Commission is counted once a deal is marked Won and approved by an admin.
-                Where two salespeople have attributed the same organisation, admin resolves the conflict before any commission is paid.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Example table */}
-        <div>
-          <h2 className="text-white font-bold text-sm mb-3">Example payouts</h2>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-            <div className="grid grid-cols-4 px-5 py-3 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              <span>Sites</span>
-              <span>ARR</span>
-              <span>L1 commission</span>
-              <span>L2 override</span>
-            </div>
-            {exampleSites.map(n => {
-              const arr = calcARR(n);
-              const l1 = calcL1Commission(n);
-              const l2 = calcL2Commission(n);
-              const atMin = l1 === 200;
-              return (
-                <div key={n} className={`grid grid-cols-4 px-5 py-3 text-sm border-b border-slate-800 last:border-0 ${n === 1 ? 'text-slate-500' : ''}`}>
-                  <span className="text-slate-300 font-semibold">{n}</span>
-                  <span className="text-teal-400">{fmtGbp(arr)}</span>
-                  <span className={`font-bold ${atMin ? 'text-slate-400' : 'text-yellow-400'}`}>
-                    {fmtGbp(l1)}{atMin && <span className="text-slate-600 font-normal text-xs ml-1">(min)</span>}
-                  </span>
-                  <span className="text-slate-500">{fmtGbp(l2)}</span>
-                </div>
-              );
-            })}
-          </div>
-          <p className="text-slate-600 text-xs mt-2 px-1">L2 = introducer override. Paid to whoever recruited the salesperson who won the deal.</p>
-        </div>
-
-        {/* The script */}
-        <div>
-          <h2 className="text-white font-bold text-sm mb-3">Explaining it to a new recruit</h2>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{`We pay 15% of the first year's contract value when an account goes live. Minimum £200 per account.
-
-Every venue pays £1,200 a year. One pub is £200. Ten pubs is £1,800. Simple.
-
-There's also an introducer structure. If you bring someone onto the team and they win deals, you earn 5% of those accounts' ARR — ongoing, for as long as the accounts are with us.
-
-Commission is signed off by admin once a deal is confirmed won. If two of us are both claiming the same venue, admin sorts it out before anything gets paid. First one to properly log the relationship and move it through the pipeline is usually the right call.`}</p>
-          </div>
-        </div>
 
       </div>
     </div>
