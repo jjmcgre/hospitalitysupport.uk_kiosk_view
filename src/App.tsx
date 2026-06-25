@@ -1,11 +1,10 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import CommissionStructurePage from './pages/CommissionStructurePage';
 import MarketingLayout from './pages/marketing/MarketingLayout';
-import OverviewPage from './pages/marketing/OverviewPage';
 import PipelinePage from './pages/marketing/PipelinePage';
 import DealPage from './pages/marketing/DealPage';
 import InboundPage from './pages/marketing/InboundPage';
@@ -57,7 +56,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<OverviewPage />} />
+              <Route index element={<Navigate to="/pipeline" replace />} />
               <Route path="pipeline" element={<PipelinePage />} />
               <Route path="deals/:id" element={<DealPage />} />
               <Route path="inbound" element={<InboundPage />} />

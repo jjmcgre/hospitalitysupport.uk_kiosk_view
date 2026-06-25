@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import {
-  Menu, X, LayoutDashboard, Mail, MessageSquare, Palette,
+  Menu, X, Mail, MessageSquare, Palette,
   CalendarDays, Copy, Check, ExternalLink, Share2, LogOut, User, Pencil,
   GitBranch, Users, PoundSterling, Inbox, Phone, FolderOpen, MessageCircle,
   Plus,
@@ -160,7 +160,6 @@ export default function MarketingLayout() {
       <nav className="flex-1 overflow-y-auto p-3 space-y-4">
         <div>
           <p className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-4 mb-1.5">Pipeline</p>
-          <NavItem to="/" label="Overview" icon={LayoutDashboard} end />
           <NavItem to="/pipeline" label="Pipeline" icon={GitBranch} />
           {isAdmin && <NavItem to="/inbound" label="Inbound Leads" icon={Inbox} />}
           <NavItem to="/diary" label="Demo Diary" icon={CalendarDays} />
