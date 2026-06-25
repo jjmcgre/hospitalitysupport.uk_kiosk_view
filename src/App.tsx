@@ -23,6 +23,8 @@ import Print1Page from './pages/marketing/Print1Page';
 import Print5Page from './pages/marketing/Print5Page';
 import EnquiriesPage from './pages/marketing/EnquiriesPage';
 import DiaryPage from './pages/marketing/DiaryPage';
+import DocsPage from './pages/marketing/DocsPage';
+import ChatPage from './pages/marketing/ChatPage';
 import { BookingProvider } from './context/BookingContext';
 import BookingModal from './components/BookingModal';
 
@@ -63,6 +65,8 @@ function App() {
               <Route path="commission" element={<CommissionPage />} />
               <Route path="enquiries" element={<EnquiriesPage />} />
               <Route path="diary" element={<DiaryPage />} />
+              <Route path="chat" element={<ChatPage />} />
+              <Route path="docs" element={<DocsPage />} />
               <Route path="instagram" element={<InstagramPage />} />
               <Route path="tiktok" element={<TikTokPage />} />
               <Route path="facebook" element={<FacebookPage />} />
@@ -82,3 +86,4 @@ function App() {
 }
 
 export default App;
+

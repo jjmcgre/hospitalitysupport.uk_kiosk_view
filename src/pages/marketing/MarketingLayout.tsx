@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import {
-  Menu, X, LayoutDashboard, Instagram, Video, Facebook, Linkedin,
-  Mail, MessageSquare, Palette, BookOpen, FileText, Files, CalendarDays,
-  Copy, Check, ExternalLink, Share2, LogOut, User, Pencil, GitBranch,
-  Users, PoundSterling, Inbox, Phone,
+  Menu, X, LayoutDashboard, Mail, MessageSquare, Palette,
+  CalendarDays, Copy, Check, ExternalLink, Share2, LogOut, User, Pencil,
+  GitBranch, Users, PoundSterling, Inbox, Phone, FolderOpen, MessageCircle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -58,7 +57,7 @@ function SharePanel() {
             const fullUrl = `${origin}${link.path}`;
             return (
               <div key={link.path} className="bg-slate-800/60 rounded-xl px-3 py-2.5">
-                <p className="text-white text-xs font-bold leading-snug mb-0.5">{link.name}</p>
+                <p className="text-white text-xs font-semibold leading-snug mb-0.5">{link.name}</p>
                 <p className="text-slate-500 text-[10px] mb-1.5">{link.description}</p>
                 <div className="flex items-center gap-1">
                   <CopyBtn text={`${link.name}\n${fullUrl}`} title="Copy name + link">
@@ -147,15 +146,17 @@ export default function MarketingLayout() {
       print:hidden
     `}>
       <div className="px-5 py-5 border-b border-slate-800">
-        <span className="text-white font-black text-sm tracking-tight">
-          ServiceSupport<span className="text-teal-400">.UK</span>
-        </span>
-        <p className="text-slate-500 text-xs mt-1 font-medium">Pipeline</p>
+        <Link to="/" className="block hover:opacity-80 transition-opacity">
+          <span className="text-white font-bold text-sm tracking-tight">
+            ServiceSupport<span className="text-teal-400">.UK</span>
+          </span>
+          <p className="text-slate-500 text-xs mt-0.5 font-medium">Pipeline Hub</p>
+        </Link>
       </div>
 
       <nav className="flex-1 overflow-y-auto p-3 space-y-4">
         <div>
-          <p className="text-slate-600 text-[10px] font-bold uppercase tracking-widest px-4 mb-1.5">Pipeline</p>
+          <p className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-4 mb-1.5">Pipeline</p>
           <NavItem to="/" label="Overview" icon={LayoutDashboard} end />
           <NavItem to="/pipeline" label="Pipeline" icon={GitBranch} />
           {isAdmin && <NavItem to="/inbound" label="Inbound Leads" icon={Inbox} />}
@@ -163,14 +164,16 @@ export default function MarketingLayout() {
         </div>
 
         <div className="border-t border-slate-800 pt-3">
-          <p className="text-slate-600 text-[10px] font-bold uppercase tracking-widest px-4 mb-1.5">Team</p>
+          <p className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-4 mb-1.5">Team</p>
           <NavItem to="/team" label="Team" icon={Users} />
           <NavItem to="/commission" label="Commission" icon={PoundSterling} />
+          <NavItem to="/chat" label="Team Chat" icon={MessageCircle} />
         </div>
 
         <div className="border-t border-slate-800 pt-3">
-          <p className="text-slate-600 text-[10px] font-bold uppercase tracking-widest px-4 mb-1.5">Materials</p>
+          <p className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-4 mb-1.5">Materials</p>
           <SharePanel />
+          <NavItem to="/docs" label="Documents" icon={FolderOpen} />
           <NavItem to="/email" label="Email Campaign" icon={Mail} />
           <NavItem to="/sales" label="Scripts & Talking Points" icon={MessageSquare} />
           <NavItem to="/brand" label="Brand" icon={Palette} />
@@ -179,14 +182,14 @@ export default function MarketingLayout() {
 
       <div className="p-4 border-t border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0 text-teal-400 font-black text-sm">
+          <div className="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0 text-teal-400 font-bold text-sm">
             {initial}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-white text-xs font-bold truncate">{displayName}</p>
+              <p className="text-white text-xs font-semibold truncate">{displayName}</p>
               {isAdmin && (
-                <span className="text-[9px] font-bold bg-teal-500/15 text-teal-400 border border-teal-500/25 rounded-full px-1.5 py-px flex-shrink-0">
+                <span className="text-[9px] font-semibold bg-teal-500/15 text-teal-400 border border-teal-500/25 rounded-full px-1.5 py-px flex-shrink-0">
                   admin
                 </span>
               )}
@@ -213,7 +216,7 @@ export default function MarketingLayout() {
         {!profile?.display_name && (
           <button
             onClick={() => setShowProfileModal(true)}
-            className="mt-2 w-full text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg py-1.5 hover:bg-amber-500/15 transition-colors"
+            className="mt-2 w-full text-[10px] font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded-lg py-1.5 hover:bg-sky-500/15 transition-colors"
           >
             Set your display name
           </button>
@@ -224,7 +227,6 @@ export default function MarketingLayout() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
-      {/* Profile modal */}
       {showProfileModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl p-8 w-full max-w-sm">
@@ -239,7 +241,7 @@ export default function MarketingLayout() {
             </div>
             <div className="space-y-3">
               <div>
-                <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
+                <label className="text-slate-400 text-[11px] font-semibold uppercase tracking-widest block mb-2">
                   Display name <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -254,7 +256,7 @@ export default function MarketingLayout() {
                 />
               </div>
               <div>
-                <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2 flex items-center gap-1">
+                <label className="text-slate-400 text-[11px] font-semibold uppercase tracking-widest block mb-2 flex items-center gap-1">
                   <Phone size={10} />Mobile
                 </label>
                 <input
@@ -270,7 +272,7 @@ export default function MarketingLayout() {
               <button
                 onClick={saveProfile}
                 disabled={!profileName.trim() || savingProfile}
-                className="flex-1 bg-teal-500 hover:bg-teal-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
+                className="flex-1 bg-teal-500 hover:bg-teal-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
               >
                 {savingProfile ? 'Saving...' : 'Save'}
               </button>
@@ -296,7 +298,7 @@ export default function MarketingLayout() {
           <button onClick={() => setMobileOpen(true)} className="text-slate-400 hover:text-white transition-colors p-1">
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <span className="text-white font-semibold text-sm">Pipeline</span>
+          <span className="text-white font-semibold text-sm">Pipeline Hub</span>
         </header>
         <main className="flex-1 overflow-y-auto">
           <Outlet />
