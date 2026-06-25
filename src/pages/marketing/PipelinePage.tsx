@@ -255,7 +255,9 @@ export default function PipelinePage() {
                         </span>
 
                         <span className="text-[10px] text-teal-500 font-bold">{fmtGbp(arr)}/yr</span>
-                        <span className="text-[10px] text-sky-400 font-bold">{fmtGbp(comm)} comm.</span>
+                        {deal.commission_status !== 'n/a' && !(isMyDeal && profile?.is_founder) && (
+                          <span className="text-[10px] text-sky-400 font-bold">{fmtGbp(comm)} comm.</span>
+                        )}
 
                         {deal.sourced_by_name && (
                           <span className={`text-[10px] font-bold rounded-full px-2 py-px flex items-center gap-1 ${
