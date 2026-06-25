@@ -11,6 +11,7 @@ import { supabase } from '../../lib/supabase';
 import LogDealModal from './components/LogDealModal';
 
 const shareLinks = [
+  { name: 'ServiceSupport.UK — Product Overview', path: '/demo', description: 'Full product landing page' },
   { name: 'ServiceSupport.UK — Brochure', path: '/brochure', description: '8-page square PDF' },
   { name: 'ServiceSupport.UK — 1-Page Summary', path: '/one-pager', description: 'A4 single page' },
   { name: 'ServiceSupport.UK — Sales Pack', path: '/sales-pack', description: '5-page A4 full detail' },
