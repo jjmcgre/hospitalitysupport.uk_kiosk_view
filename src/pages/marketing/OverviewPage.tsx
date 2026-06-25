@@ -243,37 +243,6 @@ export default function OverviewPage() {
 
       <div className="px-4 py-5 sm:px-8 sm:py-6 space-y-8">
 
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-slate-600 text-xs flex items-center gap-1.5">
-            <Clock size={11} />Updated {timeAgo(lastRefreshed.toISOString())}
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => { navigator.clipboard.writeText(landingUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border transition-all ${
-                copied ? 'bg-teal-500/20 border-teal-500/40 text-teal-300' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
-              }`}
-            >
-              {copied ? <Check size={12} /> : <Copy size={12} />}
-              {copied ? 'Copied!' : 'Copy landing page link'}
-            </button>
-            <a href="/demo" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600 transition-all">
-              <ExternalLink size={12} />Open landing page
-            </a>
-            <button
-              onClick={() => setShowAddLead(true)}
-              className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-semibold px-3 py-2 rounded-lg"
-            >
-              <Plus size={12} />Log a lead
-            </button>
-            <button onClick={load} className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 text-xs transition-colors">
-              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-              Refresh
-            </button>
-          </div>
-        </div>
 
         {/* ── COMPANY PERFORMANCE ── */}
         <section className="space-y-4">
