@@ -17,6 +17,7 @@ interface AuthContextValue {
   loading: boolean;
   profile: UserProfile | null;
   profileLoading: boolean;
+  needsClaim: boolean;
   founderIds: Set<string>;
   refetchProfile: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase
       .from('user_profiles')
       .select('id, display_name, role, is_founder, introduced_by_user_id, phone')
-      .eq('id', userId)
+      .eq('auth_user_id', userId)
       .maybeSingle();
     setProfile(data as UserProfile | null);
     setProfileLoading(false);
@@ -79,6 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [fetchProfile, fetchFounderIds]);
 
+  const needsClaim = !!session && !loading && !profileLoading && profile === null;
+
   return (
     <AuthContext.Provider value={{
       session,
@@ -86,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       profile,
       profileLoading,
+      needsClaim,
       founderIds,
       refetchProfile,
       signOut: async () => { await supabase.auth.signOut(); },

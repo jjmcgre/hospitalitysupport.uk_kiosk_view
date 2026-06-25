@@ -99,7 +99,7 @@ export default function CommissionPage() {
     load();
   }
 
-  const myDeals = useMemo(() => deals.filter(d => d.sourced_by_user_id === user?.id), [deals, user]);
+  const myDeals = useMemo(() => deals.filter(d => d.sourced_by_user_id === profile?.id), [deals, profile]);
   const myApproved = useMemo(() => myDeals.filter(d => d.commission_status === 'approved'), [myDeals]);
   const myPending = useMemo(() => myDeals.filter(d => d.commission_status === 'pending'), [myDeals]);
   const myFlagged = useMemo(() => myDeals.filter(d => d.commission_status === 'flagged'), [myDeals]);
@@ -115,10 +115,10 @@ export default function CommissionPage() {
     return deals
       .filter(d => {
         const sp = d.sourced_by_user_id ? profileMap[d.sourced_by_user_id] : null;
-        return sp?.introduced_by_user_id === user?.id && d.commission_status === 'approved';
+        return sp?.introduced_by_user_id === profile?.id && d.commission_status === 'approved';
       })
       .reduce((s, d) => s + calcL2Commission(d.num_sites, d.arr_override), 0);
-  }, [deals, profile, profileMap, user]);
+  }, [deals, profile, profileMap]);
 
   const flaggedDeals = deals.filter(d => d.commission_status === 'flagged' && !founderIds.has(d.sourced_by_user_id ?? ''));
   const pendingApproval = deals.filter(d => d.commission_status === 'pending' && d.stage === 'won' && !founderIds.has(d.sourced_by_user_id ?? ''));

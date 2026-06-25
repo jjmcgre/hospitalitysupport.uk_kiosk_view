@@ -16,6 +16,7 @@ interface TeamMember {
   is_active: boolean;
   is_founder: boolean;
   notes: string | null;
+  auth_user_id: string | null;
   created_at: string;
 }
 
@@ -34,7 +35,7 @@ const inputCls =
 const labelCls = 'text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2';
 
 export default function TeamPage() {
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [stats, setStats] = useState<MemberStats>({});
   const [loading, setLoading] = useState(true);
@@ -132,7 +133,7 @@ export default function TeamPage() {
           <div className="space-y-3">
             {members.map(m => {
               const s = stats[m.id] ?? { active: 0, won: 0, pipelineArr: 0, wonArr: 0, commission: 0 };
-              const isMe = m.id === user?.id;
+              const isMe = m.id === profile?.id;
               const isEditing = editing === m.id;
 
               return (
