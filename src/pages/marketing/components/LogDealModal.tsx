@@ -335,6 +335,17 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
         throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
       }
 
+      // Advance the deal stage to demo_booked
+      const demoAction = DEFAULT_NEXT_ACTIONS['demo_booked'];
+      await supabase
+        .from('deals')
+        .update({
+          stage: 'demo_booked',
+          next_action: demoAction.action,
+          next_action_date: isoDate(addDays(new Date(selectedSlot.slot_date), demoAction.daysAhead)),
+        })
+        .eq('id', savedDealId);
+
       await supabase.from('deal_activity').insert({
         deal_id: savedDealId,
         user_id: userId,
