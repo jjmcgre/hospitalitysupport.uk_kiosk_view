@@ -78,6 +78,7 @@ Deno.serve(async (req: Request) => {
   // Pre-create the profile so the Team page shows them immediately
   const { error: profileError } = await adminClient.from("user_profiles").upsert({
     id: userId,
+    auth_user_id: userId,
     display_name: display_name.trim(),
     role: role ?? "salesperson",
     phone: phone?.trim() || null,

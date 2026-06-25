@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Phone, Plus, Check, X, RefreshCw, UserCheck, Shield } from 'lucide-react';
+import { Phone, Plus, Check, X, RefreshCw, UserCheck, Shield, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
@@ -13,6 +13,7 @@ interface TeamMember {
   phone: string | null;
   introduced_by_user_id: string | null;
   is_active: boolean;
+  is_founder: boolean;
   notes: string | null;
   created_at: string;
 }
@@ -94,6 +95,7 @@ export default function TeamPage() {
       phone: draft.phone?.trim() || null,
       role: draft.role ?? 'salesperson',
       introduced_by_user_id: draft.introduced_by_user_id || null,
+      is_founder: draft.is_founder ?? false,
       notes: draft.notes?.trim() || null,
     }).eq('id', editing);
     setEditing(null);
@@ -155,6 +157,11 @@ export default function TeamPage() {
                             <Shield size={8} />admin
                           </span>
                         )}
+                        {m.is_founder && (
+                          <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full px-2 py-px flex items-center gap-1">
+                            <Star size={8} />founder
+                          </span>
+                        )}
                         {isMe && (
                           <span className="text-[10px] font-bold bg-slate-700 text-slate-400 border border-slate-600 rounded-full px-2 py-px">
                             you
@@ -190,8 +197,17 @@ export default function TeamPage() {
                           <div className="text-slate-600 text-[10px]">Won</div>
                         </div>
                         <div className="bg-slate-800 rounded-xl px-3 py-2 text-center">
-                          <div className="text-yellow-400 font-black text-lg">{s.commission > 0 ? fmtGbp(s.commission) : '—'}</div>
-                          <div className="text-slate-600 text-[10px]">Comm. paid</div>
+                          {m.is_founder ? (
+                            <>
+                              <div className="text-amber-400 font-black text-lg">Business</div>
+                              <div className="text-slate-600 text-[10px]">Commission</div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-yellow-400 font-black text-lg">{s.commission > 0 ? fmtGbp(s.commission) : '—'}</div>
+                              <div className="text-slate-600 text-[10px]">Comm. paid</div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -235,6 +251,24 @@ export default function TeamPage() {
                             </select>
                           </div>
                         </div>
+                      )}
+                      {isAdmin && (
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                          <div className="relative flex-shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={draft.is_founder ?? false}
+                              onChange={e => setDraft(p => ({ ...p, is_founder: e.target.checked }))}
+                              className="sr-only"
+                            />
+                            <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                              draft.is_founder ? 'bg-amber-500 border-amber-500' : 'bg-transparent border-slate-600 group-hover:border-slate-400'
+                            }`}>
+                              {draft.is_founder && <Check size={10} className="text-white" strokeWidth={3} />}
+                            </div>
+                          </div>
+                          <span className="text-slate-400 text-xs">Founder — commission goes to the business, not personal</span>
+                        </label>
                       )}
                       <div>
                         <label className={labelCls}>Notes</label>

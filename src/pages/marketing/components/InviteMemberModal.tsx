@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, UserPlus, Check, AlertCircle } from 'lucide-react';
+import { X, UserPlus, Check, AlertCircle, Mail, User } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
 interface Props {
@@ -13,11 +13,13 @@ const inputCls =
 const labelCls = 'text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2';
 
 export default function InviteMemberModal({ members, onClose, onSuccess }: Props) {
+  const [mode, setMode] = useState<'manual' | 'invite'>('manual');
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState('salesperson');
   const [phone, setPhone] = useState('');
   const [introducedBy, setIntroducedBy] = useState('');
+  const [isFounder, setIsFounder] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -27,35 +29,45 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
     setError(null);
     setSaving(true);
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { setError('Not authenticated'); setSaving(false); return; }
-
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const res = await fetch(`${supabaseUrl}/functions/v1/invite-team-member`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({
-        email: email.trim().toLowerCase(),
+    if (mode === 'manual') {
+      const { error: err } = await supabase.from('user_profiles').insert({
         display_name: displayName.trim(),
         role,
         phone: phone.trim() || null,
         introduced_by_user_id: introducedBy || null,
-      }),
-    });
+        is_founder: isFounder,
+        is_active: true,
+      });
+      setSaving(false);
+      if (err) { setError(err.message); return; }
+      setDone(true);
+      setTimeout(() => { onSuccess(); onClose(); }, 1500);
+    } else {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setError('Not authenticated'); setSaving(false); return; }
 
-    const json = await res.json();
-    setSaving(false);
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/invite-team-member`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          display_name: displayName.trim(),
+          role,
+          phone: phone.trim() || null,
+          introduced_by_user_id: introducedBy || null,
+        }),
+      });
 
-    if (!res.ok) {
-      setError(json.error ?? 'Something went wrong');
-      return;
+      const json = await res.json();
+      setSaving(false);
+      if (!res.ok) { setError(json.error ?? 'Something went wrong'); return; }
+      setDone(true);
+      setTimeout(() => { onSuccess(); onClose(); }, 1800);
     }
-
-    setDone(true);
-    setTimeout(() => { onSuccess(); onClose(); }, 1800);
   }
 
   return (
@@ -67,7 +79,7 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
             <div className="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center">
               <UserPlus size={14} className="text-teal-400" />
             </div>
-            <h2 className="text-white font-bold text-sm">Invite team member</h2>
+            <h2 className="text-white font-bold text-sm">Add team member</h2>
           </div>
           <button onClick={onClose} className="text-slate-600 hover:text-white transition-colors">
             <X size={16} />
@@ -79,25 +91,61 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
             <div className="w-12 h-12 rounded-full bg-teal-500/15 border border-teal-500/25 flex items-center justify-center mx-auto">
               <Check size={20} className="text-teal-400" />
             </div>
-            <p className="text-white font-bold">Invite sent</p>
+            <p className="text-white font-bold">
+              {mode === 'manual' ? 'Member added' : 'Invite sent'}
+            </p>
             <p className="text-slate-500 text-sm">
-              {email} will receive an email with a link to set their password and log in.
+              {mode === 'manual'
+                ? `${displayName} has been added to the team.`
+                : `${email} will receive an email to set their password.`}
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="col-span-2">
+
+            {/* Mode toggle */}
+            <div className="grid grid-cols-2 gap-1.5 bg-slate-800 p-1 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setMode('manual')}
+                className={`flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg transition-colors ${
+                  mode === 'manual'
+                    ? 'bg-slate-700 text-white shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <User size={11} />
+                Add manually
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('invite')}
+                className={`flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg transition-colors ${
+                  mode === 'invite'
+                    ? 'bg-slate-700 text-white shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <Mail size={11} />
+                Send email invite
+              </button>
+            </div>
+
+            {mode === 'invite' && (
+              <div>
                 <label className={labelCls}>Email address</label>
                 <input
                   type="email"
-                  required
+                  required={mode === 'invite'}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="name@example.com"
                   className={inputCls}
                 />
               </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
               <div className="col-span-2">
                 <label className={labelCls}>Display name</label>
                 <input
@@ -137,6 +185,31 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
               </div>
             </div>
 
+            {/* Founder toggle — manual mode only */}
+            {mode === 'manual' && (
+              <label className="flex items-start gap-3 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 cursor-pointer hover:border-slate-600 transition-colors">
+                <div className="relative flex-shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={isFounder}
+                    onChange={e => setIsFounder(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                    isFounder ? 'bg-amber-500 border-amber-500' : 'bg-transparent border-slate-600'
+                  }`}>
+                    {isFounder && <Check size={10} className="text-white" strokeWidth={3} />}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-white text-xs font-bold">Founder</p>
+                  <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
+                    Their deals contribute to business revenue rather than personal commission.
+                  </p>
+                </div>
+              </label>
+            )}
+
             {error && (
               <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
                 <AlertCircle size={14} className="text-red-400 flex-shrink-0 mt-0.5" />
@@ -144,9 +217,11 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
               </div>
             )}
 
-            <p className="text-slate-600 text-xs leading-relaxed">
-              They'll receive an email invite with a link to set their password. Their profile will appear on the Team page immediately.
-            </p>
+            {mode === 'invite' && (
+              <p className="text-slate-600 text-xs leading-relaxed">
+                They'll receive an email with a link to set their password. Their profile appears on the Team page immediately.
+              </p>
+            )}
 
             <div className="flex gap-2 pt-1">
               <button
@@ -155,7 +230,9 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
                 className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors"
               >
                 <UserPlus size={13} />
-                {saving ? 'Sending invite...' : 'Send invite'}
+                {saving
+                  ? (mode === 'manual' ? 'Adding...' : 'Sending...')
+                  : (mode === 'manual' ? 'Add member' : 'Send invite')}
               </button>
               <button
                 type="button"
