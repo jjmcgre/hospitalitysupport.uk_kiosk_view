@@ -295,24 +295,32 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
 
   async function confirmBooking() {
     if (!selectedSlot || !savedDealId) return;
+
+    // email is NOT NULL in demo_bookings — require it before proceeding
+    if (!contact.email.trim()) {
+      setBookingError('An email address is required to book a demo. Go back and add one to the contact.');
+      return;
+    }
+
     setBookingSlot(true);
     setBookingError('');
 
     try {
-      // Create a demo_bookings record pre-populated with the lead's contact details
       const bookingId = crypto.randomUUID();
       const businessLabel = [org.trading_name.trim(), org.city.trim()].filter(Boolean).join(', ');
 
       const { error: bErr } = await supabase.from('demo_bookings').insert([{
         id: bookingId,
         name: contact.full_name.trim(),
-        email: contact.email.trim() || null,
+        email: contact.email.trim(),
         phone: contact.phone.trim() || null,
         business_name: businessLabel,
         city: org.city.trim() || null,
         postcode: org.postcode.trim() || null,
         num_sites: org.num_sites,
         message: initialNote.trim() || null,
+        sourced_by_user_id: userId,
+        sourced_by_name: userName,
       }]);
       if (bErr) throw new Error(bErr.message);
 
@@ -327,7 +335,6 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
         throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
       }
 
-      // Log the booking against the deal activity
       await supabase.from('deal_activity').insert({
         deal_id: savedDealId,
         user_id: userId,
@@ -338,6 +345,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
         },
       });
 
+      onClose();
       navigate(`/deals/${savedDealId}`);
     } catch (err: unknown) {
       setBookingError(err instanceof Error ? err.message : 'Could not book the slot.');
@@ -550,7 +558,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
               {bookingSlot ? 'Booking…' : 'Confirm demo booking'}
             </button>
             <button
-              onClick={() => savedDealId ? navigate(`/deals/${savedDealId}`) : onClose()}
+              onClick={() => { onClose(); if (savedDealId) navigate(`/deals/${savedDealId}`); }}
               className="w-full text-slate-500 hover:text-slate-300 text-sm transition-colors py-1"
             >
               Skip for now — go to the deal
