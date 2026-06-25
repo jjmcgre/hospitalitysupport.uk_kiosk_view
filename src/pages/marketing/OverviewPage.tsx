@@ -98,12 +98,15 @@ export default function OverviewPage() {
   const [loading, setLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [showAddLead, setShowAddLead] = useState(false);
-  const [profile, setProfile] = useState<{ display_name: string } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; is_founder: boolean } | null>(null);
+  const [founderIds, setFounderIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!user) return;
-    supabase.from('user_profiles').select('display_name').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data ?? null));
+    supabase.from('user_profiles').select('display_name, is_founder').eq('id', user.id).maybeSingle()
+      .then(({ data }) => setProfile(data ? { display_name: data.display_name, is_founder: data.is_founder ?? false } : null));
+    supabase.from('user_profiles').select('id, is_founder').eq('is_founder', true)
+      .then(({ data }) => setFounderIds(new Set((data ?? []).map((p: { id: string }) => p.id))));
   }, [user]);
 
   async function load() {
@@ -143,14 +146,14 @@ export default function OverviewPage() {
     .sort((a, b) => a.slot_date.localeCompare(b.slot_date) || a.slot_time.localeCompare(b.slot_time))[0];
 
   const leaderboard = useMemo(() => {
-    const map = new Map<string, { name: string; arr: number; commission: number; count: number }>();
+    const map = new Map<string, { userId: string; name: string; arr: number; commission: number; count: number }>();
     for (const d of activeDeals) {
       if (!d.sourced_by_user_id || !d.sourced_by_name) continue;
       const arr = calcARR(d.num_sites);
       const comm = calcL1Commission(d.num_sites);
       const ex = map.get(d.sourced_by_user_id);
       if (ex) { ex.arr += arr; ex.commission += comm; ex.count++; }
-      else map.set(d.sourced_by_user_id, { name: d.sourced_by_name, arr, commission: comm, count: 1 });
+      else map.set(d.sourced_by_user_id, { userId: d.sourced_by_user_id, name: d.sourced_by_name, arr, commission: comm, count: 1 });
     }
     return Array.from(map.values()).sort((a, b) => b.arr - a.arr);
   }, [activeDeals]);
@@ -300,7 +303,11 @@ export default function OverviewPage() {
           <KpiCard icon={CalendarCheck} label="Demos booked" value={bookedSlots} sub={`${availableSlots} slots open`} tone={bookedSlots > 0 ? 'amber' : 'neutral'} to="/diary" />
           <KpiCard icon={Building2} label="Pipeline ARR" value={totalPipelineArr > 0 ? fmtGbp(totalPipelineArr) : '—'} sub="if all convert" tone="teal" to="/pipeline" />
           <KpiCard icon={Trophy} label="My pipeline" value={myPipelineArr > 0 ? fmtGbp(myPipelineArr) : '—'} sub={`${myDeals.length} deal${myDeals.length !== 1 ? 's' : ''}`} tone="gold" to="/pipeline" />
-          <KpiCard icon={CheckCircle2} label="My commission" value={myCommission > 0 ? fmtGbp(myCommission) : myDeals.length === 0 ? 'Log leads' : '—'} sub="15% · min £200" tone="gold" to="/commission" />
+          {profile?.is_founder ? (
+            <KpiCard icon={CheckCircle2} label="Commission" value="Business" sub="goes to the company" tone="amber" to="/commission" />
+          ) : (
+            <KpiCard icon={CheckCircle2} label="My commission" value={myCommission > 0 ? fmtGbp(myCommission) : myDeals.length === 0 ? 'Log leads' : '—'} sub="£200 or 15%, whichever is greater" tone="gold" to="/commission" />
+          )}
         </div>
 
         {/* Leaderboard + diary */}
@@ -352,9 +359,13 @@ export default function OverviewPage() {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <div className="text-slate-400 text-xs">{fmtGbp(entry.arr)}/yr ARR</div>
-                      <div className={`font-bold text-sm ${i === 0 ? 'text-yellow-300' : 'text-teal-400'}`}>
-                        {fmtGbp(entry.commission)}
-                      </div>
+                      {founderIds.has(entry.userId) ? (
+                        <div className="font-bold text-sm text-amber-400">Business</div>
+                      ) : (
+                        <div className={`font-bold text-sm ${i === 0 ? 'text-yellow-300' : 'text-teal-400'}`}>
+                          {fmtGbp(entry.commission)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
