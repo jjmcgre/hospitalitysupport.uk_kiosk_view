@@ -334,6 +334,49 @@ export default function DealPage() {
     }
   }
 
+  async function moveToStage(target: Stage) {
+    if (!deal || target === deal.stage) return;
+    if (target === 'lost') { setShowLostModal(true); return; }
+
+    const currentIdx = STAGE_ORDER.indexOf(deal.stage);
+    const demoBookedIdx = STAGE_ORDER.indexOf('demo_booked');
+
+    // Forward to demo_booked requires a slot
+    if (target === 'demo_booked' && currentIdx < demoBookedIdx) {
+      openBookDemo();
+      return;
+    }
+
+    setAdvancingStage(true);
+    const defaultAct = DEFAULT_NEXT_ACTIONS[target];
+    const newNextDate = defaultAct.action ? isoDate(addDays(new Date(), defaultAct.daysAhead)) : null;
+
+    await supabase.from('deals').update({
+      stage: target,
+      next_action: defaultAct.action || null,
+      next_action_date: newNextDate,
+      won_at: target === 'won' ? new Date().toISOString() : (deal.won_at ?? null),
+      ...(target === 'won' && founderIds.has(deal.sourced_by_user_id ?? '') ? { commission_status: 'n/a' } : {}),
+      updated_at: new Date().toISOString(),
+    }).eq('id', deal.id);
+
+    await writeActivity('stage_changed', { from: deal.stage, to: target });
+    setDeal(prev => prev ? {
+      ...prev, stage: target,
+      next_action: defaultAct.action || null,
+      next_action_date: newNextDate,
+      won_at: target === 'won' ? new Date().toISOString() : (prev.won_at ?? null),
+    } : prev);
+    setNextActionText(defaultAct.action || '');
+    setNextActionDate(newNextDate ?? '');
+
+    const { data } = await supabase.from('deal_activity')
+      .select('id,user_name,action_type,payload,created_at')
+      .eq('deal_id', deal.id).order('created_at', { ascending: false });
+    setActivity((data ?? []) as ActivityRow[]);
+    setAdvancingStage(false);
+  }
+
   async function saveArr() {
     if (!deal || !user) return;
     setSavingArr(true);
@@ -771,53 +814,101 @@ export default function DealPage() {
         {/* Right: Stage, Commission, Next action, Activity */}
         <div className="space-y-4">
 
-          {/* Stage card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-4">
+          {/* Stage stepper card */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
               <CheckCircle2 size={14} className="text-teal-400" />
               <h2 className="text-white font-bold text-sm">Stage</h2>
-            </div>
-            <div className="flex items-center gap-2 mb-4">
-              <StageBadge stage={deal.stage} />
+              {advancingStage && <RefreshCw size={11} className="animate-spin text-slate-500 ml-auto" />}
             </div>
 
-            {deal.stage === 'lost' ? (
-              <div className="bg-red-500/5 border border-red-500/20 rounded-xl px-3 py-2.5">
-                <p className="text-red-400 text-xs font-bold">Lost reason</p>
-                <p className="text-slate-300 text-sm mt-0.5">
-                  {LOST_REASONS.find(r => r.value === deal.lost_reason)?.label ?? deal.lost_reason ?? 'Not specified'}
-                </p>
-              </div>
-            ) : deal.stage === 'won' ? (
-              <div className="bg-green-500/5 border border-green-500/20 rounded-xl px-3 py-2.5">
-                <p className="text-green-400 text-xs font-bold flex items-center gap-1">
-                  <CheckCircle2 size={11} />Won
-                </p>
-                {deal.won_at && <p className="text-slate-500 text-xs mt-0.5">{fullDate(deal.won_at)}</p>}
-              </div>
-            ) : canEdit ? (
-              <div className="space-y-2">
-                {next && (
-                  <button
-                    onClick={next === 'demo_booked' ? openBookDemo : advanceStage}
-                    disabled={advancingStage}
-                    className="w-full flex items-center justify-between bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-white font-bold px-4 py-3 rounded-xl text-sm transition-colors"
-                  >
-                    <span>{next === 'demo_booked' ? 'Book a demo →' : `Move to: ${STAGE_LABELS[next]}`}</span>
-                    <ChevronRight size={14} />
-                  </button>
-                )}
-                <button
-                  onClick={() => setShowLostModal(true)}
-                  className="w-full text-center text-slate-500 hover:text-red-400 text-xs py-2 transition-colors"
-                >
-                  Mark as lost
-                </button>
-              </div>
-            ) : null}
+            <div className="px-4 py-4">
+              {(() => {
+                const allStages: (Stage | 'lost')[] = [...STAGE_ORDER, 'lost'];
+                const currentIdx = deal.stage === 'lost'
+                  ? allStages.length - 1
+                  : STAGE_ORDER.indexOf(deal.stage);
+
+                return allStages.map((stage, idx) => {
+                  const isPast = idx < currentIdx;
+                  const isCurrent = stage === deal.stage;
+                  const isLostRow = stage === 'lost';
+                  const isLastRow = idx === allStages.length - 1;
+                  const label = isLostRow ? 'Lost' : STAGE_LABELS[stage as Stage];
+
+                  const circleBase = 'relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-150';
+                  const circleCls = isCurrent
+                    ? isLostRow
+                      ? `${circleBase} bg-red-500/20 border-2 border-red-500 text-red-400`
+                      : `${circleBase} bg-teal-500 border-2 border-teal-400 text-white shadow-md shadow-teal-500/30`
+                    : isPast
+                    ? `${circleBase} bg-teal-500/15 border border-teal-500/40 text-teal-400`
+                    : isLostRow
+                    ? `${circleBase} bg-slate-800 border border-red-500/20 text-red-500/40`
+                    : `${circleBase} bg-slate-800 border border-slate-700 text-slate-600`;
+
+                  const labelCls2 = isCurrent
+                    ? isLostRow ? 'text-red-300 font-bold' : 'text-white font-bold'
+                    : isPast
+                    ? 'text-slate-400'
+                    : isLostRow
+                    ? 'text-red-500/40'
+                    : 'text-slate-600';
+
+                  const isClickable = canEdit && !isCurrent && !advancingStage;
+
+                  return (
+                    <div key={stage} className="flex items-start gap-3">
+                      {/* Line + circle column */}
+                      <div className="flex flex-col items-center flex-shrink-0">
+                        <button
+                          onClick={() => isClickable && moveToStage(stage as Stage)}
+                          disabled={!isClickable}
+                          className={`${circleCls} ${isClickable ? 'hover:scale-110 cursor-pointer' : 'cursor-default'}`}
+                          title={isClickable ? `Move to ${label}` : undefined}
+                        >
+                          {isPast
+                            ? <Check size={11} strokeWidth={3} />
+                            : isLostRow
+                            ? <X size={11} strokeWidth={3} />
+                            : isCurrent
+                            ? <span className="w-2 h-2 rounded-full bg-current block" />
+                            : <span className="text-[9px] font-black">{idx + 1}</span>
+                          }
+                        </button>
+                        {!isLastRow && (
+                          <div className={`w-px flex-1 my-0.5 ${isPast && !isLostRow ? 'bg-teal-500/30' : 'bg-slate-800'}`}
+                            style={{ minHeight: 20 }} />
+                        )}
+                      </div>
+
+                      {/* Label */}
+                      <button
+                        onClick={() => isClickable && moveToStage(stage as Stage)}
+                        disabled={!isClickable}
+                        className={`flex-1 pt-1 pb-5 text-left text-sm transition-colors ${labelCls2} ${isClickable ? 'cursor-pointer hover:text-white' : 'cursor-default'} ${isLastRow ? 'pb-1' : ''}`}
+                      >
+                        {label}
+                        {isCurrent && !isLostRow && (
+                          <span className="ml-2 text-[9px] font-bold text-teal-400 bg-teal-500/10 border border-teal-500/20 rounded-full px-1.5 py-px align-middle">now</span>
+                        )}
+                        {isCurrent && isLostRow && deal.lost_reason && (
+                          <span className="ml-2 text-[9px] font-medium text-red-400/70">
+                            {LOST_REASONS.find(r => r.value === deal.lost_reason)?.label}
+                          </span>
+                        )}
+                        {stage === 'won' && isCurrent && deal.won_at && (
+                          <span className="block text-[10px] text-slate-500 mt-0.5 font-normal">{fullDate(deal.won_at)}</span>
+                        )}
+                      </button>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
 
             {deal.stage === 'won' && canEdit && (
-              <div className="mt-3">
+              <div className="px-5 pb-5">
                 <label className={labelCls}>Handoff note</label>
                 <textarea rows={3} defaultValue={deal.handoff_note ?? ''}
                   onBlur={async (e) => {
