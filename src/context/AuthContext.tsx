@@ -17,6 +17,7 @@ interface AuthContextValue {
   loading: boolean;
   profile: UserProfile | null;
   profileLoading: boolean;
+  founderIds: Set<string>;
   refetchProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -28,6 +29,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [founderIds, setFounderIds] = useState<Set<string>>(new Set());
+
+  const fetchFounderIds = useCallback(async () => {
+    const { data } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('is_founder', true);
+    setFounderIds(new Set((data ?? []).map((p: { id: string }) => p.id)));
+  }, []);
 
   const fetchProfile = useCallback(async (userId: string) => {
     setProfileLoading(true);
@@ -49,20 +59,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setLoading(false);
-      if (data.session?.user?.id) fetchProfile(data.session.user.id);
+      if (data.session?.user?.id) {
+        fetchProfile(data.session.user.id);
+        fetchFounderIds();
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       if (newSession?.user?.id) {
         fetchProfile(newSession.user.id);
+        fetchFounderIds();
       } else {
         setProfile(null);
+        setFounderIds(new Set());
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchProfile]);
+  }, [fetchProfile, fetchFounderIds]);
 
   return (
     <AuthContext.Provider value={{
@@ -71,6 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       profile,
       profileLoading,
+      founderIds,
       refetchProfile,
       signOut: async () => { await supabase.auth.signOut(); },
     }}>

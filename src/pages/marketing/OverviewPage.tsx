@@ -135,21 +135,14 @@ function MonthlyTrend({ deals }: { deals: DealRow[] }) {
 }
 
 export default function OverviewPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, founderIds } = useAuth();
   const [deals, setDeals] = useState<DealRow[]>([]);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [showAddLead, setShowAddLead] = useState(false);
-  const [founderIds, setFounderIds] = useState<Set<string>>(new Set());
   const [leaderTab, setLeaderTab] = useState<'pipeline' | 'won'>('pipeline');
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('user_profiles').select('id, is_founder').eq('is_founder', true)
-      .then(({ data }) => setFounderIds(new Set((data ?? []).map((p: { id: string }) => p.id))));
-  }, [user]);
 
   async function load() {
     setLoading(true);

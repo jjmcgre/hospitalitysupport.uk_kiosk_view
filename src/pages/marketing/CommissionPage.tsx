@@ -27,7 +27,7 @@ interface DealRow {
 }
 
 export default function CommissionPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, founderIds } = useAuth();
   const [deals, setDeals] = useState<DealRow[]>([]);
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +109,6 @@ export default function CommissionPage() {
   const myPipelineTotal = useMemo(() => myPending.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myPending]);
 
   const profileMap = useMemo(() => Object.fromEntries(profiles.map(p => [p.id, p])), [profiles]);
-  const founderIds = useMemo(() => new Set(profiles.filter(p => p.is_founder).map(p => p.id)), [profiles]);
 
   const l2Earnings = useMemo(() => {
     if (!profile?.introduced_by_user_id) return 0;

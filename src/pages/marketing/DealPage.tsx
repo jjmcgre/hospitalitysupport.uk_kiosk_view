@@ -128,7 +128,7 @@ function StageBadge({ stage }: { stage: Stage }) {
 
 export default function DealPage() {
   const { id } = useParams<{ id: string }>();
-  const { user, profile } = useAuth();
+  const { user, profile, founderIds } = useAuth();
   const navigate = useNavigate();
 
   const [deal, setDeal] = useState<DealData | null>(null);
@@ -136,7 +136,6 @@ export default function DealPage() {
   const [contacts, setContacts] = useState<ContactData[]>([]);
   const [activity, setActivity] = useState<ActivityRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sourcerIsFounder, setSourcerIsFounder] = useState(false);
 
   // Editing states
   const [editOrg, setEditOrg] = useState(false);
@@ -181,16 +180,12 @@ export default function DealPage() {
       setDeal(d);
       setNextActionText(d.next_action ?? '');
       setNextActionDate(d.next_action_date ?? '');
-      const [orgRes, contactRes, profRes] = await Promise.all([
+      const [orgRes, contactRes] = await Promise.all([
         supabase.from('organisations').select('*').eq('id', d.org_id).single(),
         supabase.from('contacts').select('*').eq('org_id', d.org_id).order('is_primary', { ascending: false }),
-        d.sourced_by_user_id
-          ? supabase.from('user_profiles').select('is_founder').eq('id', d.sourced_by_user_id).maybeSingle()
-          : Promise.resolve({ data: null }),
       ]);
       if (orgRes.data) { setOrg(orgRes.data as OrgData); setOrgDraft(orgRes.data as OrgData); }
       setContacts((contactRes.data ?? []) as ContactData[]);
-      setSourcerIsFounder(profRes.data?.is_founder === true);
     }
     setActivity((actRes.data ?? []) as ActivityRow[]);
     setLoading(false);
@@ -291,7 +286,7 @@ export default function DealPage() {
       next_action: defaultAct.action || null,
       next_action_date: defaultAct.action ? newNextDate : null,
       won_at: next === 'won' ? new Date().toISOString() : undefined,
-      ...(next === 'won' && sourcerIsFounder ? { commission_status: 'n/a' } : {}),
+      ...(next === 'won' && founderIds.has(deal.sourced_by_user_id ?? '') ? { commission_status: 'n/a' } : {}),
       updated_at: new Date().toISOString(),
     }).eq('id', deal.id);
     await writeActivity('stage_changed', { from: deal.stage, to: next });
@@ -728,7 +723,7 @@ export default function DealPage() {
                 {deal.commission_status === 'n/a' ? 'Business revenue' : deal.commission_status}
               </span>
             </div>
-            {deal.commission_status === 'n/a' || sourcerIsFounder ? (
+            {deal.commission_status === 'n/a' || founderIds.has(deal.sourced_by_user_id ?? '') ? (
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Sites</span>

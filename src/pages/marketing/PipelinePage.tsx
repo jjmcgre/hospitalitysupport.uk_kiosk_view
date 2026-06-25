@@ -8,7 +8,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import {
   STAGE_LABELS, STAGE_ORDER, Stage, calcARR, calcL1Commission,
-  fmtGbp, ORG_TYPE_LABELS, CommissionStatus,
+  fmtGbp, ORG_TYPE_LABELS, CommissionStatus, isCommissionable,
 } from '../../lib/commission';
 import PageHeader from './components/PageHeader';
 import LogDealModal from './components/LogDealModal';
@@ -78,7 +78,7 @@ function formatNextDate(date: string | null): string {
 }
 
 export default function PipelinePage() {
-  const { user, profile } = useAuth();
+  const { user, profile, founderIds } = useAuth();
   const [deals, setDeals] = useState<DealRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterTab>('all');
@@ -255,7 +255,7 @@ export default function PipelinePage() {
                         </span>
 
                         <span className="text-[10px] text-teal-500 font-bold">{fmtGbp(arr)}/yr</span>
-                        {deal.commission_status !== 'n/a' && !(isMyDeal && profile?.is_founder) && (
+                        {isCommissionable(deal.sourced_by_user_id, founderIds) && (
                           <span className="text-[10px] text-sky-400 font-bold">{fmtGbp(comm)} comm.</span>
                         )}
 

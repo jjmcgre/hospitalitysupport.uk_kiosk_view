@@ -117,6 +117,11 @@ export const LOST_REASONS = [
   { value: 'other', label: 'Other' },
 ];
 
+export function isCommissionable(sourcedByUserId: string | null | undefined, founderIds: Set<string>): boolean {
+  if (!sourcedByUserId) return false;
+  return !founderIds.has(sourcedByUserId);
+}
+
 export function computeOrgKey(tradingName: string, postcode: string): string {
   return (
     tradingName.toLowerCase().replace(/\s+/g, '') +

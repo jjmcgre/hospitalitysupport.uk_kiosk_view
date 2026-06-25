@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, AlertTriangle, MapPin, Building2, User, Phone, Mail, Hash, Globe, FileText, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
+import { useAuth } from '../../../context/AuthContext';
 import {
   ORG_TYPES, ORG_TYPE_LABELS, computeOrgKey,
   DEFAULT_NEXT_ACTIONS, isoDate, addDays,
@@ -43,6 +44,8 @@ interface ExistingOrg {
 
 export default function LogDealModal({ userId, userName, onClose }: Props) {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const isFounder = profile?.is_founder === true;
   const [org, setOrg] = useState(emptyOrg);
   const [contact, setContact] = useState(emptyContact);
   const [initialNote, setInitialNote] = useState('');
@@ -149,7 +152,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
       const activeDeals = (existingDeals ?? []).filter(
         d => d.stage !== 'lost' && d.stage !== 'won'
       );
-      const commissionStatus = activeDeals.length > 0 ? 'flagged' : 'pending';
+      const commissionStatus = isFounder ? 'n/a' : (activeDeals.length > 0 ? 'flagged' : 'pending');
 
       const { data: newDeal, error: dealErr } = await supabase
         .from('deals')
@@ -424,10 +427,14 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
               {sites >= 1 && (
                 <div className="flex items-center gap-4 bg-teal-500/5 border border-teal-500/20 rounded-xl px-4 py-2.5">
                   <span className="text-teal-400 text-xs font-bold">{fmtGbp(arr)}/yr ARR</span>
-                  <span className="text-slate-600">·</span>
-                  <span className="text-sky-400 text-xs font-bold">{fmtGbp(commission)} commission</span>
-                  <span className="text-slate-600">·</span>
-                  <span className="text-slate-400 text-xs">£200 or 15%, whichever is greater</span>
+                  {!isFounder && (
+                    <>
+                      <span className="text-slate-600">·</span>
+                      <span className="text-sky-400 text-xs font-bold">{fmtGbp(commission)} commission</span>
+                      <span className="text-slate-600">·</span>
+                      <span className="text-slate-400 text-xs">£200 or 15%, whichever is greater</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
