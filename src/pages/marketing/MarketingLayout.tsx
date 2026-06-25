@@ -174,17 +174,6 @@ export default function MarketingLayout() {
           <NavItem to="/email" label="Email Campaign" icon={Mail} />
           <NavItem to="/sales" label="Scripts & Talking Points" icon={MessageSquare} />
           <NavItem to="/brand" label="Brand" icon={Palette} />
-          <NavItem to="/brochure-tool" label="Brochure" icon={BookOpen} />
-          <NavItem to="/print-1" label="1-Page Summary" icon={FileText} />
-          <NavItem to="/print-5" label="5-Page Brochure" icon={Files} />
-        </div>
-
-        <div className="border-t border-slate-800 pt-3">
-          <p className="text-slate-600 text-[10px] font-bold uppercase tracking-widest px-4 mb-1.5">Social</p>
-          <NavItem to="/instagram" label="Instagram" icon={Instagram} />
-          <NavItem to="/tiktok" label="TikTok" icon={Video} />
-          <NavItem to="/facebook" label="Facebook" icon={Facebook} />
-          <NavItem to="/linkedin" label="LinkedIn" icon={Linkedin} />
         </div>
       </nav>
 
