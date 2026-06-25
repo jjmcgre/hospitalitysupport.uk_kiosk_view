@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { X, AlertTriangle, MapPin, Building2, User, Phone, Mail, Hash, Globe, FileText, CheckCircle } from 'lucide-react';
+import { X, AlertTriangle, MapPin, Building2, User, Phone, Mail, Hash, Globe, FileText, CheckCircle, CalendarDays, Copy, Check, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../context/AuthContext';
 import {
   ORG_TYPES, ORG_TYPE_LABELS, computeOrgKey,
   DEFAULT_NEXT_ACTIONS, isoDate, addDays,
-  calcARR, calcL1Commission, fmtGbp,
 } from '../../../lib/commission';
 
 interface Props {
@@ -40,6 +39,33 @@ interface ExistingOrg {
   city: string | null;
   postcode: string | null;
   org_type: string;
+}
+
+function BookingLinkBanner({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="flex items-center gap-3 bg-sky-500/5 border border-sky-500/20 rounded-xl px-4 py-2.5">
+      <CalendarDays size={13} className="text-sky-400 flex-shrink-0" />
+      <span className="text-sky-400 text-xs font-semibold flex-shrink-0">Book a demo</span>
+      <span className="text-slate-500 text-xs font-mono truncate flex-1">{url}</span>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-1.5 rounded-lg text-slate-500 hover:text-sky-400 hover:bg-sky-500/10 transition-colors flex-shrink-0"
+        title="Open booking page"
+      >
+        <ExternalLink size={11} />
+      </a>
+      <button
+        onClick={() => { navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1800); }}
+        className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${copied ? 'text-teal-400 bg-teal-500/10' : 'text-slate-500 hover:text-teal-400 hover:bg-teal-500/10'}`}
+        title="Copy link"
+      >
+        {copied ? <Check size={11} /> : <Copy size={11} />}
+      </button>
+    </div>
+  );
 }
 
 export default function LogDealModal({ userId, userName, onClose }: Props) {
@@ -221,8 +247,8 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
   }
 
   const sites = parseInt(org.num_sites, 10) || 1;
-  const arr = calcARR(sites);
-  const commission = calcL1Commission(sites);
+
+  const bookingUrl = typeof window !== 'undefined' ? `${window.location.origin}/demo` : '/demo';
 
   const inputCls =
     'w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors';
@@ -425,17 +451,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
               </div>
 
               {sites >= 1 && (
-                <div className="flex items-center gap-4 bg-teal-500/5 border border-teal-500/20 rounded-xl px-4 py-2.5">
-                  <span className="text-teal-400 text-xs font-bold">{fmtGbp(arr)}/yr ARR</span>
-                  {!isFounder && (
-                    <>
-                      <span className="text-slate-600">·</span>
-                      <span className="text-sky-400 text-xs font-bold">{fmtGbp(commission)} commission</span>
-                      <span className="text-slate-600">·</span>
-                      <span className="text-slate-400 text-xs">£200 or 15%, whichever is greater</span>
-                    </>
-                  )}
-                </div>
+                <BookingLinkBanner url={bookingUrl} />
               )}
             </div>
           </div>

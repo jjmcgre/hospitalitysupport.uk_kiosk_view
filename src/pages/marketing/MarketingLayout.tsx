@@ -4,9 +4,11 @@ import {
   Menu, X, LayoutDashboard, Mail, MessageSquare, Palette,
   CalendarDays, Copy, Check, ExternalLink, Share2, LogOut, User, Pencil,
   GitBranch, Users, PoundSterling, Inbox, Phone, FolderOpen, MessageCircle,
+  Plus,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import LogDealModal from './components/LogDealModal';
 
 const shareLinks = [
   { name: 'ServiceSupport.UK — Product Overview', path: '/demo', description: 'Full product landing page' },
@@ -99,6 +101,7 @@ function NavItem({ to, label, icon: Icon, end }: { to: string; label: string; ic
 
 export default function MarketingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showLog, setShowLog] = useState(false);
   const { user, signOut, profile, profileLoading, refetchProfile } = useAuth();
   const navigate = useNavigate();
 
@@ -294,16 +297,31 @@ export default function MarketingLayout() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setMobileOpen(true)} className="text-slate-400 hover:text-white transition-colors p-1">
+        <header className="print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-2.5 flex items-center gap-3">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-slate-400 hover:text-white transition-colors p-1 flex-shrink-0">
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <span className="text-white font-semibold text-sm">Pipeline Hub</span>
+          <span className="text-white font-semibold text-sm lg:hidden">Pipeline Hub</span>
+          <div className="flex-1" />
+          <button
+            onClick={() => setShowLog(true)}
+            className="flex items-center gap-1.5 bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-bold px-3 py-2 rounded-lg"
+          >
+            <Plus size={13} />
+            Log a lead
+          </button>
         </header>
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>
+      {showLog && user && (
+        <LogDealModal
+          userId={user.id}
+          userName={profile?.display_name || user.email?.split('@')[0] || 'You'}
+          onClose={() => setShowLog(false)}
+        />
+      )}
     </div>
   );
 }
