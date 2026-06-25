@@ -427,7 +427,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
                   <span className="text-slate-600">·</span>
                   <span className="text-yellow-400 text-xs font-bold">{fmtGbp(commission)} commission</span>
                   <span className="text-slate-600">·</span>
-                  <span className="text-slate-400 text-xs">15% · min £200</span>
+                  <span className="text-slate-400 text-xs">£200 or 15%, whichever is greater</span>
                 </div>
               )}
             </div>

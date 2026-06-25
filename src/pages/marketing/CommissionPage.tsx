@@ -184,7 +184,7 @@ export default function CommissionPage() {
             <div className="mt-3 bg-teal-500/5 border border-teal-500/20 rounded-2xl p-4 flex items-center justify-between">
               <div>
                 <p className="text-teal-300 font-bold text-sm">Introducer override earnings</p>
-                <p className="text-slate-500 text-xs mt-0.5">5% of ARR from people you've introduced</p>
+                <p className="text-slate-500 text-xs mt-0.5">5% commission on accounts introduced by people you brought on</p>
               </div>
               <p className="text-teal-400 font-black text-xl">{fmtGbp(l2Earnings)}</p>
             </div>

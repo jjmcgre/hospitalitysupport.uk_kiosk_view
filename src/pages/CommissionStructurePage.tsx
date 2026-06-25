@@ -152,11 +152,11 @@ export default function CommissionStructurePage() {
             <div className="space-y-3">
               <p className="text-slate-300 leading-relaxed">
                 Each venue pays <span className="text-teal-400 font-bold">£{PRICE_PER_SITE.toLocaleString()} per year</span>.
-                Multi-site groups count as a single account at the number of venues they run.
+                Multi-site groups are charged by the number of venues they run.
               </p>
               <p className="text-slate-300 leading-relaxed">
-                You earn <span className="text-white font-bold">15% of the first year's contract value</span>,
-                with a <span className="text-white font-bold">minimum of £200 per account</span> — whichever is greater.
+                You earn <span className="text-white font-bold">£200 or 15% of the first year's contract value</span>,
+                whichever is greater.
               </p>
               <p className="text-slate-300 leading-relaxed">
                 Commission is based on <span className="text-white font-bold">new business, first year only</span>.
@@ -167,9 +167,9 @@ export default function CommissionStructurePage() {
             <div className="border-t border-slate-800 pt-5 space-y-2">
               <p className="text-white font-bold text-sm">Introducer bonus</p>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Bring another partner onto the programme and you earn{' '}
-                <span className="text-white font-semibold">5% of the first-year contract value</span> on every
-                account they introduce that goes live — for as long as those accounts are active in year one.
+                Bring another sales partner onto the programme and you earn{' '}
+                <span className="text-white font-semibold">5% commission</span> on every
+                account they introduce that goes live.
               </p>
             </div>
           </div>
@@ -204,7 +204,7 @@ export default function CommissionStructurePage() {
             })}
           </div>
           <p className="text-slate-600 text-xs px-1">
-            Introducer bonus is paid to whoever brought the closing partner onto the programme.
+            Introducer bonus is paid to whoever brought the sales partner onto the programme.
           </p>
         </div>
 
