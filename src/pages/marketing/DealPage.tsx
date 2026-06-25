@@ -791,7 +791,7 @@ export default function DealPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">L1 commission</span>
-                <span className="text-yellow-400 font-bold">{fmtGbp(commission)}</span>
+                <span className="text-sky-400 font-bold">{fmtGbp(commission)}</span>
               </div>
               <div className="h-px bg-slate-800" />
               <div className="flex items-center justify-between">

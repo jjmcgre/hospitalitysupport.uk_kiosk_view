@@ -194,7 +194,7 @@ export default function CommissionStructurePage() {
                 <div key={n} className="grid grid-cols-4 px-5 py-3.5 text-sm border-b border-slate-800/60 last:border-0 hover:bg-slate-800/30 transition-colors">
                   <span className="text-slate-300 font-semibold">{n}</span>
                   <span className="text-teal-400 font-semibold">{fmtGbp(arr)}</span>
-                  <span className={`font-bold ${atMin ? 'text-slate-400' : 'text-yellow-400'}`}>
+                  <span className={`font-bold ${atMin ? 'text-slate-400' : 'text-sky-400'}`}>
                     {fmtGbp(l1)}
                     {atMin && <span className="text-slate-600 font-normal text-xs ml-1">min</span>}
                   </span>

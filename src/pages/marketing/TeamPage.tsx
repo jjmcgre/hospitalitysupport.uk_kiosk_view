@@ -197,7 +197,7 @@ export default function TeamPage() {
                             </>
                           ) : (
                             <>
-                              <div className="text-yellow-400 font-black text-lg">{s.commission > 0 ? fmtGbp(s.commission) : '—'}</div>
+                              <div className="text-sky-400 font-bold text-lg">{s.commission > 0 ? fmtGbp(s.commission) : '—'}</div>
                               <div className="text-slate-600 text-[10px]">Comm. paid</div>
                             </>
                           )}

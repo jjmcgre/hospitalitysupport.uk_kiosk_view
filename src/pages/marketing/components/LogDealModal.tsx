@@ -425,7 +425,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
                 <div className="flex items-center gap-4 bg-teal-500/5 border border-teal-500/20 rounded-xl px-4 py-2.5">
                   <span className="text-teal-400 text-xs font-bold">{fmtGbp(arr)}/yr ARR</span>
                   <span className="text-slate-600">·</span>
-                  <span className="text-yellow-400 text-xs font-bold">{fmtGbp(commission)} commission</span>
+                  <span className="text-sky-400 text-xs font-bold">{fmtGbp(commission)} commission</span>
                   <span className="text-slate-600">·</span>
                   <span className="text-slate-400 text-xs">£200 or 15%, whichever is greater</span>
                 </div>
