@@ -1,0 +1,1 @@
+ALTER TABLE demo_bookings ALTER COLUMN email DROP NOT NULL;

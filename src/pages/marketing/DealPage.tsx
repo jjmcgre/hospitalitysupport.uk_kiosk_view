@@ -280,10 +280,6 @@ export default function DealPage() {
   async function confirmDemoBooking() {
     if (!bdSelectedSlot || !deal || !user) return;
     const contact = primaryContact ?? contacts[0] ?? null;
-    if (!contact?.email) {
-      setBdError('The primary contact needs an email address before a demo can be booked. Add one in the Contacts section.');
-      return;
-    }
     setBdBooking(true);
     setBdError('');
     try {
@@ -1265,15 +1261,15 @@ export default function DealPage() {
                   </div>
                 )}
 
+              </div>
+
+              {/* Footer — always visible */}
+              <div className="px-6 pb-6 pt-4 border-t border-slate-700 flex-shrink-0 space-y-3">
                 {bdError && (
                   <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-red-300 text-sm flex items-start gap-2">
                     <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" />{bdError}
                   </div>
                 )}
-              </div>
-
-              {/* Footer */}
-              <div className="px-6 pb-6 pt-4 border-t border-slate-700 flex-shrink-0 space-y-3">
                 <button
                   onClick={confirmDemoBooking}
                   disabled={!bdSelectedSlot || bdBooking}
