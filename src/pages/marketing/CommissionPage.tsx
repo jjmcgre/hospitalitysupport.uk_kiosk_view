@@ -131,19 +131,15 @@ export default function CommissionPage() {
       <div className="px-4 py-6 sm:px-8 space-y-8">
 
         {/* Share link */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-white text-sm font-bold">Commission structure</p>
-            <p className="text-slate-500 text-xs mt-0.5">Share this link with anyone you're bringing onto the team.</p>
-          </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-slate-500">Commission structure:</span>
           <a
             href="/commission-structure"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors flex-shrink-0"
+            className="flex items-center gap-1.5 text-teal-400 hover:text-teal-300 font-semibold transition-colors"
           >
-            <ExternalLink size={12} />
-            Open page
+            View page <ExternalLink size={12} />
           </a>
         </div>
 
