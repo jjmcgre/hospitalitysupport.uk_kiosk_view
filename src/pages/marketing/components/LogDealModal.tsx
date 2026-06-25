@@ -1,5 +1,9 @@
-import { useState } from 'react';
-import { X, AlertTriangle, MapPin, Building2, User, Phone, Mail, Hash, Globe, FileText, CheckCircle, CalendarDays, Copy, Check, ExternalLink } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import {
+  X, AlertTriangle, MapPin, Building2, User, Phone, Mail, Hash, Globe,
+  FileText, CheckCircle, CalendarDays, ChevronLeft, ChevronRight, Clock,
+  RefreshCw,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../context/AuthContext';
@@ -41,37 +45,40 @@ interface ExistingOrg {
   org_type: string;
 }
 
-function BookingLinkBanner({ url }: { url: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <div className="flex items-center gap-3 bg-sky-500/5 border border-sky-500/20 rounded-xl px-4 py-2.5">
-      <CalendarDays size={13} className="text-sky-400 flex-shrink-0" />
-      <span className="text-sky-400 text-xs font-semibold flex-shrink-0">Book a demo</span>
-      <span className="text-slate-500 text-xs font-mono truncate flex-1">{url}</span>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="p-1.5 rounded-lg text-slate-500 hover:text-sky-400 hover:bg-sky-500/10 transition-colors flex-shrink-0"
-        title="Open booking page"
-      >
-        <ExternalLink size={11} />
-      </a>
-      <button
-        onClick={() => { navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1800); }}
-        className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${copied ? 'text-teal-400 bg-teal-500/10' : 'text-slate-500 hover:text-teal-400 hover:bg-teal-500/10'}`}
-        title="Copy link"
-      >
-        {copied ? <Check size={11} /> : <Copy size={11} />}
-      </button>
-    </div>
-  );
+interface AvailableSlot {
+  id: string;
+  slot_date: string;
+  slot_time: string;
+  duration_mins: number;
+}
+
+const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+function weekStart(d: Date) {
+  const r = new Date(d);
+  const day = r.getDay();
+  r.setDate(r.getDate() + (day === 0 ? -6 : 1 - day));
+  return r;
+}
+
+function formatDateShort(dateStr: string) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'short',
+  });
+}
+
+function formatDateLong(dateStr: string) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  });
 }
 
 export default function LogDealModal({ userId, userName, onClose }: Props) {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const isFounder = profile?.is_founder === true;
+
+  // Lead form state
   const [org, setOrg] = useState(emptyOrg);
   const [contact, setContact] = useState(emptyContact);
   const [initialNote, setInitialNote] = useState('');
@@ -80,7 +87,49 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
   const [existingOrg, setExistingOrg] = useState<ExistingOrg | null>(null);
   const [duplicateChecked, setDuplicateChecked] = useState(false);
   const [useExisting, setUseExisting] = useState(false);
-  const [step, setStep] = useState<'form' | 'duplicate'>('form');
+  const [step, setStep] = useState<'form' | 'duplicate' | 'book'>('form');
+
+  // Post-save state
+  const [savedDealId, setSavedDealId] = useState<string | null>(null);
+
+  // Slot picker state
+  const [weekBase, setWeekBase] = useState(() => weekStart(new Date()));
+  const [slots, setSlots] = useState<AvailableSlot[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);
+  const [bookingSlot, setBookingSlot] = useState(false);
+  const [bookingError, setBookingError] = useState('');
+
+  const today = isoDate(new Date());
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
+
+  async function loadSlots(base: Date) {
+    setSlotsLoading(true);
+    const from = isoDate(base);
+    const to = isoDate(addDays(base, 6));
+    const { data } = await supabase
+      .from('demo_availability')
+      .select('id, slot_date, slot_time, duration_mins')
+      .eq('booked', false)
+      .gte('slot_date', from)
+      .lte('slot_date', to)
+      .gte('slot_date', today)
+      .order('slot_date')
+      .order('slot_time');
+    setSlots(data ?? []);
+    setSlotsLoading(false);
+  }
+
+  useEffect(() => {
+    if (step === 'book') loadSlots(weekBase);
+  }, [step]);
+
+  function changeWeek(dir: number) {
+    const next = addDays(weekBase, dir * 7);
+    setWeekBase(next);
+    loadSlots(next);
+    setSelectedSlot(null);
+  }
 
   function setOrgField(field: keyof typeof emptyOrg, value: string) {
     setOrg(prev => ({ ...prev, [field]: value }));
@@ -167,7 +216,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
       if (contactErr) throw new Error(contactErr.message);
 
       const sites = parseInt(org.num_sites, 10) || 1;
-      const today = new Date();
+      const todayDate = new Date();
       const defaultAction = DEFAULT_NEXT_ACTIONS['new'];
 
       const { data: existingDeals } = await supabase
@@ -194,7 +243,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
           assigned_to_name: userName,
           commission_status: commissionStatus,
           next_action: defaultAction.action,
-          next_action_date: isoDate(addDays(today, defaultAction.daysAhead)),
+          next_action_date: isoDate(addDays(todayDate, defaultAction.daysAhead)),
           num_sites: isNaN(sites) ? 1 : sites,
           created_by_user_id: userId,
         })
@@ -208,11 +257,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
           user_id: userId,
           user_name: userName,
           action_type: 'created',
-          payload: {
-            source: 'direct',
-            org_name: org.trading_name.trim(),
-            num_sites: sites,
-          },
+          payload: { source: 'direct', org_name: org.trading_name.trim(), num_sites: sites },
         },
       ];
 
@@ -238,7 +283,9 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
 
       await supabase.from('deal_activity').insert(activityRows);
 
-      navigate(`/deals/${newDeal.id}`);
+      // Lead saved — move to the demo booking step
+      setSavedDealId(newDeal.id);
+      setStep('book');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
@@ -246,15 +293,64 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
     }
   }
 
-  const sites = parseInt(org.num_sites, 10) || 1;
+  async function confirmBooking() {
+    if (!selectedSlot || !savedDealId) return;
+    setBookingSlot(true);
+    setBookingError('');
 
-  const bookingUrl = typeof window !== 'undefined' ? `${window.location.origin}/demo` : '/demo';
+    try {
+      // Create a demo_bookings record pre-populated with the lead's contact details
+      const bookingId = crypto.randomUUID();
+      const businessLabel = [org.trading_name.trim(), org.city.trim()].filter(Boolean).join(', ');
+
+      const { error: bErr } = await supabase.from('demo_bookings').insert([{
+        id: bookingId,
+        name: contact.full_name.trim(),
+        email: contact.email.trim() || null,
+        phone: contact.phone.trim() || null,
+        business_name: businessLabel,
+        city: org.city.trim() || null,
+        postcode: org.postcode.trim() || null,
+        num_sites: org.num_sites,
+        message: initialNote.trim() || null,
+      }]);
+      if (bErr) throw new Error(bErr.message);
+
+      const meetLink = 'https://meet.google.com/mav-hmei-vzi';
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
+        p_slot_id: selectedSlot.id,
+        p_booking_id: bookingId,
+        p_video_link: meetLink,
+      });
+
+      if (rpcError || !rpcResult?.ok) {
+        throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
+      }
+
+      // Log the booking against the deal activity
+      await supabase.from('deal_activity').insert({
+        deal_id: savedDealId,
+        user_id: userId,
+        user_name: userName,
+        action_type: 'note_added',
+        payload: {
+          text: `Demo booked: ${formatDateLong(selectedSlot.slot_date)} at ${selectedSlot.slot_time}`,
+        },
+      });
+
+      navigate(`/deals/${savedDealId}`);
+    } catch (err: unknown) {
+      setBookingError(err instanceof Error ? err.message : 'Could not book the slot.');
+      setBookingSlot(false);
+    }
+  }
 
   const inputCls =
     'w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors';
   const labelCls =
     'text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2';
 
+  // ── Duplicate check step ──────────────────────────────────────────
   if (step === 'duplicate' && existingOrg) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
@@ -284,10 +380,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
             </p>
             <div className="space-y-2">
               <button
-                onClick={() => {
-                  setUseExisting(true);
-                  save(existingOrg.id);
-                }}
+                onClick={() => { setUseExisting(true); save(existingOrg.id); }}
                 disabled={saving}
                 className="w-full flex items-center gap-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-teal-500/40 rounded-xl px-4 py-3 transition-all text-left"
               >
@@ -298,11 +391,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
                 </div>
               </button>
               <button
-                onClick={() => {
-                  setDuplicateChecked(true);
-                  setStep('form');
-                  save(null);
-                }}
+                onClick={() => { setDuplicateChecked(true); setStep('form'); save(null); }}
                 disabled={saving}
                 className="w-full flex items-center gap-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 transition-all text-left"
               >
@@ -330,6 +419,149 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
     );
   }
 
+  // ── Book a demo step ──────────────────────────────────────────────
+  if (step === 'book') {
+    const slotsThisWeek = weekDays.map(day => ({
+      date: isoDate(day),
+      daySlots: slots.filter(s => s.slot_date === isoDate(day)),
+    }));
+    const hasSlots = slotsThisWeek.some(d => d.daySlots.length > 0);
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[92vh] flex flex-col">
+
+          {/* Header */}
+          <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700 flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0">
+              <CalendarDays size={18} className="text-teal-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-white font-bold text-base">Book a demo now?</h2>
+              <p className="text-slate-500 text-xs mt-0.5 truncate">
+                Lead saved · Pick a slot for <span className="text-white font-semibold">{contact.full_name || org.trading_name}</span>
+              </p>
+            </div>
+            <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-800 flex-shrink-0">
+              <X size={18} />
+            </button>
+          </div>
+
+          <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+
+            {/* Contact summary */}
+            <div className="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
+              <span className="text-white font-semibold">{contact.full_name || '—'}</span>
+              <span className="text-slate-400">{org.trading_name}</span>
+              {contact.email && <span className="flex items-center gap-1 text-teal-400"><Mail size={10} />{contact.email}</span>}
+              {contact.phone && <span className="flex items-center gap-1 text-slate-400"><Phone size={10} />{contact.phone}</span>}
+            </div>
+
+            {/* Week navigator */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => changeWeek(-1)}
+                disabled={isoDate(weekBase) <= today}
+                className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-30 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <div className="text-center">
+                <div className="text-white font-bold text-sm">
+                  {weekDays[0].toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  {' — '}
+                  {weekDays[6].toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+              </div>
+              <button
+                onClick={() => changeWeek(1)}
+                className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+
+            {/* Slot grid */}
+            {slotsLoading ? (
+              <div className="text-center py-10 text-slate-500 text-sm flex items-center justify-center gap-2">
+                <RefreshCw size={14} className="animate-spin" /> Loading available slots…
+              </div>
+            ) : !hasSlots ? (
+              <div className="text-center py-10 space-y-2">
+                <CalendarDays size={28} className="text-slate-600 mx-auto" />
+                <p className="text-slate-400 text-sm font-semibold">No slots available this week</p>
+                <p className="text-slate-600 text-xs">Use the arrows to browse other weeks.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {slotsThisWeek.filter(d => d.daySlots.length > 0).map(({ date, daySlots }) => (
+                  <div key={date}>
+                    <div className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">
+                      {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
+                      {' · '}{formatDateShort(date)}
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {daySlots.map(slot => (
+                        <button
+                          key={slot.id}
+                          onClick={() => setSelectedSlot(selectedSlot?.id === slot.id ? null : slot)}
+                          className={`rounded-xl py-2.5 px-2 text-xs font-bold border transition-all flex items-center justify-center gap-1 ${
+                            selectedSlot?.id === slot.id
+                              ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
+                              : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                          }`}
+                        >
+                          <Clock size={10} />
+                          {slot.slot_time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Selected slot summary */}
+            {selectedSlot && (
+              <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl px-4 py-3 flex items-center gap-3">
+                <CheckCircle size={16} className="text-teal-400 flex-shrink-0" />
+                <div>
+                  <div className="text-white text-sm font-bold">{formatDateLong(selectedSlot.slot_date)}</div>
+                  <div className="text-teal-300 text-xs">{selectedSlot.slot_time} · {selectedSlot.duration_mins} minutes</div>
+                </div>
+              </div>
+            )}
+
+            {bookingError && (
+              <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-red-300 text-sm">
+                {bookingError}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 pb-6 pt-4 border-t border-slate-700 flex-shrink-0 space-y-3">
+            <button
+              onClick={confirmBooking}
+              disabled={!selectedSlot || bookingSlot}
+              className="w-full bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2"
+            >
+              {bookingSlot ? <RefreshCw size={14} className="animate-spin" /> : <CalendarDays size={14} />}
+              {bookingSlot ? 'Booking…' : 'Confirm demo booking'}
+            </button>
+            <button
+              onClick={() => savedDealId ? navigate(`/deals/${savedDealId}`) : onClose()}
+              className="w-full text-slate-500 hover:text-slate-300 text-sm transition-colors py-1"
+            >
+              Skip for now — go to the deal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Lead form (default step) ──────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto">
@@ -449,10 +681,6 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
                   />
                 </div>
               </div>
-
-              {sites >= 1 && (
-                <BookingLinkBanner url={bookingUrl} />
-              )}
             </div>
           </div>
 
@@ -545,7 +773,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
               disabled={saving}
               className="flex-1 bg-teal-500 hover:bg-teal-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm transition-colors"
             >
-              {saving ? 'Saving...' : 'Save deal'}
+              {saving ? 'Saving…' : 'Save & book a demo →'}
             </button>
             <button
               type="button"
