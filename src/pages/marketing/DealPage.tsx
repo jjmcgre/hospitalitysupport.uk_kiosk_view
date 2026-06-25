@@ -136,6 +136,7 @@ export default function DealPage() {
   const [contacts, setContacts] = useState<ContactData[]>([]);
   const [activity, setActivity] = useState<ActivityRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sourcerIsFounder, setSourcerIsFounder] = useState(false);
 
   // Editing states
   const [editOrg, setEditOrg] = useState(false);
@@ -180,12 +181,16 @@ export default function DealPage() {
       setDeal(d);
       setNextActionText(d.next_action ?? '');
       setNextActionDate(d.next_action_date ?? '');
-      const [orgRes, contactRes] = await Promise.all([
+      const [orgRes, contactRes, profRes] = await Promise.all([
         supabase.from('organisations').select('*').eq('id', d.org_id).single(),
         supabase.from('contacts').select('*').eq('org_id', d.org_id).order('is_primary', { ascending: false }),
+        d.sourced_by_user_id
+          ? supabase.from('user_profiles').select('is_founder').eq('id', d.sourced_by_user_id).maybeSingle()
+          : Promise.resolve({ data: null }),
       ]);
       if (orgRes.data) { setOrg(orgRes.data as OrgData); setOrgDraft(orgRes.data as OrgData); }
       setContacts((contactRes.data ?? []) as ContactData[]);
+      setSourcerIsFounder(profRes.data?.is_founder === true);
     }
     setActivity((actRes.data ?? []) as ActivityRow[]);
     setLoading(false);
@@ -286,6 +291,7 @@ export default function DealPage() {
       next_action: defaultAct.action || null,
       next_action_date: defaultAct.action ? newNextDate : null,
       won_at: next === 'won' ? new Date().toISOString() : undefined,
+      ...(next === 'won' && sourcerIsFounder ? { commission_status: 'n/a' } : {}),
       updated_at: new Date().toISOString(),
     }).eq('id', deal.id);
     await writeActivity('stage_changed', { from: deal.stage, to: next });
@@ -712,15 +718,36 @@ export default function DealPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-bold text-sm">Commission</h2>
               <span className={`text-[10px] font-bold rounded-full px-2 py-px border ${
+                deal.commission_status === 'n/a' ? 'bg-slate-800 text-slate-500 border-slate-700' :
                 deal.commission_status === 'approved' ? 'bg-green-500/10 text-green-400 border-green-500/25' :
                 deal.commission_status === 'flagged' ? 'bg-sky-500/10 text-sky-400 border-sky-500/25' :
                 deal.commission_status === 'declined' ? 'bg-red-500/10 text-red-400 border-red-500/25' :
                 'bg-slate-800 text-slate-400 border-slate-700'
               }`}>
                 {deal.commission_status === 'flagged' && <AlertTriangle size={9} className="inline mr-1" />}
-                {deal.commission_status}
+                {deal.commission_status === 'n/a' ? 'Business revenue' : deal.commission_status}
               </span>
             </div>
+            {deal.commission_status === 'n/a' || sourcerIsFounder ? (
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Sites</span>
+                  <span className="text-white font-bold">{deal.num_sites}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">ARR</span>
+                  <span className="text-teal-400 font-bold">{fmtGbp(arr)}/yr</span>
+                </div>
+                <div className="h-px bg-slate-800" />
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Sourced by</span>
+                  <span className="text-white text-xs">{deal.sourced_by_name ?? '—'}</span>
+                </div>
+                <p className="text-slate-600 text-[10px] leading-snug mt-1">
+                  This deal was sourced by a founder. Revenue goes directly to the business — no commission is payable.
+                </p>
+              </div>
+            ) : (
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Sites</span>
@@ -792,6 +819,7 @@ export default function DealPage() {
                 </p>
               )}
             </div>
+            )}
           </div>
 
           {/* Next action */}

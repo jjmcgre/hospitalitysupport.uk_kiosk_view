@@ -187,8 +187,8 @@ export default function OverviewPage() {
   }, [wonDeals, lostDeals]);
 
   const commissionApproved = useMemo(() =>
-    deals.filter(d => d.commission_status === 'approved').reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0),
-  [deals]);
+    deals.filter(d => d.commission_status === 'approved' && !founderIds.has(d.sourced_by_user_id ?? '')).reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0),
+  [deals, founderIds]);
 
   const myPipelineArr = useMemo(() => myDeals.reduce((s, d) => s + calcARR(d.num_sites, d.arr_override), 0), [myDeals]);
   const myWonArr = useMemo(() => myWonDeals.reduce((s, d) => s + calcARR(d.num_sites, d.arr_override), 0), [myWonDeals]);

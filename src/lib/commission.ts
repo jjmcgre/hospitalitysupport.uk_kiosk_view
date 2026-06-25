@@ -44,7 +44,7 @@ export type Stage =
   | 'won'
   | 'lost';
 
-export type CommissionStatus = 'pending' | 'approved' | 'flagged' | 'declined';
+export type CommissionStatus = 'pending' | 'approved' | 'flagged' | 'declined' | 'n/a';
 export type Confidence = 'hot' | 'warm' | 'cold';
 export type Source = 'direct' | 'inbound' | 'referral' | 'email_campaign';
 

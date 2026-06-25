@@ -109,6 +109,7 @@ export default function CommissionPage() {
   const myPipelineTotal = useMemo(() => myPending.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myPending]);
 
   const profileMap = useMemo(() => Object.fromEntries(profiles.map(p => [p.id, p])), [profiles]);
+  const founderIds = useMemo(() => new Set(profiles.filter(p => p.is_founder).map(p => p.id)), [profiles]);
 
   const l2Earnings = useMemo(() => {
     if (!profile?.introduced_by_user_id) return 0;
@@ -120,9 +121,9 @@ export default function CommissionPage() {
       .reduce((s, d) => s + calcL2Commission(d.num_sites, d.arr_override), 0);
   }, [deals, profile, profileMap, user]);
 
-  const flaggedDeals = deals.filter(d => d.commission_status === 'flagged');
-  const pendingApproval = deals.filter(d => d.commission_status === 'pending' && d.stage === 'won');
-  const approvedUnpaid = deals.filter(d => d.commission_status === 'approved' && !d.commission_paid_at && d.stage === 'won');
+  const flaggedDeals = deals.filter(d => d.commission_status === 'flagged' && !founderIds.has(d.sourced_by_user_id ?? ''));
+  const pendingApproval = deals.filter(d => d.commission_status === 'pending' && d.stage === 'won' && !founderIds.has(d.sourced_by_user_id ?? ''));
+  const approvedUnpaid = deals.filter(d => d.commission_status === 'approved' && !d.commission_paid_at && d.stage === 'won' && !founderIds.has(d.sourced_by_user_id ?? ''));
 
   return (
     <div className="min-h-full">
