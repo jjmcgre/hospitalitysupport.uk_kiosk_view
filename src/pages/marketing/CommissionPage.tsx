@@ -152,9 +152,9 @@ export default function CommissionPage() {
           <h2 className="text-white font-bold text-sm mb-3">Your commission</h2>
 
           {profile?.is_founder ? (
-            <div className="bg-slate-900 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <Star size={18} className="text-amber-400" />
+            <div className="bg-slate-900 border border-sky-500/20 rounded-2xl p-5 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center flex-shrink-0">
+                <Star size={18} className="text-sky-400" />
               </div>
               <div>
                 <p className="text-white font-bold text-sm">Founder — revenue goes to the business</p>
@@ -191,7 +191,7 @@ export default function CommissionPage() {
                   <div className="text-slate-500 text-xs mt-1">In pipeline</div>
                 </div>
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-                  <div className="text-amber-400 font-black text-2xl">{myFlagged.length > 0 ? myFlagged.length : '—'}</div>
+                  <div className="text-sky-400 font-black text-2xl">{myFlagged.length > 0 ? myFlagged.length : '—'}</div>
                   <div className="text-slate-500 text-xs mt-1">Flagged for review</div>
                 </div>
               </div>
@@ -212,11 +212,11 @@ export default function CommissionPage() {
         {isAdmin && (flaggedDeals.length > 0 || pendingApproval.length > 0 || approvedUnpaid.length > 0) && (
           <div className="space-y-4">
             {flaggedDeals.length > 0 && (
-              <div className="bg-slate-900 border border-amber-500/25 rounded-2xl overflow-hidden">
-                <div className="flex items-center gap-2 px-5 py-4 border-b border-amber-500/15">
-                  <AlertTriangle size={14} className="text-amber-400" />
+              <div className="bg-slate-900 border border-sky-500/25 rounded-2xl overflow-hidden">
+                <div className="flex items-center gap-2 px-5 py-4 border-b border-sky-500/15">
+                  <AlertTriangle size={14} className="text-sky-400" />
                   <h2 className="text-white font-bold text-sm">Flagged — needs your decision</h2>
-                  <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/25 rounded-full px-2 py-px ml-auto">
+                  <span className="text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/25 rounded-full px-2 py-px ml-auto">
                     {flaggedDeals.length}
                   </span>
                 </div>

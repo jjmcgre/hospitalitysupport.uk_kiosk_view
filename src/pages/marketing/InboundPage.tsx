@@ -215,7 +215,7 @@ export default function InboundPage() {
                         </span>
                       )}
                       {lead.message?.trim() && (
-                        <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full px-2 py-px flex items-center gap-1">
+                        <span className="text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full px-2 py-px flex items-center gap-1">
                           <MessageSquare size={8} />Has message
                         </span>
                       )}

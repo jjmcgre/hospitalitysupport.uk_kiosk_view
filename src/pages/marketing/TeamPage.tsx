@@ -151,7 +151,7 @@ export default function TeamPage() {
                           </span>
                         )}
                         {m.is_founder && (
-                          <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full px-2 py-px flex items-center gap-1">
+                          <span className="text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full px-2 py-px flex items-center gap-1">
                             <Star size={8} />founder
                           </span>
                         )}
@@ -192,7 +192,7 @@ export default function TeamPage() {
                         <div className="bg-slate-800 rounded-xl px-3 py-2 text-center">
                           {m.is_founder ? (
                             <>
-                              <div className="text-amber-400 font-black text-lg">Business</div>
+                              <div className="text-sky-400 font-bold text-lg">Business</div>
                               <div className="text-slate-600 text-[10px]">Commission</div>
                             </>
                           ) : (
@@ -255,7 +255,7 @@ export default function TeamPage() {
                               className="sr-only"
                             />
                             <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                              draft.is_founder ? 'bg-amber-500 border-amber-500' : 'bg-transparent border-slate-600 group-hover:border-slate-400'
+                              draft.is_founder ? 'bg-sky-500 border-sky-500' : 'bg-transparent border-slate-600 group-hover:border-slate-400'
                             }`}>
                               {draft.is_founder && <Check size={10} className="text-white" strokeWidth={3} />}
                             </div>

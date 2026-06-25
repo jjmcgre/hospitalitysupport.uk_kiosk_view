@@ -104,7 +104,7 @@ export default function AnalyticsTab() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard icon={Mail} label="Total sent" value={total} colour="bg-blue-500/15 text-blue-400" />
         <StatCard icon={Eye} label="Opened" value={opened} sub={pct(opened, total)} colour="bg-teal-500/15 text-teal-400" />
-        <StatCard icon={MousePointer} label="Clicked" value={clicked} sub={pct(clicked, total)} colour="bg-amber-500/15 text-amber-400" />
+        <StatCard icon={MousePointer} label="Clicked" value={clicked} sub={pct(clicked, total)} colour="bg-sky-500/15 text-sky-400" />
         <StatCard icon={TrendingUp} label="Multi-open" value={multiOpen} sub="opened 2+ times" colour="bg-sky-500/15 text-sky-400" />
       </div>
 
@@ -147,8 +147,8 @@ export default function AnalyticsTab() {
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5" title="Clicks">
-                    <MousePointer size={13} className={s.clicked_at ? 'text-amber-400' : 'text-slate-600'} />
-                    <span className={`text-xs font-semibold ${s.clicked_at ? 'text-amber-400' : 'text-slate-600'}`}>
+                    <MousePointer size={13} className={s.clicked_at ? 'text-sky-400' : 'text-slate-600'} />
+                    <span className={`text-xs font-semibold ${s.clicked_at ? 'text-sky-400' : 'text-slate-600'}`}>
                       {s.click_count > 0 ? `${s.click_count}×` : '—'}
                     </span>
                   </div>
@@ -160,8 +160,8 @@ export default function AnalyticsTab() {
                   )}
                   {s.email_contacts?.status === 'unsubscribed' && (
                     <div className="flex items-center gap-1.5">
-                      <UserMinus size={13} className="text-amber-400" />
-                      <span className="text-xs font-semibold text-amber-400">Unsub</span>
+                      <UserMinus size={13} className="text-sky-400" />
+                      <span className="text-xs font-semibold text-sky-400">Unsub</span>
                     </div>
                   )}
                 </div>

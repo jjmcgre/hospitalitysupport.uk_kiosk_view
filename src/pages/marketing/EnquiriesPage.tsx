@@ -148,7 +148,7 @@ export default function EnquiriesPage() {
         {leaderboard.length > 0 && (
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-5 mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <Trophy size={15} className="text-amber-400" />
+              <Trophy size={15} className="text-sky-400" />
               <h3 className="text-white font-bold text-sm">Lead Leaderboard</h3>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -157,20 +157,20 @@ export default function EnquiriesPage() {
                   key={entry.userId}
                   className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border ${
                     i === 0
-                      ? 'bg-amber-500/10 border-amber-500/30'
+                      ? 'bg-sky-500/10 border-sky-500/30'
                       : 'bg-slate-800 border-slate-700'
                   }`}
                 >
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${
-                    i === 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-700 text-slate-400'
+                    i === 0 ? 'bg-sky-500/20 text-sky-300' : 'bg-slate-700 text-slate-400'
                   }`}>
                     {i === 0 ? '🏆' : entry.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className={`text-xs font-bold ${i === 0 ? 'text-amber-200' : 'text-white'}`}>
+                    <p className={`text-xs font-bold ${i === 0 ? 'text-sky-200' : 'text-white'}`}>
                       {entry.name}
                     </p>
-                    <p className={`text-[10px] ${i === 0 ? 'text-amber-400' : 'text-slate-500'}`}>
+                    <p className={`text-[10px] ${i === 0 ? 'text-sky-400' : 'text-slate-500'}`}>
                       {entry.count} lead{entry.count !== 1 ? 's' : ''}
                     </p>
                   </div>
@@ -267,7 +267,7 @@ export default function EnquiriesPage() {
                           </span>
                         )}
                         {eq.message?.trim() && (
-                          <span className="text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25 rounded-full px-2 py-0.5">
+                          <span className="text-[10px] font-bold bg-sky-500/15 text-sky-300 border border-sky-500/25 rounded-full px-2 py-0.5">
                             Has message
                           </span>
                         )}

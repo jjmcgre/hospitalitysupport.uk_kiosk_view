@@ -4,7 +4,7 @@ import { campaigns, type Stage, type Email } from './campaignData';
 
 const stageAccent: Record<number, string> = {
   1: 'border-blue-500/30 bg-blue-500/5',
-  2: 'border-amber-500/30 bg-amber-500/5',
+  2: 'border-sky-500/30 bg-sky-500/5',
   3: 'border-teal-500/30 bg-teal-500/5',
   4: 'border-orange-500/30 bg-orange-500/5',
   5: 'border-rose-500/30 bg-rose-500/5',
@@ -12,7 +12,7 @@ const stageAccent: Record<number, string> = {
 
 const stageLabelColour: Record<number, string> = {
   1: 'text-blue-400 bg-blue-500/15 border-blue-500/25',
-  2: 'text-amber-400 bg-amber-500/15 border-amber-500/25',
+  2: 'text-sky-400 bg-sky-500/15 border-sky-500/25',
   3: 'text-teal-400 bg-teal-500/15 border-teal-500/25',
   4: 'text-orange-400 bg-orange-500/15 border-orange-500/25',
   5: 'text-rose-400 bg-rose-500/15 border-rose-500/25',

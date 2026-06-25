@@ -41,7 +41,7 @@ const STAGE_COLOURS: Record<Stage, string> = {
   new: 'bg-slate-700 text-slate-300 border-slate-600',
   contacted: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
   demo_booked: 'bg-teal-500/15 text-teal-300 border-teal-500/30',
-  demo_done: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  demo_done: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
   proposal_sent: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
   won: 'bg-green-500/15 text-green-300 border-green-500/30',
   lost: 'bg-red-500/15 text-red-400 border-red-500/25',
@@ -55,7 +55,7 @@ const CONFIDENCE_ICONS: Record<string, React.ElementType> = {
 
 const CONFIDENCE_COLOURS: Record<string, string> = {
   hot: 'text-red-400',
-  warm: 'text-amber-400',
+  warm: 'text-sky-400',
   cold: 'text-blue-400',
 };
 
@@ -267,7 +267,7 @@ export default function PipelinePage() {
                         )}
 
                         {deal.commission_status === 'flagged' && (
-                          <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/25 rounded-full px-2 py-px flex items-center gap-1">
+                          <span className="text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/25 rounded-full px-2 py-px flex items-center gap-1">
                             <AlertTriangle size={9} />
                             Commission flagged
                           </span>

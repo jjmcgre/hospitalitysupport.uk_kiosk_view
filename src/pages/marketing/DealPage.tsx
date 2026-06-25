@@ -106,7 +106,7 @@ const STAGE_COLOURS: Record<Stage, string> = {
   new: 'bg-slate-700 text-slate-300 border-slate-600',
   contacted: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
   demo_booked: 'bg-teal-500/15 text-teal-300 border-teal-500/30',
-  demo_done: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  demo_done: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
   proposal_sent: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
   won: 'bg-green-500/15 text-green-300 border-green-500/30',
   lost: 'bg-red-500/15 text-red-400 border-red-500/25',
@@ -114,7 +114,7 @@ const STAGE_COLOURS: Record<Stage, string> = {
 
 const CONFIDENCE_DATA = {
   hot: { Icon: Flame, colour: 'text-red-400' },
-  warm: { Icon: Thermometer, colour: 'text-amber-400' },
+  warm: { Icon: Thermometer, colour: 'text-sky-400' },
   cold: { Icon: Snowflake, colour: 'text-blue-400' },
 };
 
@@ -713,7 +713,7 @@ export default function DealPage() {
               <h2 className="text-white font-bold text-sm">Commission</h2>
               <span className={`text-[10px] font-bold rounded-full px-2 py-px border ${
                 deal.commission_status === 'approved' ? 'bg-green-500/10 text-green-400 border-green-500/25' :
-                deal.commission_status === 'flagged' ? 'bg-amber-500/10 text-amber-400 border-amber-500/25' :
+                deal.commission_status === 'flagged' ? 'bg-sky-500/10 text-sky-400 border-sky-500/25' :
                 deal.commission_status === 'declined' ? 'bg-red-500/10 text-red-400 border-red-500/25' :
                 'bg-slate-800 text-slate-400 border-slate-700'
               }`}>
@@ -756,7 +756,7 @@ export default function DealPage() {
                   >
                     <span className="text-teal-400 font-bold">{fmtGbp(arr)}/yr</span>
                     {deal.arr_override && (
-                      <span className="text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full px-1.5 py-px">custom</span>
+                      <span className="text-[9px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full px-1.5 py-px">custom</span>
                     )}
                     <Pencil size={10} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
                   </button>
@@ -787,7 +787,7 @@ export default function DealPage() {
                 </div>
               )}
               {deal.commission_status === 'flagged' && (
-                <p className="text-amber-400/80 text-[10px] leading-snug mt-1">
+                <p className="text-sky-400/80 text-[10px] leading-snug mt-1">
                   Another active deal exists for this organisation. Admin must review before commission is paid.
                 </p>
               )}

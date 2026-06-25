@@ -231,8 +231,8 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
         <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md">
           <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center flex-shrink-0">
-              <AlertTriangle size={18} className="text-amber-400" />
+            <div className="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle size={18} className="text-sky-400" />
             </div>
             <div>
               <h2 className="text-white font-bold text-base">Possible duplicate</h2>

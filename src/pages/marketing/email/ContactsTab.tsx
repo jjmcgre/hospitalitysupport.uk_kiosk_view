@@ -30,7 +30,7 @@ const PIPELINE_STAGES = [
   { id: 'prospect',      label: 'Prospect',       colour: 'text-slate-300 bg-slate-700 border-slate-600',         dot: 'bg-slate-400' },
   { id: 'demo_booked',   label: 'Demo booked',    colour: 'text-sky-300 bg-sky-500/10 border-sky-500/25',         dot: 'bg-sky-400' },
   { id: 'post_demo',     label: 'Post-demo',      colour: 'text-teal-300 bg-teal-500/10 border-teal-500/25',      dot: 'bg-teal-400' },
-  { id: 'proposal_sent', label: 'Proposal sent',  colour: 'text-amber-300 bg-amber-500/10 border-amber-500/25',   dot: 'bg-amber-400' },
+  { id: 'proposal_sent', label: 'Proposal sent',  colour: 'text-sky-300 bg-sky-500/10 border-sky-500/25',   dot: 'bg-sky-400' },
   { id: 'customer',      label: 'Customer',       colour: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/25', dot: 'bg-emerald-400' },
 ] as const;
 
@@ -60,7 +60,7 @@ interface SendRecord {
 
 function statusBadge(status: string) {
   if (status === 'unsubscribed')
-    return <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/25 rounded-full px-2 py-px">Unsub</span>;
+    return <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/25 rounded-full px-2 py-px">Unsub</span>;
   if (status === 'bounced')
     return <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/25 rounded-full px-2 py-px">Bounced</span>;
   return <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400 bg-teal-500/10 border border-teal-500/25 rounded-full px-2 py-px">Active</span>;
@@ -546,7 +546,7 @@ function ContactPanel({
               {[
                 { label: 'Sent', value: totalSends, colour: 'text-slate-300' },
                 { label: 'Opened', value: opened, colour: 'text-teal-400' },
-                { label: 'Clicked', value: clicked, colour: 'text-amber-400' },
+                { label: 'Clicked', value: clicked, colour: 'text-sky-400' },
               ].map(s => (
                 <div key={s.label} className="bg-slate-800 border border-slate-700 rounded-xl p-3 text-center">
                   <p className={`text-xl font-black ${s.colour}`}>{s.value}</p>
@@ -572,7 +572,7 @@ function ContactPanel({
                 {sends.map((s) => (
                   <div key={s.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
                     <div className="flex items-start gap-3">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${s.bounced_at ? 'bg-rose-400' : s.clicked_at ? 'bg-amber-400' : s.opened_at ? 'bg-teal-400' : 'bg-slate-600'}`} />
+                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${s.bounced_at ? 'bg-rose-400' : s.clicked_at ? 'bg-sky-400' : s.opened_at ? 'bg-teal-400' : 'bg-slate-600'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-semibold leading-snug">{s.subject}</p>
                         <p className="text-slate-500 text-[10px] mt-0.5">{campaignLabel(s.campaign_id)} · Stage {s.stage}</p>
@@ -590,7 +590,7 @@ function ContactPanel({
                             </span>
                           )}
                           {s.clicked_at && (
-                            <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/25 rounded-full px-2 py-0.5">
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/25 rounded-full px-2 py-0.5">
                               <MousePointer size={9} />{s.click_count}× clicked
                             </span>
                           )}

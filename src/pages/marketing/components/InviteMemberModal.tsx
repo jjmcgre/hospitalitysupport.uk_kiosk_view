@@ -196,7 +196,7 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
                     className="sr-only"
                   />
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                    isFounder ? 'bg-amber-500 border-amber-500' : 'bg-transparent border-slate-600'
+                    isFounder ? 'bg-sky-500 border-sky-500' : 'bg-transparent border-slate-600'
                   }`}>
                     {isFounder && <Check size={10} className="text-white" strokeWidth={3} />}
                   </div>

@@ -124,7 +124,7 @@ const steps = [
                   <span className="text-white text-[10px] font-semibold">{c.step}</span>
                 </div>
                 <div className="text-[9px] text-slate-400">{c.control}</div>
-                <div className="text-[9px] text-amber-400/80 mt-0.5">If fail: {c.action}</div>
+                <div className="text-[9px] text-sky-400/80 mt-0.5">If fail: {c.action}</div>
               </div>
             ))}
           </div>

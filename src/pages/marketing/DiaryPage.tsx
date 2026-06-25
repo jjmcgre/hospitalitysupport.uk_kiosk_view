@@ -198,14 +198,14 @@ export default function DiaryPage() {
                   const enq = enquiryFor(slot.booked_by_booking_id);
                   const isExpanded = expandedMeeting === slot.id;
                   return (
-                    <div key={slot.id} className="bg-slate-800 border border-amber-500/25 rounded-2xl overflow-hidden">
+                    <div key={slot.id} className="bg-slate-800 border border-sky-500/25 rounded-2xl overflow-hidden">
                       <button
                         onClick={() => setExpandedMeeting(isExpanded ? null : slot.id)}
                         className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-slate-700/30 transition-colors"
                       >
                         {/* Date block */}
-                        <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/25 flex flex-col items-center justify-center flex-shrink-0">
-                          <div className="text-amber-400 text-[10px] font-bold uppercase">
+                        <div className="w-12 h-12 rounded-xl bg-sky-500/15 border border-sky-500/25 flex flex-col items-center justify-center flex-shrink-0">
+                          <div className="text-sky-400 text-[10px] font-bold uppercase">
                             {new Date(slot.slot_date + 'T00:00:00').toLocaleDateString('en-GB', { month: 'short' })}
                           </div>
                           <div className="text-white text-lg font-black leading-none">
@@ -237,8 +237,8 @@ export default function DiaryPage() {
                       {isExpanded && (
                         <div className="border-t border-slate-700 px-5 pb-5 pt-4 space-y-4">
                           {/* Meeting info */}
-                          <div className="bg-amber-500/8 border border-amber-500/20 rounded-xl p-4 space-y-2">
-                            <div className="text-amber-300 text-[10px] font-bold uppercase tracking-wider mb-2">Meeting details</div>
+                          <div className="bg-sky-500/8 border border-sky-500/20 rounded-xl p-4 space-y-2">
+                            <div className="text-sky-300 text-[10px] font-bold uppercase tracking-wider mb-2">Meeting details</div>
                             <div className="grid grid-cols-2 gap-3 text-sm">
                               <div>
                                 <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Date</div>
@@ -394,7 +394,7 @@ export default function DiaryPage() {
             {/* Legend */}
             <div className="flex items-center gap-4 text-xs">
               <span className="flex items-center gap-1.5 text-slate-400"><span className="w-3 h-3 rounded bg-teal-500/25 border border-teal-500/40 inline-block" />Available</span>
-              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-3 h-3 rounded bg-amber-500/25 border border-amber-500/40 inline-block" />Booked</span>
+              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-3 h-3 rounded bg-sky-500/25 border border-sky-500/40 inline-block" />Booked</span>
               <button onClick={load} className="ml-auto flex items-center gap-1.5 text-slate-500 hover:text-teal-400 transition-colors">
                 <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />Refresh
               </button>
@@ -429,12 +429,12 @@ export default function DiaryPage() {
                           onClick={() => setSelectedSlot(slot)}
                           className={`w-full text-left rounded-lg px-2 py-1.5 text-[10px] font-bold border transition-colors ${
                             slot.booked
-                              ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
+                              ? 'bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30'
                               : 'bg-teal-500/15 border-teal-500/30 text-teal-300 hover:bg-teal-500/25'
                           }`}
                         >
                           <div className="flex items-center gap-1"><Clock size={8} />{slot.slot_time}</div>
-                          {slot.booked && <div className="text-[9px] text-amber-400/70 mt-0.5">Booked</div>}
+                          {slot.booked && <div className="text-[9px] text-sky-400/70 mt-0.5">Booked</div>}
                         </button>
                       ))}
                     </div>
@@ -508,7 +508,7 @@ export default function DiaryPage() {
                             </span>
                           )}
                           {eq.message?.trim() && (
-                            <span className="text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25 rounded-full px-2 py-0.5">Has message</span>
+                            <span className="text-[10px] font-bold bg-sky-500/15 text-sky-300 border border-sky-500/25 rounded-full px-2 py-0.5">Has message</span>
                           )}
                         </div>
                         <div className="text-slate-500 text-xs mt-0.5 flex items-center gap-3">
@@ -643,7 +643,7 @@ export default function DiaryPage() {
               </div>
               <div>
                 <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Status</div>
-                <div className={`text-sm font-bold ${selectedSlot.booked ? 'text-amber-400' : 'text-teal-400'}`}>
+                <div className={`text-sm font-bold ${selectedSlot.booked ? 'text-sky-400' : 'text-teal-400'}`}>
                   {selectedSlot.booked ? 'Booked' : 'Available'}
                 </div>
               </div>
@@ -654,7 +654,7 @@ export default function DiaryPage() {
                 </div>
               )}
               {selectedSlot.booked && enquiryFor(selectedSlot.booked_by_booking_id) && (
-                <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-3">
+                <div className="bg-sky-500/10 border border-sky-500/25 rounded-xl p-3">
                   <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-1">Booked by</div>
                   {(() => {
                     const e = enquiryFor(selectedSlot.booked_by_booking_id)!;
