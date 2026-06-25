@@ -137,6 +137,7 @@ export default function MarketingLayout() {
     setSavingProfile(true);
     await supabase.from('user_profiles').upsert({
       id: user.id,
+      auth_user_id: user.id,
       display_name: profileName.trim(),
       phone: profilePhone.trim() || null,
     });

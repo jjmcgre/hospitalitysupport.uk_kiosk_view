@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import {
   PoundSterling, CheckCircle2, AlertTriangle, XCircle, Clock,
-  RefreshCw, ChevronRight, ExternalLink,
+  RefreshCw, ChevronRight, ExternalLink, Star,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
@@ -28,6 +28,7 @@ interface UserProfile {
   id: string;
   display_name: string;
   role: string;
+  is_founder: boolean;
   introduced_by_user_id: string | null;
 }
 
@@ -41,7 +42,7 @@ export default function CommissionPage() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from('user_profiles').select('id, display_name, role, introduced_by_user_id').eq('id', user.id).maybeSingle()
+    supabase.from('user_profiles').select('id, display_name, role, is_founder, introduced_by_user_id').eq('id', user.id).maybeSingle()
       .then(({ data }) => setProfile(data as UserProfile | null));
   }, [user]);
 
@@ -49,7 +50,7 @@ export default function CommissionPage() {
     setLoading(true);
     const [dealsRes, profilesRes] = await Promise.all([
       supabase.from('deals').select('id,stage,num_sites,commission_status,commission_paid_at,sourced_by_user_id,sourced_by_name,created_at,organisations(trading_name,city)'),
-      supabase.from('user_profiles').select('id,display_name,role,introduced_by_user_id'),
+      supabase.from('user_profiles').select('id,display_name,role,is_founder,introduced_by_user_id'),
     ]);
     setDeals((dealsRes.data ?? []) as DealRow[]);
     setProfiles((profilesRes.data ?? []) as UserProfile[]);
@@ -162,32 +163,61 @@ export default function CommissionPage() {
         {/* My commission summary */}
         <div>
           <h2 className="text-white font-bold text-sm mb-3">Your commission</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <div className="text-yellow-400 font-black text-2xl">{myApprovedTotal > 0 ? fmtGbp(myApprovedTotal) : '—'}</div>
-              <div className="text-slate-500 text-xs mt-1">Approved total</div>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <div className="text-green-400 font-black text-2xl">{myPaidTotal > 0 ? fmtGbp(myPaidTotal) : '—'}</div>
-              <div className="text-slate-500 text-xs mt-1">Paid to date</div>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <div className="text-teal-400 font-black text-2xl">{myPipelineTotal > 0 ? fmtGbp(myPipelineTotal) : '—'}</div>
-              <div className="text-slate-500 text-xs mt-1">In pipeline</div>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <div className="text-amber-400 font-black text-2xl">{myFlagged.length > 0 ? myFlagged.length : '—'}</div>
-              <div className="text-slate-500 text-xs mt-1">Flagged for review</div>
-            </div>
-          </div>
-          {l2Earnings > 0 && (
-            <div className="mt-3 bg-teal-500/5 border border-teal-500/20 rounded-2xl p-4 flex items-center justify-between">
-              <div>
-                <p className="text-teal-300 font-bold text-sm">Introducer override earnings</p>
-                <p className="text-slate-500 text-xs mt-0.5">5% commission on accounts introduced by people you brought on</p>
+
+          {profile?.is_founder ? (
+            <div className="bg-slate-900 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
+                <Star size={18} className="text-amber-400" />
               </div>
-              <p className="text-teal-400 font-black text-xl">{fmtGbp(l2Earnings)}</p>
+              <div>
+                <p className="text-white font-bold text-sm">Founder — revenue goes to the business</p>
+                <p className="text-slate-400 text-sm mt-1 leading-relaxed">
+                  As a founder, commission from your deals contributes directly to business revenue
+                  rather than being paid out personally. Your pipeline activity is still tracked and
+                  attributed to you.
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-3 max-w-xs">
+                  <div className="bg-slate-800 rounded-xl px-3 py-2 text-center">
+                    <div className="text-white font-black text-xl">{myDeals.filter(d => d.stage === 'won').length}</div>
+                    <div className="text-slate-600 text-[10px]">Won</div>
+                  </div>
+                  <div className="bg-slate-800 rounded-xl px-3 py-2 text-center">
+                    <div className="text-teal-400 font-black text-xl">{myDeals.filter(d => d.stage !== 'won' && d.stage !== 'lost').length}</div>
+                    <div className="text-slate-600 text-[10px]">Active deals</div>
+                  </div>
+                </div>
+              </div>
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                  <div className="text-yellow-400 font-black text-2xl">{myApprovedTotal > 0 ? fmtGbp(myApprovedTotal) : '—'}</div>
+                  <div className="text-slate-500 text-xs mt-1">Approved total</div>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                  <div className="text-green-400 font-black text-2xl">{myPaidTotal > 0 ? fmtGbp(myPaidTotal) : '—'}</div>
+                  <div className="text-slate-500 text-xs mt-1">Paid to date</div>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                  <div className="text-teal-400 font-black text-2xl">{myPipelineTotal > 0 ? fmtGbp(myPipelineTotal) : '—'}</div>
+                  <div className="text-slate-500 text-xs mt-1">In pipeline</div>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                  <div className="text-amber-400 font-black text-2xl">{myFlagged.length > 0 ? myFlagged.length : '—'}</div>
+                  <div className="text-slate-500 text-xs mt-1">Flagged for review</div>
+                </div>
+              </div>
+              {l2Earnings > 0 && (
+                <div className="mt-3 bg-teal-500/5 border border-teal-500/20 rounded-2xl p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-teal-300 font-bold text-sm">Introducer override earnings</p>
+                    <p className="text-slate-500 text-xs mt-0.5">5% commission on accounts introduced by people you brought on</p>
+                  </div>
+                  <p className="text-teal-400 font-black text-xl">{fmtGbp(l2Earnings)}</p>
+                </div>
+              )}
+            </>
           )}
         </div>
 
