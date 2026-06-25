@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Phone, Plus, Check, X, RefreshCw, UserCheck, Shield, Star } from 'lucide-react';
+import { Phone, Mail, Plus, Check, X, RefreshCw, UserCheck, Shield, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
@@ -11,6 +11,7 @@ interface TeamMember {
   display_name: string;
   role: string;
   phone: string | null;
+  email: string | null;
   introduced_by_user_id: string | null;
   is_active: boolean;
   is_founder: boolean;
@@ -86,6 +87,7 @@ export default function TeamPage() {
     await supabase.from('user_profiles').update({
       display_name: (draft.display_name ?? '').trim(),
       phone: draft.phone?.trim() || null,
+      email: draft.email?.trim() || null,
       role: draft.role ?? 'salesperson',
       introduced_by_user_id: draft.introduced_by_user_id || null,
       is_founder: draft.is_founder ?? false,
@@ -173,7 +175,12 @@ export default function TeamPage() {
                             <Phone size={10} />{m.phone}
                           </a>
                         )}
-                        {!m.phone && <span className="text-slate-700">No phone set</span>}
+                        {m.email && (
+                          <a href={`mailto:${m.email}`} className="flex items-center gap-1 hover:text-white transition-colors">
+                            <Mail size={10} />{m.email}
+                          </a>
+                        )}
+                        {!m.phone && !m.email && <span className="text-slate-700">No contact info set</span>}
                       </div>
 
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -224,6 +231,10 @@ export default function TeamPage() {
                           <label className={labelCls}>Phone</label>
                           <input type="tel" value={draft.phone ?? ''} onChange={e => setDraft(p => ({ ...p, phone: e.target.value }))} placeholder="07700 900000" className={inputCls} />
                         </div>
+                      </div>
+                      <div>
+                        <label className={labelCls}>Email</label>
+                        <input type="email" value={draft.email ?? ''} onChange={e => setDraft(p => ({ ...p, email: e.target.value }))} placeholder="name@example.com" className={inputCls} />
                       </div>
                       {isAdmin && (
                         <div className="grid sm:grid-cols-2 gap-3">
