@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Users, Phone, Mail, Plus, Check, X, RefreshCw, UserCheck, Shield } from 'lucide-react';
+import { Phone, Plus, Check, X, RefreshCw, UserCheck, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
+import InviteMemberModal from './components/InviteMemberModal';
 import { calcARR, calcL1Commission, fmtGbp } from '../../lib/commission';
 
 interface TeamMember {
@@ -39,6 +40,7 @@ export default function TeamPage() {
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState<Partial<TeamMember>>({});
   const [saving, setSaving] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -108,10 +110,21 @@ export default function TeamPage() {
       <div className="px-4 py-6 sm:px-8">
         <div className="flex items-center justify-between mb-5">
           <p className="text-slate-500 text-sm">{members.length} active member{members.length !== 1 ? 's' : ''}</p>
-          <button onClick={load} className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 text-xs transition-colors">
-            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            {isAdmin && (
+              <button
+                onClick={() => setShowInvite(true)}
+                className="flex items-center gap-1.5 bg-teal-500 hover:bg-teal-400 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors"
+              >
+                <Plus size={12} />
+                Invite member
+              </button>
+            )}
+            <button onClick={load} className="flex items-center gap-1.5 text-slate-500 hover:text-teal-400 text-xs transition-colors">
+              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -243,28 +256,15 @@ export default function TeamPage() {
             })}
           </div>
         )}
-
-        {isAdmin && (
-          <div className="mt-6 bg-slate-900/50 border border-slate-800 rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Shield size={14} className="text-teal-400" />
-              <p className="text-white text-sm font-bold">Adding new team members</p>
-            </div>
-            <p className="text-slate-500 text-sm leading-relaxed">
-              New team members sign up at{' '}
-              <a href="/login" className="text-teal-400 hover:text-teal-300">{typeof window !== 'undefined' ? window.location.host : ''}/login</a>.
-              Once they've logged in for the first time, their profile appears here and you can set their role and introducer.
-            </p>
-            <p className="text-slate-600 text-xs mt-2">
-              To set the first admin: run{' '}
-              <code className="bg-slate-800 px-2 py-0.5 rounded text-teal-400 text-[10px]">
-                UPDATE user_profiles SET role = 'admin' WHERE id = '&lt;your-user-id&gt;';
-              </code>{' '}
-              in the Supabase SQL editor.
-            </p>
-          </div>
-        )}
       </div>
+
+      {showInvite && (
+        <InviteMemberModal
+          members={members}
+          onClose={() => setShowInvite(false)}
+          onSuccess={load}
+        />
+      )}
     </div>
   );
 }
