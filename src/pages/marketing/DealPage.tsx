@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Building2, MapPin, Globe, Hash, Phone, Mail, MessageSquare,
-  Plus, ChevronRight, Check, X, AlertTriangle, Flame, Thermometer, Snowflake,
-  UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink, Pencil,
+  Plus, ChevronRight, ChevronLeft, Check, X, AlertTriangle, Flame, Thermometer, Snowflake,
+  UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink, Pencil, CalendarDays,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -67,6 +67,34 @@ interface ActivityRow {
   action_type: string;
   payload: Record<string, unknown> | null;
   created_at: string;
+}
+
+interface AvailableSlot {
+  id: string;
+  slot_date: string;
+  slot_time: string;
+  duration_mins: number;
+}
+
+const SLOT_DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+function slotWeekStart(d: Date) {
+  const r = new Date(d);
+  const day = r.getDay();
+  r.setDate(r.getDate() + (day === 0 ? -6 : 1 - day));
+  return r;
+}
+
+function slotFormatShort(dateStr: string) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'short',
+  });
+}
+
+function slotFormatLong(dateStr: string) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  });
 }
 
 const ACTION_LABELS: Record<string, string> = {
@@ -164,6 +192,15 @@ export default function DealPage() {
   const [arrDraft, setArrDraft] = useState('');
   const [savingArr, setSavingArr] = useState(false);
 
+  // Book-demo slot picker (shown when advancing to demo_booked)
+  const [showBookDemo, setShowBookDemo] = useState(false);
+  const [bdWeekBase, setBdWeekBase] = useState(() => slotWeekStart(new Date()));
+  const [bdSlots, setBdSlots] = useState<AvailableSlot[]>([]);
+  const [bdSlotsLoading, setBdSlotsLoading] = useState(false);
+  const [bdSelectedSlot, setBdSelectedSlot] = useState<AvailableSlot | null>(null);
+  const [bdBooking, setBdBooking] = useState(false);
+  const [bdError, setBdError] = useState('');
+
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
   async function load() {
@@ -211,6 +248,90 @@ export default function DealPage() {
       action_type: type,
       payload,
     });
+  }
+
+  async function loadBdSlots(base: Date) {
+    setBdSlotsLoading(true);
+    const from = isoDate(base);
+    const to = isoDate(addDays(base, 6));
+    const todayStr = isoDate(new Date());
+    const { data } = await supabase
+      .from('demo_availability')
+      .select('id, slot_date, slot_time, duration_mins')
+      .eq('booked', false)
+      .gte('slot_date', from)
+      .lte('slot_date', to)
+      .gte('slot_date', todayStr)
+      .order('slot_date')
+      .order('slot_time');
+    setBdSlots(data ?? []);
+    setBdSlotsLoading(false);
+  }
+
+  function openBookDemo() {
+    setBdWeekBase(slotWeekStart(new Date()));
+    setBdSelectedSlot(null);
+    setBdError('');
+    setBdSlots([]);
+    setShowBookDemo(true);
+    loadBdSlots(slotWeekStart(new Date()));
+  }
+
+  async function confirmDemoBooking() {
+    if (!bdSelectedSlot || !deal || !user) return;
+    const contact = primaryContact ?? contacts[0] ?? null;
+    if (!contact?.email) {
+      setBdError('The primary contact needs an email address before a demo can be booked. Add one in the Contacts section.');
+      return;
+    }
+    setBdBooking(true);
+    setBdError('');
+    try {
+      const bookingId = crypto.randomUUID();
+      const businessLabel = [org!.trading_name, org!.city].filter(Boolean).join(', ');
+      const { error: bErr } = await supabase.from('demo_bookings').insert([{
+        id: bookingId,
+        name: contact.full_name,
+        email: contact.email,
+        phone: contact.phone ?? null,
+        business_name: businessLabel,
+        city: org!.city ?? null,
+        postcode: org!.postcode ?? null,
+        num_sites: String(org!.num_sites ?? 1),
+        sourced_by_user_id: deal.sourced_by_user_id,
+        sourced_by_name: deal.sourced_by_name,
+      }]);
+      if (bErr) throw new Error(bErr.message);
+
+      const meetLink = 'https://meet.google.com/mav-hmei-vzi';
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
+        p_slot_id: bdSelectedSlot.id,
+        p_booking_id: bookingId,
+        p_video_link: meetLink,
+      });
+      if (rpcError || !rpcResult?.ok) {
+        throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
+      }
+
+      const demoAction = DEFAULT_NEXT_ACTIONS['demo_booked'];
+      await supabase.from('deals').update({
+        stage: 'demo_booked',
+        next_action: demoAction.action,
+        next_action_date: isoDate(addDays(new Date(bdSelectedSlot.slot_date), demoAction.daysAhead)),
+        updated_at: new Date().toISOString(),
+      }).eq('id', deal.id);
+
+      await writeActivity('stage_changed', { from: deal.stage, to: 'demo_booked' });
+      await writeActivity('note_added', {
+        text: `Demo booked: ${slotFormatLong(bdSelectedSlot.slot_date)} at ${bdSelectedSlot.slot_time}`,
+      });
+
+      setShowBookDemo(false);
+      await load();
+    } catch (err: unknown) {
+      setBdError(err instanceof Error ? err.message : 'Could not book the slot.');
+      setBdBooking(false);
+    }
   }
 
   async function saveArr() {
@@ -678,11 +799,11 @@ export default function DealPage() {
               <div className="space-y-2">
                 {next && (
                   <button
-                    onClick={advanceStage}
+                    onClick={next === 'demo_booked' ? openBookDemo : advanceStage}
                     disabled={advancingStage}
                     className="w-full flex items-center justify-between bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-white font-bold px-4 py-3 rounded-xl text-sm transition-colors"
                   >
-                    <span>Move to: {STAGE_LABELS[next]}</span>
+                    <span>{next === 'demo_booked' ? 'Book a demo →' : `Move to: ${STAGE_LABELS[next]}`}</span>
                     <ChevronRight size={14} />
                   </button>
                 )}
@@ -936,6 +1057,151 @@ export default function DealPage() {
           </div>
         </div>
       </div>
+
+      {/* Book demo slot picker modal */}
+      {showBookDemo && (() => {
+        const bdWeekDays = Array.from({ length: 7 }, (_, i) => addDays(bdWeekBase, i));
+        const todayStr = isoDate(new Date());
+        const slotsThisWeek = bdWeekDays.map(day => ({
+          date: isoDate(day),
+          daySlots: bdSlots.filter(s => s.slot_date === isoDate(day)),
+        }));
+        const hasSlots = slotsThisWeek.some(d => d.daySlots.length > 0);
+        const contact = primaryContact ?? contacts[0] ?? null;
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[92vh] flex flex-col">
+
+              {/* Header */}
+              <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700 flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center flex-shrink-0">
+                  <CalendarDays size={18} className="text-teal-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-white font-bold text-base">Book a demo</h2>
+                  <p className="text-slate-500 text-xs mt-0.5 truncate">
+                    {org!.trading_name}{contact ? ` · ${contact.full_name}` : ''}
+                  </p>
+                </div>
+                <button onClick={() => setShowBookDemo(false)} className="text-slate-500 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-800 flex-shrink-0">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+
+                {/* Contact summary */}
+                {contact && (
+                  <div className="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
+                    <span className="text-white font-semibold">{contact.full_name}</span>
+                    <span className="text-slate-400">{org!.trading_name}</span>
+                    {contact.email && <span className="flex items-center gap-1 text-teal-400"><Mail size={10} />{contact.email}</span>}
+                    {contact.phone && <span className="flex items-center gap-1 text-slate-400"><Phone size={10} />{contact.phone}</span>}
+                  </div>
+                )}
+
+                {/* Week navigator */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => { const next = addDays(bdWeekBase, -7); setBdWeekBase(next); loadBdSlots(next); setBdSelectedSlot(null); }}
+                    disabled={isoDate(bdWeekBase) <= todayStr}
+                    className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-30 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <div className="text-white font-bold text-sm text-center">
+                    {bdWeekDays[0].toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                    {' — '}
+                    {bdWeekDays[6].toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </div>
+                  <button
+                    onClick={() => { const next = addDays(bdWeekBase, 7); setBdWeekBase(next); loadBdSlots(next); setBdSelectedSlot(null); }}
+                    className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+
+                {/* Slots */}
+                {bdSlotsLoading ? (
+                  <div className="text-center py-10 text-slate-500 text-sm flex items-center justify-center gap-2">
+                    <RefreshCw size={14} className="animate-spin" /> Loading available slots…
+                  </div>
+                ) : !hasSlots ? (
+                  <div className="text-center py-10 space-y-2">
+                    <CalendarDays size={28} className="text-slate-600 mx-auto" />
+                    <p className="text-slate-400 text-sm font-semibold">No slots available this week</p>
+                    <p className="text-slate-600 text-xs">Use the arrows to browse other weeks.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {slotsThisWeek.filter(d => d.daySlots.length > 0).map(({ date, daySlots }) => (
+                      <div key={date}>
+                        <div className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">
+                          {SLOT_DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
+                          {' · '}{slotFormatShort(date)}
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                          {daySlots.map(slot => (
+                            <button
+                              key={slot.id}
+                              onClick={() => setBdSelectedSlot(bdSelectedSlot?.id === slot.id ? null : slot)}
+                              className={`rounded-xl py-2.5 px-2 text-xs font-bold border transition-all flex items-center justify-center gap-1 ${
+                                bdSelectedSlot?.id === slot.id
+                                  ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
+                                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                              }`}
+                            >
+                              <Clock size={10} />
+                              {slot.slot_time}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Selected slot summary */}
+                {bdSelectedSlot && (
+                  <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl px-4 py-3 flex items-center gap-3">
+                    <CheckCircle2 size={16} className="text-teal-400 flex-shrink-0" />
+                    <div>
+                      <div className="text-white text-sm font-bold">{slotFormatLong(bdSelectedSlot.slot_date)}</div>
+                      <div className="text-teal-300 text-xs">{bdSelectedSlot.slot_time} · {bdSelectedSlot.duration_mins} minutes</div>
+                    </div>
+                  </div>
+                )}
+
+                {bdError && (
+                  <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-red-300 text-sm flex items-start gap-2">
+                    <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" />{bdError}
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 pb-6 pt-4 border-t border-slate-700 flex-shrink-0 space-y-3">
+                <button
+                  onClick={confirmDemoBooking}
+                  disabled={!bdSelectedSlot || bdBooking}
+                  className="w-full bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2"
+                >
+                  {bdBooking ? <RefreshCw size={14} className="animate-spin" /> : <CalendarDays size={14} />}
+                  {bdBooking ? 'Booking…' : 'Confirm demo & advance stage'}
+                </button>
+                <button
+                  onClick={() => setShowBookDemo(false)}
+                  className="w-full text-slate-500 hover:text-slate-300 text-sm transition-colors py-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Lost modal */}
       {showLostModal && (
