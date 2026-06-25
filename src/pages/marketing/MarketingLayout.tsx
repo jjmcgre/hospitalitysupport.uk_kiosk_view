@@ -15,6 +15,7 @@ const shareLinks = [
   { name: 'ServiceSupport.UK — Brochure', path: '/brochure', description: '8-page square PDF' },
   { name: 'ServiceSupport.UK — 1-Page Summary', path: '/one-pager', description: 'A4 single page' },
   { name: 'ServiceSupport.UK — Sales Pack', path: '/sales-pack', description: '5-page A4 full detail' },
+  { name: 'ServiceSupport.UK — Commission Structure', path: '/commission-structure', description: 'Share with prospective team members' },
 ];
 
 function CopyBtn({ text, title, children }: { text: string; title: string; children: React.ReactNode }) {
