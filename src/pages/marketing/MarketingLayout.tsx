@@ -79,11 +79,6 @@ function SharePanel() {
   );
 }
 
-interface Profile {
-  display_name: string;
-  role: string;
-}
-
 function NavItem({ to, label, icon: Icon, end }: { to: string; label: string; icon: React.ElementType; end?: boolean }) {
   return (
     <NavLink
@@ -105,32 +100,19 @@ function NavItem({ to, label, icon: Icon, end }: { to: string; label: string; ic
 
 export default function MarketingLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, profile, profileLoading, refetchProfile } = useAuth();
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileName, setProfileName] = useState('');
   const [profilePhone, setProfilePhone] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data } = await supabase
-        .from('user_profiles')
-        .select('display_name, role, phone')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (data) {
-        setProfile({ display_name: data.display_name, role: data.role ?? 'salesperson' });
-        setProfileName(data.display_name);
-        setProfilePhone((data as { phone?: string }).phone ?? '');
-      } else {
-        setShowProfileModal(true);
-      }
-    })();
-  }, [user]);
+    if (!profileLoading && !profile && user) {
+      setShowProfileModal(true);
+    }
+  }, [profile, profileLoading, user]);
 
   async function saveProfile() {
     if (!user || !profileName.trim()) return;
@@ -141,7 +123,7 @@ export default function MarketingLayout() {
       display_name: profileName.trim(),
       phone: profilePhone.trim() || null,
     });
-    setProfile(prev => ({ display_name: profileName.trim(), role: prev?.role ?? 'salesperson' }));
+    await refetchProfile();
     setShowProfileModal(false);
     setSavingProfile(false);
   }
@@ -224,7 +206,7 @@ export default function MarketingLayout() {
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
             <button
-              onClick={() => { setProfileName(profile?.display_name ?? ''); setShowProfileModal(true); }}
+              onClick={() => { setProfileName(profile?.display_name ?? ''); setProfilePhone(profile?.phone ?? ''); setShowProfileModal(true); }}
               title="Edit profile"
               className="p-1.5 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-slate-800 transition-colors"
             >

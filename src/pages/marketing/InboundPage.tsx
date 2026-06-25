@@ -37,11 +37,10 @@ const inputCls = 'w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py
 const labelCls = 'text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2';
 
 export default function InboundPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [leads, setLeads] = useState<InboundLead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<{ display_name: string; role: string } | null>(null);
   const [converting, setConverting] = useState<ConvertModal | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -58,8 +57,6 @@ export default function InboundPage() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from('user_profiles').select('display_name, role').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data as { display_name: string; role: string } | null));
     supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
       .then(({ data }) => setTeamMembers(data ?? []));
   }, [user]);

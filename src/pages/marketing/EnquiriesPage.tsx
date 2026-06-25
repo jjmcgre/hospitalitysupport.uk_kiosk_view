@@ -40,7 +40,7 @@ function formatDate(dateStr: string) {
 
 
 export default function EnquiriesPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -48,20 +48,6 @@ export default function EnquiriesPage() {
   const [claiming, setClaiming] = useState<Set<string>>(new Set());
   const [filterMine, setFilterMine] = useState(false);
   const [showAddLead, setShowAddLead] = useState(false);
-
-  const [profile, setProfile] = useState<{ display_name: string } | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data } = await supabase
-        .from('user_profiles')
-        .select('display_name')
-        .eq('id', user.id)
-        .maybeSingle();
-      setProfile(data ?? null);
-    })();
-  }, [user]);
 
   async function load() {
     setLoading(true);

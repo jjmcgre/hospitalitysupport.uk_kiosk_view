@@ -6,6 +6,7 @@ import {
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+import type { UserProfile } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
 import {
   calcARR, calcL1Commission, calcL2Commission, fmtGbp,
@@ -24,33 +25,18 @@ interface DealRow {
   organisations: { trading_name: string; city: string | null } | null;
 }
 
-interface UserProfile {
-  id: string;
-  display_name: string;
-  role: string;
-  is_founder: boolean;
-  introduced_by_user_id: string | null;
-}
-
 export default function CommissionPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [deals, setDeals] = useState<DealRow[]>([]);
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [approving, setApproving] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('user_profiles').select('id, display_name, role, is_founder, introduced_by_user_id').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data as UserProfile | null));
-  }, [user]);
 
   async function load() {
     setLoading(true);
     const [dealsRes, profilesRes] = await Promise.all([
       supabase.from('deals').select('id,stage,num_sites,commission_status,commission_paid_at,sourced_by_user_id,sourced_by_name,created_at,organisations(trading_name,city)'),
-      supabase.from('user_profiles').select('id,display_name,role,is_founder,introduced_by_user_id'),
+      supabase.from('user_profiles').select('id,display_name,role,is_founder,introduced_by_user_id,phone'),
     ]);
     setDeals((dealsRes.data ?? []) as DealRow[]);
     setProfiles((profilesRes.data ?? []) as UserProfile[]);

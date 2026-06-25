@@ -77,19 +77,12 @@ function formatNextDate(date: string | null): string {
 }
 
 export default function PipelinePage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [deals, setDeals] = useState<DealRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterTab>('all');
   const [search, setSearch] = useState('');
   const [showLog, setShowLog] = useState(false);
-  const [profile, setProfile] = useState<{ display_name: string } | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('user_profiles').select('display_name').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data ?? null));
-  }, [user]);
 
   async function load() {
     setLoading(true);

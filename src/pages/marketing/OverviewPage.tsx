@@ -92,19 +92,16 @@ function CopyLinkButton({ text }: { text: string }) {
 }
 
 export default function OverviewPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [deals, setDeals] = useState<DealRow[]>([]);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [showAddLead, setShowAddLead] = useState(false);
-  const [profile, setProfile] = useState<{ display_name: string; is_founder: boolean } | null>(null);
   const [founderIds, setFounderIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!user) return;
-    supabase.from('user_profiles').select('display_name, is_founder').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data ? { display_name: data.display_name, is_founder: data.is_founder ?? false } : null));
     supabase.from('user_profiles').select('id, is_founder').eq('is_founder', true)
       .then(({ data }) => setFounderIds(new Set((data ?? []).map((p: { id: string }) => p.id))));
   }, [user]);

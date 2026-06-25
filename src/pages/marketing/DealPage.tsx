@@ -127,7 +127,7 @@ function StageBadge({ stage }: { stage: Stage }) {
 
 export default function DealPage() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
 
   const [deal, setDeal] = useState<DealData | null>(null);
@@ -135,7 +135,6 @@ export default function DealPage() {
   const [contacts, setContacts] = useState<ContactData[]>([]);
   const [activity, setActivity] = useState<ActivityRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<{ display_name: string; role: string } | null>(null);
 
   // Editing states
   const [editOrg, setEditOrg] = useState(false);
@@ -161,12 +160,6 @@ export default function DealPage() {
   const [editConfidence, setEditConfidence] = useState(false);
 
   const noteRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('user_profiles').select('display_name, role').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data as { display_name: string; role: string } | null));
-  }, [user]);
 
   async function load() {
     if (!id) return;

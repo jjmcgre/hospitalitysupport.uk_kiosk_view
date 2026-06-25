@@ -33,21 +33,14 @@ const inputCls =
 const labelCls = 'text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2';
 
 export default function TeamPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [stats, setStats] = useState<MemberStats>({});
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<{ display_name: string; role: string } | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState<Partial<TeamMember>>({});
   const [saving, setSaving] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('user_profiles').select('display_name, role').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setProfile(data as { display_name: string; role: string } | null));
-  }, [user]);
 
   async function load() {
     setLoading(true);
