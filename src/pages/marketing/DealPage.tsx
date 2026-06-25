@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Building2, MapPin, Globe, Hash, Phone, Mail, MessageSquare,
   Plus, ChevronRight, Check, X, AlertTriangle, Flame, Thermometer, Snowflake,
-  UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink,
+  UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink, Pencil,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -52,6 +52,7 @@ interface DealData {
   next_action: string | null;
   next_action_date: string | null;
   num_sites: number;
+  arr_override: number | null;
   video_link: string | null;
   lost_reason: string | null;
   handoff_note: string | null;
@@ -159,6 +160,10 @@ export default function DealPage() {
 
   const [editConfidence, setEditConfidence] = useState(false);
 
+  const [editArr, setEditArr] = useState(false);
+  const [arrDraft, setArrDraft] = useState('');
+  const [savingArr, setSavingArr] = useState(false);
+
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
   async function load() {
@@ -206,6 +211,16 @@ export default function DealPage() {
       action_type: type,
       payload,
     });
+  }
+
+  async function saveArr() {
+    if (!deal || !user) return;
+    setSavingArr(true);
+    const val = arrDraft.trim() === '' ? null : parseInt(arrDraft.replace(/[^0-9]/g, ''), 10) || null;
+    await supabase.from('deals').update({ arr_override: val, updated_at: new Date().toISOString() }).eq('id', deal.id);
+    setDeal(prev => prev ? { ...prev, arr_override: val } : prev);
+    setEditArr(false);
+    setSavingArr(false);
   }
 
   async function saveOrg() {
@@ -358,8 +373,8 @@ export default function DealPage() {
     );
   }
 
-  const arr = calcARR(deal.num_sites);
-  const commission = calcL1Commission(deal.num_sites);
+  const arr = calcARR(deal.num_sites, deal.arr_override);
+  const commission = calcL1Commission(deal.num_sites, deal.arr_override);
   const next = nextStage(deal.stage);
   const conf = CONFIDENCE_DATA[deal.confidence] ?? CONFIDENCE_DATA.warm;
   const ConfIcon = conf.Icon;
@@ -713,7 +728,39 @@ export default function DealPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">ARR</span>
-                <span className="text-teal-400 font-bold">{fmtGbp(arr)}/yr</span>
+                {editArr ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-slate-500 text-xs">£</span>
+                    <input
+                      type="number"
+                      min="0"
+                      autoFocus
+                      value={arrDraft}
+                      onChange={e => setArrDraft(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') saveArr(); if (e.key === 'Escape') setEditArr(false); }}
+                      placeholder={String(deal.num_sites * 1200)}
+                      className="w-24 bg-slate-800 border border-teal-500/50 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:ring-1 focus:ring-teal-500/50"
+                    />
+                    <button onClick={saveArr} disabled={savingArr} className="p-1 rounded text-teal-400 hover:text-teal-300 transition-colors">
+                      <Check size={12} />
+                    </button>
+                    <button onClick={() => setEditArr(false)} className="p-1 rounded text-slate-500 hover:text-slate-300 transition-colors">
+                      <X size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => { setArrDraft(deal.arr_override ? String(deal.arr_override) : ''); setEditArr(true); }}
+                    className="flex items-center gap-1.5 group"
+                    title="Override ARR"
+                  >
+                    <span className="text-teal-400 font-bold">{fmtGbp(arr)}/yr</span>
+                    {deal.arr_override && (
+                      <span className="text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full px-1.5 py-px">custom</span>
+                    )}
+                    <Pencil size={10} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+                  </button>
+                )}
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">L1 commission</span>

@@ -17,6 +17,7 @@ interface DealRow {
   id: string;
   stage: Stage;
   num_sites: number;
+  arr_override: number | null;
   commission_status: CommissionStatus;
   commission_paid_at: string | null;
   sourced_by_user_id: string | null;
@@ -35,7 +36,7 @@ export default function CommissionPage() {
   async function load() {
     setLoading(true);
     const [dealsRes, profilesRes] = await Promise.all([
-      supabase.from('deals').select('id,stage,num_sites,commission_status,commission_paid_at,sourced_by_user_id,sourced_by_name,created_at,organisations(trading_name,city)'),
+      supabase.from('deals').select('id,stage,num_sites,arr_override,commission_status,commission_paid_at,sourced_by_user_id,sourced_by_name,created_at,organisations(trading_name,city)'),
       supabase.from('user_profiles').select('id,display_name,role,is_founder,introduced_by_user_id,phone'),
     ]);
     setDeals((dealsRes.data ?? []) as DealRow[]);
@@ -103,9 +104,9 @@ export default function CommissionPage() {
   const myPending = useMemo(() => myDeals.filter(d => d.commission_status === 'pending'), [myDeals]);
   const myFlagged = useMemo(() => myDeals.filter(d => d.commission_status === 'flagged'), [myDeals]);
 
-  const myApprovedTotal = useMemo(() => myApproved.reduce((s, d) => s + calcL1Commission(d.num_sites), 0), [myApproved]);
-  const myPaidTotal = useMemo(() => myApproved.filter(d => d.commission_paid_at).reduce((s, d) => s + calcL1Commission(d.num_sites), 0), [myApproved]);
-  const myPipelineTotal = useMemo(() => myPending.reduce((s, d) => s + calcL1Commission(d.num_sites), 0), [myPending]);
+  const myApprovedTotal = useMemo(() => myApproved.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myApproved]);
+  const myPaidTotal = useMemo(() => myApproved.filter(d => d.commission_paid_at).reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myApproved]);
+  const myPipelineTotal = useMemo(() => myPending.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myPending]);
 
   const profileMap = useMemo(() => Object.fromEntries(profiles.map(p => [p.id, p])), [profiles]);
 
@@ -116,7 +117,7 @@ export default function CommissionPage() {
         const sp = d.sourced_by_user_id ? profileMap[d.sourced_by_user_id] : null;
         return sp?.introduced_by_user_id === user?.id && d.commission_status === 'approved';
       })
-      .reduce((s, d) => s + calcL2Commission(d.num_sites), 0);
+      .reduce((s, d) => s + calcL2Commission(d.num_sites, d.arr_override), 0);
   }, [deals, profile, profileMap, user]);
 
   const flaggedDeals = deals.filter(d => d.commission_status === 'flagged');
@@ -228,7 +229,7 @@ export default function CommissionPage() {
                           {d.organisations?.city && <span className="text-slate-500 font-normal text-xs ml-2">{d.organisations.city}</span>}
                         </p>
                         <p className="text-slate-500 text-xs mt-0.5">
-                          {d.sourced_by_name} · {d.num_sites} site{d.num_sites !== 1 ? 's' : ''} · {fmtGbp(calcL1Commission(d.num_sites))}
+                          {d.sourced_by_name} · {d.num_sites} site{d.num_sites !== 1 ? 's' : ''} · {fmtGbp(calcL1Commission(d.num_sites, d.arr_override))}
                         </p>
                       </div>
                       <Link to={`/deals/${d.id}`} className="text-slate-500 hover:text-teal-400 flex items-center gap-1 text-xs transition-colors flex-shrink-0">
@@ -267,7 +268,7 @@ export default function CommissionPage() {
                           {d.organisations?.trading_name ?? '—'}
                         </p>
                         <p className="text-slate-500 text-xs mt-0.5">
-                          {d.sourced_by_name} · {d.num_sites} site{d.num_sites !== 1 ? 's' : ''} · {fmtGbp(calcL1Commission(d.num_sites))}
+                          {d.sourced_by_name} · {d.num_sites} site{d.num_sites !== 1 ? 's' : ''} · {fmtGbp(calcL1Commission(d.num_sites, d.arr_override))}
                         </p>
                       </div>
                       <button onClick={() => approveCommission(d.id)} disabled={approving === d.id}
@@ -291,7 +292,7 @@ export default function CommissionPage() {
                     <div key={d.id} className="px-5 py-4 flex items-center gap-4">
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm truncate">{d.organisations?.trading_name ?? '—'}</p>
-                        <p className="text-slate-500 text-xs">{d.sourced_by_name} · {fmtGbp(calcL1Commission(d.num_sites))}</p>
+                        <p className="text-slate-500 text-xs">{d.sourced_by_name} · {fmtGbp(calcL1Commission(d.num_sites, d.arr_override))}</p>
                       </div>
                       <button onClick={() => markPaid(d.id)} disabled={approving === d.id}
                         className="flex items-center gap-1 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 text-yellow-400 text-xs font-bold px-3 py-2 rounded-xl transition-colors disabled:opacity-50 flex-shrink-0">

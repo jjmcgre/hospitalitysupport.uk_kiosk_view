@@ -25,6 +25,7 @@ interface DealRow {
   next_action: string | null;
   next_action_date: string | null;
   num_sites: number;
+  arr_override: number | null;
   created_at: string;
   organisations: {
     trading_name: string;
@@ -88,7 +89,7 @@ export default function PipelinePage() {
     setLoading(true);
     const { data } = await supabase
       .from('deals')
-      .select('id,stage,source,confidence,sourced_by_user_id,sourced_by_name,assigned_to_name,commission_status,next_action,next_action_date,num_sites,created_at,organisations(trading_name,city,postcode,org_type)')
+      .select('id,stage,source,confidence,sourced_by_user_id,sourced_by_name,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,organisations(trading_name,city,postcode,org_type)')
       .order('next_action_date', { ascending: true, nullsFirst: false });
     setDeals((data ?? []) as DealRow[]);
     setLoading(false);
@@ -216,8 +217,8 @@ export default function PipelinePage() {
               const org = deal.organisations;
               const overdue = isOverdue(deal.next_action_date) && deal.stage !== 'won' && deal.stage !== 'lost';
               const ConfIcon = CONFIDENCE_ICONS[deal.confidence] ?? Thermometer;
-              const arr = calcARR(deal.num_sites);
-              const comm = calcL1Commission(deal.num_sites);
+              const arr = calcARR(deal.num_sites, deal.arr_override);
+              const comm = calcL1Commission(deal.num_sites, deal.arr_override);
               const isMyDeal = deal.sourced_by_user_id === user?.id;
               const dateLabel = formatNextDate(deal.next_action_date);
 

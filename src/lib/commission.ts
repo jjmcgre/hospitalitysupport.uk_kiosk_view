@@ -3,19 +3,22 @@ const L1_RATE = 0.15;
 const L1_MIN = 200;
 const L2_RATE = 0.05;
 
-export function calcARR(sites: number): number {
+export function calcARR(sites: number, arrOverride?: number | null): number {
+  if (arrOverride != null && arrOverride > 0) return arrOverride;
   if (sites <= 0) return 0;
   return sites * PRICE_PER_SITE;
 }
 
-export function calcL1Commission(sites: number): number {
-  if (sites <= 0) return 0;
-  return Math.max(L1_MIN, calcARR(sites) * L1_RATE);
+export function calcL1Commission(sites: number, arrOverride?: number | null): number {
+  const arr = calcARR(sites, arrOverride);
+  if (arr <= 0) return 0;
+  return Math.max(L1_MIN, arr * L1_RATE);
 }
 
-export function calcL2Commission(sites: number): number {
-  if (sites <= 0) return 0;
-  return calcARR(sites) * L2_RATE;
+export function calcL2Commission(sites: number, arrOverride?: number | null): number {
+  const arr = calcARR(sites, arrOverride);
+  if (arr <= 0) return 0;
+  return arr * L2_RATE;
 }
 
 export function fmtGbp(n: number): string {

@@ -32,6 +32,7 @@ interface DealRow {
   next_action: string | null;
   next_action_date: string | null;
   num_sites: number;
+  arr_override: number | null;
   created_at: string;
   organisations: { trading_name: string; city: string | null } | null;
 }
@@ -111,7 +112,7 @@ export default function OverviewPage() {
     const today = isoDate(new Date());
     const [dealsRes, slotRes] = await Promise.all([
       supabase.from('deals')
-        .select('id,stage,sourced_by_user_id,sourced_by_name,commission_status,next_action,next_action_date,num_sites,created_at,organisations(trading_name,city)')
+        .select('id,stage,sourced_by_user_id,sourced_by_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,organisations(trading_name,city)')
         .order('next_action_date', { ascending: true, nullsFirst: false }),
       supabase.from('demo_availability').select('id,slot_date,slot_time,booked').gte('slot_date', today),
     ]);
@@ -130,10 +131,10 @@ export default function OverviewPage() {
   const myDeals = useMemo(() => activeDeals.filter(d => d.sourced_by_user_id === user?.id), [activeDeals, user]);
   const newThisWeek = useMemo(() => deals.filter(d => d.created_at.slice(0, 10) >= sevenAgo).length, [deals, sevenAgo]);
 
-  const myPipelineArr = useMemo(() => myDeals.reduce((s, d) => s + calcARR(d.num_sites), 0), [myDeals]);
-  const myCommission = useMemo(() => myDeals.reduce((s, d) => s + calcL1Commission(d.num_sites), 0), [myDeals]);
+  const myPipelineArr = useMemo(() => myDeals.reduce((s, d) => s + calcARR(d.num_sites, d.arr_override), 0), [myDeals]);
+  const myCommission = useMemo(() => myDeals.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myDeals]);
 
-  const totalPipelineArr = useMemo(() => activeDeals.reduce((s, d) => s + calcARR(d.num_sites), 0), [activeDeals]);
+  const totalPipelineArr = useMemo(() => activeDeals.reduce((s, d) => s + calcARR(d.num_sites, d.arr_override), 0), [activeDeals]);
 
   const bookedSlots = slots.filter(s => s.booked).length;
   const availableSlots = slots.filter(s => !s.booked).length;
@@ -146,8 +147,8 @@ export default function OverviewPage() {
     const map = new Map<string, { userId: string; name: string; arr: number; commission: number; count: number }>();
     for (const d of activeDeals) {
       if (!d.sourced_by_user_id || !d.sourced_by_name) continue;
-      const arr = calcARR(d.num_sites);
-      const comm = calcL1Commission(d.num_sites);
+      const arr = calcARR(d.num_sites, d.arr_override);
+      const comm = calcL1Commission(d.num_sites, d.arr_override);
       const ex = map.get(d.sourced_by_user_id);
       if (ex) { ex.arr += arr; ex.commission += comm; ex.count++; }
       else map.set(d.sourced_by_user_id, { userId: d.sourced_by_user_id, name: d.sourced_by_name, arr, commission: comm, count: 1 });
