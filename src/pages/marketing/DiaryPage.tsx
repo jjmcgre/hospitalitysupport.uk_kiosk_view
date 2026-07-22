@@ -372,12 +372,13 @@ export default function DiaryPage() {
                                 </button>
                               </div>
                               {typeError && (
-                                <div className="flex items-start gap-2 text-red-300 text-xs">
-                                  <AlertCircle size={12} className="mt-0.5 flex-shrink-0" />{typeError}
+                                <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 rounded-lg p-2.5 text-red-300 text-xs leading-snug">
+                                  <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                                  <span>{typeError}</span>
                                 </div>
                               )}
                               <p className="text-slate-600 text-[11px] leading-snug">
-                                On-site visits block 5 hours of calendar (2 slots before + your meeting + 2 slots after) for travel time. Switching back to virtual frees those blocked slots.
+                                On-site visits reserve 5 hours of calendar (2 hours before + 1-hour meeting + 2 hours after) for travel time. The system checks for conflicts before switching. Switching back to virtual frees all blocked slots.
                               </p>
                             </div>
                           )}
