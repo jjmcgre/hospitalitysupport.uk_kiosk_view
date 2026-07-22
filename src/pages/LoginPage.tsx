@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
 
@@ -7,9 +7,15 @@ type Tab = 'signin' | 'signup';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const ref = searchParams.get('ref');
+  const refRef = useRef(ref);
+  refRef.current = ref;
+
   const [tab, setTab] = useState<Tab>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,10 +32,61 @@ export default function LoginPage() {
       if (err) { setError(err.message); setLoading(false); return; }
       navigate('/');
     } else {
-      const { error: err } = await supabase.auth.signUp({ email, password });
+      if (!displayName.trim()) {
+        setError('Please enter your name');
+        setLoading(false);
+        return;
+      }
+
+      const { data: signUpData, error: err } = await supabase.auth.signUp({ email, password });
       if (err) { setError(err.message); setLoading(false); return; }
+
+      const userId = signUpData.user?.id;
+      if (!userId) {
+        setError('Sign up failed — no user ID returned');
+        setLoading(false);
+        return;
+      }
+
+      // Auto-create a profile linked to the referrer
+      const profileRow: Record<string, unknown> = {
+        auth_user_id: userId,
+        display_name: displayName.trim(),
+        role: 'salesperson',
+        is_active: true,
+      };
+
+      if (refRef.current) {
+        // Look up the referrer's profile by id or auth_user_id
+        const { data: referrer } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .or(`id.eq.${refRef.current},auth_user_id.eq.${refRef.current}`)
+          .maybeSingle();
+
+        if (referrer) {
+          profileRow.introduced_by_user_id = referrer.id;
+        }
+      }
+
+      const { error: profileErr } = await supabase.from('user_profiles').insert(profileRow);
+
+      if (profileErr) {
+        // Profile insert might fail due to RLS — try upsert as fallback
+        const { error: upsertErr } = await supabase.from('user_profiles').upsert({
+          id: userId,
+          ...profileRow,
+        });
+        if (upsertErr) {
+          setError(`Account created but profile setup failed: ${upsertErr.message}. Please contact support.`);
+          setLoading(false);
+          return;
+        }
+      }
+
       setSuccess('Account created! You can now sign in.');
       setTab('signin');
+      setDisplayName('');
     }
 
     setLoading(false);
@@ -64,6 +121,22 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {tab === 'signup' && (
+              <div>
+                <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
+                  Your name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={displayName}
+                  onChange={e => setDisplayName(e.target.value)}
+                  placeholder="Full name"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors"
+                />
+              </div>
+            )}
+
             <div>
               <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
                 Email address
@@ -128,8 +201,10 @@ export default function LoginPage() {
 
           {tab === 'signup' && !success && (
             <p className="text-slate-600 text-[11px] text-center mt-5 leading-relaxed">
-              After signing up, you'll be able to set your display name<br />
-              so leads can be tracked against your profile.
+              {ref
+                ? <>You'll be linked to the person who sent you this link.<br />Sign up to join their team.</>
+                : <>After signing up, you'll be able to access the pipeline.<br />Ask an admin if you need to be added to a team.</>
+              }
             </p>
           )}
         </div>

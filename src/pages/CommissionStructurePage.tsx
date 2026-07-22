@@ -1,5 +1,6 @@
 import { calcARR, calcL1Commission, calcL2Commission, fmtGbp, PRICE_PER_SITE } from '../lib/commission';
 import { CheckCircle2, BarChart3, ClipboardList, GraduationCap, ShoppingCart, Users } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 const exampleSites = [1, 2, 3, 5, 8, 10, 15, 20];
 
@@ -50,6 +51,10 @@ const STEPS = [
 ];
 
 export default function CommissionStructurePage() {
+  const [searchParams] = useSearchParams();
+  const ref = searchParams.get('ref');
+  const loginHref = ref ? `/login?ref=${encodeURIComponent(ref)}` : '/login';
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
@@ -265,13 +270,13 @@ export default function CommissionStructurePage() {
             Ready to get started? Log in to the pipeline and record your first introduction.
           </p>
           <a
-            href="/login"
+            href={loginHref}
             className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors"
           >
             Log in to the pipeline
           </a>
           <p className="text-slate-700 text-xs">
-            Don't have an account? Ask whoever sent you this to add you to the team.
+            Don't have an account? Sign up and you'll be linked to the person who sent you here.
           </p>
         </div>
 
