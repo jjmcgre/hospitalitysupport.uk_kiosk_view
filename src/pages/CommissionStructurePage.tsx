@@ -1,6 +1,8 @@
 import { calcARR, calcL1Commission, calcL2Commission, fmtGbp, PRICE_PER_SITE } from '../lib/commission';
-import { CheckCircle2, BarChart3, ClipboardList, GraduationCap, ShoppingCart, Users } from 'lucide-react';
+import { CheckCircle2, BarChart3, ClipboardList, GraduationCap, ShoppingCart, Users, Share2, Check, Copy } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const exampleSites = [1, 2, 3, 5, 8, 10, 15, 20];
 
@@ -53,7 +55,34 @@ const STEPS = [
 export default function CommissionStructurePage() {
   const [searchParams] = useSearchParams();
   const ref = searchParams.get('ref');
-  const loginHref = ref ? `/login?ref=${encodeURIComponent(ref)}` : '/login';
+  const { user, profile } = useAuth();
+  const [copied, setCopied] = useState(false);
+
+  // If a logged-in user visits without ?ref=, use their own ID as the ref
+  const effectiveRef = ref ?? (user?.id ?? profile?.id);
+  const loginHref = effectiveRef ? `/login?ref=${encodeURIComponent(effectiveRef)}` : '/login';
+  const shareUrl = effectiveRef
+    ? `${window.location.origin}/commission-structure?ref=${encodeURIComponent(effectiveRef)}`
+    : null;
+
+  async function copyLink() {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = shareUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -263,6 +292,31 @@ export default function CommissionStructurePage() {
             </p>
           </div>
         </div>
+
+        {/* Share link card — only for logged-in users */}
+        {shareUrl && (
+          <div className="bg-teal-500/5 border border-teal-500/20 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <Share2 size={15} className="text-teal-400" />
+              <p className="text-white font-bold text-sm">Your referral link</p>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Share this link with anyone you want to introduce. When they sign up, they're automatically linked to you.
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 text-xs truncate font-mono">
+                {shareUrl}
+              </div>
+              <button
+                onClick={copyLink}
+                className="flex items-center gap-1.5 bg-teal-500 hover:bg-teal-400 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-colors flex-shrink-0"
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Footer CTA */}
         <div className="border-t border-slate-800 pt-10 text-center space-y-3">
