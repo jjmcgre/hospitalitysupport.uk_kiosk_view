@@ -160,7 +160,18 @@ export default function OverviewPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('overview-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_availability' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const today = isoDate(new Date());
   const sevenAgo = isoDate(new Date(Date.now() - 7 * 86400000));

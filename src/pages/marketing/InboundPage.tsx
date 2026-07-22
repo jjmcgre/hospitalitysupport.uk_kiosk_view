@@ -70,7 +70,17 @@ export default function InboundPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('inbound-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   function openConvert(lead: InboundLead) {
     setConverting({ lead });

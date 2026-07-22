@@ -687,7 +687,17 @@ export default function ContactsTab() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('contacts-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'email_contacts' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'email_sends' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const refreshOne = async (id: string) => {
     const { data } = await supabase.from('email_contacts').select('*').eq('id', id).maybeSingle();

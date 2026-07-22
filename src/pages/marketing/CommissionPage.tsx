@@ -44,7 +44,17 @@ export default function CommissionPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('commission-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_profiles' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const isAdmin = profile?.role === 'admin';
 

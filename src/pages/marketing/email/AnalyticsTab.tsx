@@ -59,7 +59,17 @@ export default function AnalyticsTab() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('email-analytics-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'email_sends' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'email_contacts' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const filtered = filterCampaign === 'all' ? sends : sends.filter(s => s.campaign_id === filterCampaign);
   const total = filtered.length;

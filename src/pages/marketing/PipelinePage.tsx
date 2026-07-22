@@ -102,7 +102,17 @@ export default function PipelinePage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('pipeline-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'organisations' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   useEffect(() => {
     supabase.from('user_profiles').select('id, display_name').eq('is_active', true)

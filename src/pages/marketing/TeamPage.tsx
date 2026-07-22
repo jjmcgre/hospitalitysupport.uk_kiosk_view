@@ -79,7 +79,17 @@ export default function TeamPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('team-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_profiles' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const isAdmin = profile?.role === 'admin';
   const isFounder = profile?.is_founder === true;

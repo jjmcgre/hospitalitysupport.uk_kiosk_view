@@ -108,7 +108,17 @@ export default function DiaryPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [weekBase]);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('diary-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_availability' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [weekBase]);
 
   async function addSlot() {
     if (!adding) return;

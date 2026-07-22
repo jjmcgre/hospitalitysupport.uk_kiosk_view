@@ -73,7 +73,17 @@ export default function DocsPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('docs-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'document_folders' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'documents' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const activeDocs = docs.filter(d => d.folder_id === activeFolderId);
   const activeFolder = folders.find(f => f.id === activeFolderId);

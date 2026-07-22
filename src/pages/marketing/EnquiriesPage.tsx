@@ -65,7 +65,17 @@ export default function EnquiriesPage() {
     setEnquiries(data ?? []);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel('enquiries-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   async function claimLead(id: string) {
     if (!user) return;

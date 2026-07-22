@@ -236,7 +236,18 @@ export default function DealPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => {
+    load();
+
+    const channel = supabase
+      .channel(`deal-realtime-${id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deals', filter: `id=eq.${id}` }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deal_activity', filter: `deal_id=eq.${id}` }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, () => load())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [id]);
 
   useEffect(() => {
     supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
