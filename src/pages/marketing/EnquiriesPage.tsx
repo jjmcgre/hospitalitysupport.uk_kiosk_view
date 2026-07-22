@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Mail, Phone, Building2, Users, MessageSquare, Clock, RefreshCw, Inbox, Trophy, UserCheck, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+import { computeOrgKey } from '../../lib/commission';
 import PageHeader from './components/PageHeader';
 import AddLeadModal from './components/AddLeadModal';
 
@@ -13,11 +14,14 @@ interface Enquiry {
   email: string;
   phone: string;
   business_name: string;
+  city: string | null;
+  postcode: string | null;
   num_sites: string;
   message: string;
   created_at: string;
   sourced_by_user_id: string | null;
   sourced_by_name: string | null;
+  deal_id: string | null;
 }
 
 function timeAgo(dateStr: string) {
@@ -67,12 +71,15 @@ export default function EnquiriesPage() {
     if (!user) return;
     const name = profile?.display_name || user.email?.split('@')[0] || 'Unknown';
     setClaiming(prev => new Set(prev).add(id));
+
+    const enquiry = enquiries.find(e => e.id === id);
     const { data: booking } = await supabase
       .from('demo_bookings')
       .update({ sourced_by_user_id: user.id, sourced_by_name: name })
       .eq('id', id)
       .select('deal_id')
       .single();
+
     if (booking?.deal_id) {
       await supabase.from('deals').update({
         sourced_by_user_id: user.id,
@@ -88,6 +95,52 @@ export default function EnquiriesPage() {
         action_type: 'assigned',
         payload: { from: null, to: name },
       });
+    } else if (enquiry) {
+      const sites = parseInt(enquiry.num_sites, 10) || 1;
+      const orgKey = computeOrgKey(enquiry.business_name, enquiry.postcode ?? '');
+      const { data: orgData } = await supabase.from('organisations')
+        .select('id').eq('org_key', orgKey).maybeSingle();
+
+      let orgId: string | null = orgData?.id ?? null;
+
+      if (!orgId) {
+        const { data: newOrg } = await supabase.from('organisations').insert({
+          trading_name: enquiry.business_name,
+          city: enquiry.city,
+          postcode: enquiry.postcode,
+          org_type: 'pub',
+          num_sites: sites,
+          created_by_user_id: user.id,
+        }).select('id').single();
+        orgId = newOrg?.id ?? null;
+      }
+
+      if (orgId) {
+        const { data: newDeal } = await supabase.from('deals').insert({
+          org_id: orgId,
+          stage: 'new',
+          source: 'inbound',
+          confidence: 'warm',
+          sourced_by_user_id: user.id,
+          sourced_by_name: name,
+          assigned_to_user_id: user.id,
+          assigned_to_name: name,
+          commission_status: 'pending',
+          num_sites: sites,
+          created_by_user_id: user.id,
+        }).select('id').single();
+
+        if (newDeal?.id) {
+          await supabase.from('demo_bookings').update({ deal_id: newDeal.id }).eq('id', id);
+          await supabase.from('deal_activity').insert({
+            deal_id: newDeal.id,
+            user_id: user.id,
+            user_name: name,
+            action_type: 'assigned',
+            payload: { from: null, to: name },
+          });
+        }
+      }
     }
     setClaiming(prev => { const s = new Set(prev); s.delete(id); return s; });
     await load();
