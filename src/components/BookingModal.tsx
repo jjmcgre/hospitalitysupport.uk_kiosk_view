@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import {
   X, ArrowRight, CheckCircle, Mail, Phone,
   Building2, Users, AlertCircle, Calendar, Clock, ChevronLeft, ChevronRight,
+  Video, MapPin,
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { captureRef, getStoredRef } from '../lib/referral';
 
@@ -30,6 +32,7 @@ const EMPTY: FormData = {
 };
 
 type Step = 'details' | 'slot' | 'confirmed';
+type MeetingType = 'virtual' | 'onsite';
 
 function isoDate(d: Date) {
   return d.toISOString().slice(0, 10);
@@ -64,6 +67,7 @@ const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function BookingModal() {
   const { isOpen, closeBooking } = useBooking();
+  const { user, profile } = useAuth();
   const [form, setForm] = useState<FormData>(EMPTY);
   const [step, setStep] = useState<Step>('details');
   const [submitting, setSubmitting] = useState(false);
@@ -82,6 +86,7 @@ export default function BookingModal() {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [videoLink, setVideoLink] = useState<string | null>(null);
+  const [meetingType, setMeetingType] = useState<MeetingType>('virtual');
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
   const today = isoDate(new Date());
@@ -94,6 +99,7 @@ export default function BookingModal() {
       setSelectedSlot(null);
       setBookingId(null);
       setVideoLink(null);
+      setMeetingType('virtual');
       const now = new Date();
       const aug1 = new Date('2026-08-01T00:00:00');
       setWeekBase(weekStart(now >= aug1 ? now : aug1));
@@ -109,6 +115,10 @@ export default function BookingModal() {
           .then(({ data }) => {
             if (data?.display_name) setRefUserName(data.display_name);
           });
+      } else if (user && profile?.display_name) {
+        // Auto-attribute to logged-in team member when no ref param
+        setRefUserId(user.id);
+        setRefUserName(profile.display_name);
       } else {
         setRefUserId(null);
         setRefUserName(null);
@@ -166,6 +176,7 @@ export default function BookingModal() {
       message: form.message.trim(),
       sourced_by_user_id: refUserId || null,
       sourced_by_name: refUserName || null,
+      meeting_type: meetingType,
     }]);
     setBookingId(id);
     setSubmitting(false);
@@ -178,12 +189,13 @@ export default function BookingModal() {
     setSubmitting(true);
     setError('');
 
-    const meetLink = 'https://meet.google.com/mav-hmei-vzi';
+    const meetLink = meetingType === 'virtual' ? 'https://meet.google.com/mav-hmei-vzi' : '';
 
     const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
-      p_slot_id:    selectedSlot.id,
-      p_booking_id: bookingId,
-      p_video_link: meetLink,
+      p_slot_id:      selectedSlot.id,
+      p_booking_id:   bookingId,
+      p_video_link:   meetLink,
+      p_meeting_type: meetingType,
     });
 
     if (rpcError || !rpcResult?.ok) {
@@ -202,7 +214,7 @@ export default function BookingModal() {
       date: selectedSlot.slot_date,
       time: selectedSlot.slot_time,
       duration: selectedSlot.duration_mins,
-      videoLink: meetLink,
+      videoLink: meetLink || null,
     };
 
     fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
@@ -232,7 +244,7 @@ export default function BookingModal() {
       }).catch(() => {});
     }
 
-    setVideoLink(meetLink);
+    setVideoLink(meetLink || null);
     setSubmitting(false);
     setStep('confirmed');
   }
@@ -477,6 +489,42 @@ export default function BookingModal() {
                   </div>
                 </div>
               )}
+
+              {/* Meeting type selector */}
+              <div>
+                <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Meeting type</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMeetingType('virtual')}
+                    className={`rounded-xl py-3 px-4 text-sm font-bold border transition-all flex items-center justify-center gap-2 ${
+                      meetingType === 'virtual'
+                        ? 'bg-teal-500 border-teal-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                    }`}
+                  >
+                    <Video size={14} />
+                    Virtual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMeetingType('onsite')}
+                    className={`rounded-xl py-3 px-4 text-sm font-bold border transition-all flex items-center justify-center gap-2 ${
+                      meetingType === 'onsite'
+                        ? 'bg-teal-500 border-teal-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                    }`}
+                  >
+                    <MapPin size={14} />
+                    On-site
+                  </button>
+                </div>
+                {meetingType === 'onsite' && (
+                  <p className="text-slate-500 text-[11px] mt-1.5 leading-snug">
+                    We'll come to you. On-site visits are limited to 2 per day and may block adjacent slots for travel time.
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="px-5 sm:px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0 space-y-3">
@@ -525,6 +573,10 @@ export default function BookingModal() {
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Duration</span>
                   <span className="text-white font-semibold">{selectedSlot.duration_mins} minutes</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Type</span>
+                  <span className="text-white font-semibold">{meetingType === 'virtual' ? 'Virtual (video call)' : 'On-site visit'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Business</span>
