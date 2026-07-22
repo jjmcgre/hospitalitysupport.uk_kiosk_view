@@ -67,20 +67,49 @@ export default function EnquiriesPage() {
     if (!user) return;
     const name = profile?.display_name || user.email?.split('@')[0] || 'Unknown';
     setClaiming(prev => new Set(prev).add(id));
-    await supabase
+    const { data: booking } = await supabase
       .from('demo_bookings')
       .update({ sourced_by_user_id: user.id, sourced_by_name: name })
-      .eq('id', id);
+      .eq('id', id)
+      .select('deal_id')
+      .single();
+    if (booking?.deal_id) {
+      await supabase.from('deals').update({
+        sourced_by_user_id: user.id,
+        sourced_by_name: name,
+        assigned_to_user_id: user.id,
+        assigned_to_name: name,
+        updated_at: new Date().toISOString(),
+      }).eq('id', booking.deal_id);
+      await supabase.from('deal_activity').insert({
+        deal_id: booking.deal_id,
+        user_id: user.id,
+        user_name: name,
+        action_type: 'assigned',
+        payload: { from: null, to: name },
+      });
+    }
     setClaiming(prev => { const s = new Set(prev); s.delete(id); return s; });
     await load();
   }
 
   async function releaseLead(id: string) {
     setClaiming(prev => new Set(prev).add(id));
-    await supabase
+    const { data: booking } = await supabase
       .from('demo_bookings')
       .update({ sourced_by_user_id: null, sourced_by_name: null })
-      .eq('id', id);
+      .eq('id', id)
+      .select('deal_id')
+      .single();
+    if (booking?.deal_id) {
+      await supabase.from('deals').update({
+        sourced_by_user_id: null,
+        sourced_by_name: null,
+        assigned_to_user_id: null,
+        assigned_to_name: null,
+        updated_at: new Date().toISOString(),
+      }).eq('id', booking.deal_id);
+    }
     setClaiming(prev => { const s = new Set(prev); s.delete(id); return s; });
     await load();
   }
