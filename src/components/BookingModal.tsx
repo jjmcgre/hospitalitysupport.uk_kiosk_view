@@ -565,7 +565,7 @@ export default function BookingModal() {
                 </div>
                 {meetingType === 'onsite' && (
                   <p className="text-slate-500 text-[11px] mt-1.5 leading-snug">
-                    We'll come to you. On-site visits are limited to 2 per day and may block adjacent slots for travel time.
+                    We'll come to you. On-site visits are limited to 2 per day and block 5 hours of calendar for travel time.
                   </p>
                 )}
               </div>

@@ -377,7 +377,7 @@ export default function DiaryPage() {
                                 </div>
                               )}
                               <p className="text-slate-600 text-[11px] leading-snug">
-                                Switching to on-site blocks adjacent slots for travel time. Switching back to virtual frees those slots.
+                                On-site visits block 5 hours of calendar (2 slots before + your meeting + 2 slots after) for travel time. Switching back to virtual frees those blocked slots.
                               </p>
                             </div>
                           )}
