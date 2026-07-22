@@ -4,6 +4,7 @@ import {
   ArrowLeft, Building2, MapPin, Globe, Hash, Phone, Mail, MessageSquare,
   Plus, ChevronRight, ChevronLeft, Check, X, AlertTriangle, Flame, Thermometer, Snowflake,
   UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink, Pencil, CalendarDays, Trash2,
+  UserCog,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -194,6 +195,10 @@ export default function DealPage() {
   const [arrDraft, setArrDraft] = useState('');
   const [savingArr, setSavingArr] = useState(false);
 
+  const [teamMembers, setTeamMembers] = useState<{ id: string; display_name: string }[]>([]);
+  const [showReassign, setShowReassign] = useState(false);
+  const [reassigning, setReassigning] = useState(false);
+
   // Book-demo slot picker (shown when advancing to demo_booked)
   const [showBookDemo, setShowBookDemo] = useState(false);
   const [bdWeekBase, setBdWeekBase] = useState(() => slotWeekStart(new Date()));
@@ -231,6 +236,11 @@ export default function DealPage() {
   }
 
   useEffect(() => { load(); }, [id]);
+
+  useEffect(() => {
+    supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
+      .then(({ data }) => setTeamMembers(data ?? []));
+  }, []);
 
   const userName = profile?.display_name || user?.email?.split('@')[0] || 'Unknown';
   const isAdmin = profile?.role === 'admin';
@@ -508,6 +518,30 @@ export default function DealPage() {
     setSavingContact(false);
   }
 
+  async function reassignDeal(memberId: string) {
+    if (!deal || !user) return;
+    setReassigning(true);
+    const member = teamMembers.find(m => m.id === memberId);
+    const assignedId = memberId || null;
+    const assignedName = member?.display_name ?? null;
+    await supabase.from('deals').update({
+      assigned_to_user_id: assignedId,
+      assigned_to_name: assignedName,
+      updated_at: new Date().toISOString(),
+    }).eq('id', deal.id);
+    await writeActivity('assigned', {
+      from: deal.assigned_to_name,
+      to: assignedName ?? 'Unassigned',
+    });
+    setDeal(prev => prev ? { ...prev, assigned_to_user_id: assignedId, assigned_to_name: assignedName } : prev);
+    setShowReassign(false);
+    setReassigning(false);
+    const { data } = await supabase.from('deal_activity')
+      .select('id,user_name,action_type,payload,created_at')
+      .eq('deal_id', deal.id).order('created_at', { ascending: false });
+    setActivity((data ?? []) as ActivityRow[]);
+  }
+
   async function changeConfidence(c: Confidence) {
     if (!deal) return;
     await supabase.from('deals').update({ confidence: c, updated_at: new Date().toISOString() }).eq('id', deal.id);
@@ -607,6 +641,40 @@ export default function DealPage() {
               </div>
             )}
           </button>
+          {canEdit && (
+            <div className="relative">
+              <button
+                onClick={() => setShowReassign(!showReassign)}
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-white transition-colors px-2 py-1.5 rounded-lg hover:bg-slate-800"
+                title="Reassign deal"
+              >
+                <UserCog size={14} />
+                <span className="hidden sm:inline">{deal.assigned_to_name ?? 'Unassigned'}</span>
+              </button>
+              {showReassign && (
+                <div className="absolute top-full right-0 mt-1 bg-slate-800 border border-slate-700 rounded-xl py-1 z-20 min-w-[180px] shadow-xl">
+                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Reassign to</div>
+                  <button
+                    onClick={() => reassignDeal('')}
+                    disabled={reassigning}
+                    className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-700 transition-colors ${!deal.assigned_to_user_id ? 'text-teal-400 font-bold' : 'text-slate-400'}`}
+                  >
+                    Unassigned
+                  </button>
+                  {teamMembers.map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => reassignDeal(m.id)}
+                      disabled={reassigning}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-700 transition-colors ${deal.assigned_to_user_id === m.id ? 'text-teal-400 font-bold' : 'text-slate-400'}`}
+                    >
+                      {m.display_name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

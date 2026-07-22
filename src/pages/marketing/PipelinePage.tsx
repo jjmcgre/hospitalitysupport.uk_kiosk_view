@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Plus, RefreshCw, Search, MapPin, UserCheck, AlertCircle,
   ChevronRight, Flame, Thermometer, Snowflake, AlertTriangle, GitBranch, Trash2,
+  UserCog,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +21,7 @@ interface DealRow {
   confidence: string;
   sourced_by_user_id: string | null;
   sourced_by_name: string | null;
+  assigned_to_user_id: string | null;
   assigned_to_name: string | null;
   commission_status: CommissionStatus;
   next_action: string | null;
@@ -86,18 +88,39 @@ export default function PipelinePage() {
   const [showLog, setShowLog] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DealRow | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<{ id: string; display_name: string }[]>([]);
+  const [reassignTarget, setReassignTarget] = useState<string | null>(null);
+  const [reassigning, setReassigning] = useState(false);
 
   async function load() {
     setLoading(true);
     const { data } = await supabase
       .from('deals')
-      .select('id,stage,source,confidence,sourced_by_user_id,sourced_by_name,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,organisations(trading_name,city,postcode,org_type)')
+      .select('id,stage,source,confidence,sourced_by_user_id,sourced_by_name,assigned_to_user_id,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,organisations(trading_name,city,postcode,org_type)')
       .order('next_action_date', { ascending: true, nullsFirst: false });
     setDeals((data ?? []) as DealRow[]);
     setLoading(false);
   }
 
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
+      .then(({ data }) => setTeamMembers(data ?? []));
+  }, []);
+
+  async function reassignDeal(dealId: string, memberId: string) {
+    setReassigning(true);
+    const member = teamMembers.find(m => m.id === memberId);
+    await supabase.from('deals').update({
+      assigned_to_user_id: memberId || null,
+      assigned_to_name: member?.display_name ?? null,
+      updated_at: new Date().toISOString(),
+    }).eq('id', dealId);
+    setReassignTarget(null);
+    setReassigning(false);
+    await load();
+  }
 
   async function deleteDeal(deal: DealRow) {
     setDeleting(true);
@@ -325,6 +348,37 @@ export default function PipelinePage() {
                     </div>
 
                     <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="relative">
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setReassignTarget(reassignTarget === deal.id ? null : deal.id); }}
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-teal-400 hover:bg-teal-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                          title="Reassign"
+                        >
+                          <UserCog size={13} />
+                        </button>
+                        {reassignTarget === deal.id && (
+                          <div className="absolute top-full right-0 mt-1 bg-slate-800 border border-slate-700 rounded-xl py-1 z-30 min-w-[180px] shadow-xl" onClick={(e) => e.preventDefault()}>
+                            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Reassign to</div>
+                            <button
+                              onClick={() => reassignDeal(deal.id, '')}
+                              disabled={reassigning}
+                              className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-700 transition-colors ${!deal.assigned_to_user_id ? 'text-teal-400 font-bold' : 'text-slate-400'}`}
+                            >
+                              Unassigned
+                            </button>
+                            {teamMembers.map(m => (
+                              <button
+                                key={m.id}
+                                onClick={() => reassignDeal(deal.id, m.id)}
+                                disabled={reassigning}
+                                className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-700 transition-colors ${deal.assigned_to_user_id === m.id ? 'text-teal-400 font-bold' : 'text-slate-400'}`}
+                              >
+                                {m.display_name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       <button
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDeleteTarget(deal); }}
                         className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
