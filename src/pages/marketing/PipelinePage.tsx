@@ -112,11 +112,16 @@ export default function PipelinePage() {
   async function reassignDeal(dealId: string, memberId: string) {
     setReassigning(true);
     const member = teamMembers.find(m => m.id === memberId);
-    await supabase.from('deals').update({
+    const { error } = await supabase.from('deals').update({
       assigned_to_user_id: memberId || null,
       assigned_to_name: member?.display_name ?? null,
       updated_at: new Date().toISOString(),
     }).eq('id', dealId);
+    if (error) {
+      alert('Failed to reassign: ' + error.message);
+      setReassigning(false);
+      return;
+    }
     setReassignTarget(null);
     setReassigning(false);
     await load();
@@ -147,7 +152,7 @@ export default function PipelinePage() {
 
   const filtered = useMemo(() => {
     let list = deals;
-    if (filter === 'mine') list = list.filter(d => d.sourced_by_user_id === user?.id);
+    if (filter === 'mine') list = list.filter(d => d.sourced_by_user_id === user?.id || d.assigned_to_user_id === user?.id);
     else if (filter === 'overdue') list = list.filter(d => d.next_action_date && d.next_action_date < today && d.stage !== 'won' && d.stage !== 'lost');
     else if (filter === 'flagged') list = list.filter(d => d.commission_status === 'flagged');
     else if (filter === 'won') list = list.filter(d => d.stage === 'won');
@@ -168,7 +173,7 @@ export default function PipelinePage() {
 
   const counts = useMemo(() => ({
     all: deals.filter(d => d.stage !== 'won' && d.stage !== 'lost').length,
-    mine: deals.filter(d => d.sourced_by_user_id === user?.id && d.stage !== 'won' && d.stage !== 'lost').length,
+    mine: deals.filter(d => (d.sourced_by_user_id === user?.id || d.assigned_to_user_id === user?.id) && d.stage !== 'won' && d.stage !== 'lost').length,
     overdue: deals.filter(d => d.next_action_date && d.next_action_date < today && d.stage !== 'won' && d.stage !== 'lost').length,
     flagged: deals.filter(d => d.commission_status === 'flagged').length,
     won: deals.filter(d => d.stage === 'won').length,
@@ -314,6 +319,14 @@ export default function PipelinePage() {
                           }`}>
                             <UserCheck size={9} />
                             {isMyDeal ? 'Mine' : deal.sourced_by_name}
+                          </span>
+                        )}
+                        {deal.assigned_to_name && deal.assigned_to_user_id !== deal.sourced_by_user_id && (
+                          <span className={`text-[10px] font-bold rounded-full px-2 py-px flex items-center gap-1 ${
+                            deal.assigned_to_user_id === user?.id ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-slate-800 text-slate-500 border border-slate-700'
+                          }`}>
+                            <UserCog size={9} />
+                            {deal.assigned_to_user_id === user?.id ? 'Assigned to me' : deal.assigned_to_name}
                           </span>
                         )}
 

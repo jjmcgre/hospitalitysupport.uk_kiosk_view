@@ -524,11 +524,16 @@ export default function DealPage() {
     const member = teamMembers.find(m => m.id === memberId);
     const assignedId = memberId || null;
     const assignedName = member?.display_name ?? null;
-    await supabase.from('deals').update({
+    const { error } = await supabase.from('deals').update({
       assigned_to_user_id: assignedId,
       assigned_to_name: assignedName,
       updated_at: new Date().toISOString(),
     }).eq('id', deal.id);
+    if (error) {
+      alert('Failed to reassign: ' + error.message);
+      setReassigning(false);
+      return;
+    }
     await writeActivity('assigned', {
       from: deal.assigned_to_name,
       to: assignedName ?? 'Unassigned',
