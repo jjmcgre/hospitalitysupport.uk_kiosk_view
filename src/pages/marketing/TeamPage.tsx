@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Phone, Mail, Plus, Check, X, RefreshCw, UserCheck, Shield, Star } from 'lucide-react';
+import { Phone, Mail, Plus, Check, X, RefreshCw, UserCheck, Shield, Star, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
@@ -43,6 +43,7 @@ export default function TeamPage() {
   const [draft, setDraft] = useState<Partial<TeamMember>>({});
   const [saving, setSaving] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -76,6 +77,19 @@ export default function TeamPage() {
   useEffect(() => { load(); }, []);
 
   const isAdmin = profile?.role === 'admin';
+  const isFounder = profile?.is_founder === true;
+
+  async function deleteMember(m: TeamMember) {
+    if (!confirm(`Delete ${m.display_name}? This will remove their profile. Their deals will remain but show as unclaimed.`)) return;
+    setDeletingId(m.id);
+    const { error } = await supabase.from('user_profiles').delete().eq('id', m.id);
+    setDeletingId(null);
+    if (error) {
+      alert(`Failed to delete: ${error.message}`);
+      return;
+    }
+    load();
+  }
 
   function startEdit(m: TeamMember) {
     setEditing(m.id);
@@ -213,12 +227,26 @@ export default function TeamPage() {
                       </div>
                     </div>
 
-                    {(isAdmin || isMe) && !isEditing && (
-                      <button onClick={() => startEdit(m)}
-                        className="text-slate-600 hover:text-teal-400 text-xs transition-colors flex-shrink-0">
-                        Edit
-                      </button>
-                    )}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      {(isAdmin || isMe) && !isEditing && (
+                        <button onClick={() => startEdit(m)}
+                          className="text-slate-600 hover:text-teal-400 text-xs transition-colors">
+                          Edit
+                        </button>
+                      )}
+                      {isFounder && !isMe && !m.is_founder && !isEditing && (
+                        <button
+                          onClick={() => deleteMember(m)}
+                          disabled={deletingId === m.id}
+                          className="text-slate-600 hover:text-red-400 text-xs transition-colors disabled:opacity-50 flex items-center gap-1"
+                        >
+                          {deletingId === m.id
+                            ? <RefreshCw size={12} className="animate-spin" />
+                            : <Trash2 size={12} />}
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {isEditing && (
