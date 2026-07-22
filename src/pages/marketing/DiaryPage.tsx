@@ -202,7 +202,7 @@ export default function DiaryPage() {
         {/* Tab bar */}
         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-1.5 flex gap-1.5">
           {([
-            { id: 'meetings', label: `Meetings${allBookedSlots.filter(s => !s.notes?.includes('[blocked: on-site buffer]')).length > 0 ? ` (${allBookedSlots.filter(s => !s.notes?.includes('[blocked: on-site buffer]')).length})` : ''}`, icon: <CalendarCheck size={14} /> },
+            { id: 'meetings', label: `Meetings${new Set(allBookedSlots.map(s => s.booked_by_booking_id ?? s.id)).size > 0 ? ` (${new Set(allBookedSlots.map(s => s.booked_by_booking_id ?? s.id)).size})` : ''}`, icon: <CalendarCheck size={14} /> },
             { id: 'slots', label: 'Manage Slots', icon: <Calendar size={14} /> },
             { id: 'enquiries', label: `Enquiries${enquiries.length > 0 ? ` (${enquiries.length})` : ''}`, icon: <MessageSquare size={14} /> },
           ] as const).map(tab => (
@@ -246,8 +246,14 @@ export default function DiaryPage() {
 
             {!loading && allBookedSlots.length > 0 && (
               <div className="space-y-3">
-                {allBookedSlots
-                  .filter(slot => !slot.notes?.includes('[blocked: on-site buffer]'))
+                {Array.from(
+                  allBookedSlots.reduce((map, slot) => {
+                    const key = slot.booked_by_booking_id ?? slot.id;
+                    const existing = map.get(key);
+                    if (!existing || slot.slot_time < existing.slot_time) map.set(key, slot);
+                    return map;
+                  }, new Map<string, Slot>()).values()
+                ).sort((a, b) => a.slot_date < b.slot_date ? -1 : a.slot_date > b.slot_date ? 1 : a.slot_time < b.slot_time ? -1 : 1)
                   .map(slot => {
                   const enq = enquiryFor(slot.booked_by_booking_id);
                   const isExpanded = expandedMeeting === slot.id;
@@ -312,10 +318,10 @@ export default function DiaryPage() {
                                 <div className="text-white font-semibold">{slot.slot_time} · {slot.duration_mins} minutes</div>
                               </div>
                             </div>
-                            {slot.notes && (
+                            {slot.notes && !slot.notes.replace(/\[blocked: on-site buffer\]/g, '').trim() ? null : slot.notes && (
                               <div>
                                 <div className="text-slate-500 text-[10px] uppercase tracking-wider mb-0.5">Notes</div>
-                                <div className="text-slate-300 text-sm italic">{slot.notes}</div>
+                                <div className="text-slate-300 text-sm italic">{slot.notes.replace(/\[blocked: on-site buffer\]/g, '').trim()}</div>
                               </div>
                             )}
                           </div>
