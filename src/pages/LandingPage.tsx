@@ -11,6 +11,7 @@ import DifferenceSection from '../components/DifferenceSection';
 import PricingSection from '../components/PricingSection';
 import ClosingSection from '../components/ClosingSection';
 import { useBooking } from '../context/BookingContext';
+import { captureRef } from '../lib/referral';
 
 function Nav() {
   const { openBooking } = useBooking();
@@ -34,6 +35,7 @@ export default function LandingPage() {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    captureRef();
     if (searchParams.get('book') === '1') {
       openBooking();
     }

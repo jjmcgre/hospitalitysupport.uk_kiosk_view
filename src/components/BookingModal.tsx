@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { supabase } from '../lib/supabase';
+import { captureRef, getStoredRef } from '../lib/referral';
 
 interface FormData {
   name: string;
@@ -97,7 +98,7 @@ export default function BookingModal() {
       const aug1 = new Date('2026-08-01T00:00:00');
       setWeekBase(weekStart(now >= aug1 ? now : aug1));
       const params = new URLSearchParams(window.location.search);
-      const ref = params.get('ref');
+      const ref = params.get('ref') || getStoredRef();
       if (ref) {
         setRefUserId(ref);
         supabase

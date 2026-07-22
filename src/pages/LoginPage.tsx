@@ -2,13 +2,14 @@ import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
+import { getStoredRef } from '../lib/referral';
 
 type Tab = 'signin' | 'signup';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const ref = searchParams.get('ref');
+  const ref = searchParams.get('ref') || getStoredRef();
   const refRef = useRef(ref);
   refRef.current = ref;
 

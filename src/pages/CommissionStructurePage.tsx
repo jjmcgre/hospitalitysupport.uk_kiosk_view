@@ -2,6 +2,7 @@ import { calcARR, calcL1Commission, calcL2Commission, fmtGbp, PRICE_PER_SITE } f
 import { CheckCircle2, BarChart3, ClipboardList, GraduationCap, ShoppingCart, Users } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { captureRef, getStoredRef } from '../lib/referral';
 
 const exampleSites = [1, 2, 3, 5, 8, 10, 15, 20];
 
@@ -54,10 +55,13 @@ const STEPS = [
 export default function CommissionStructurePage() {
   const [searchParams] = useSearchParams();
   const ref = searchParams.get('ref');
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
 
-  // If a logged-in user visits without ?ref=, use their own ID as the ref
-  const effectiveRef = ref ?? (user?.id ?? profile?.id);
+  // Capture any ?ref= from the URL into localStorage for later flows
+  if (ref) captureRef();
+
+  // If a logged-in user visits without ?ref=, use their own profile ID as the ref
+  const effectiveRef = ref ?? profile?.id;
   const loginHref = effectiveRef ? `/login?ref=${encodeURIComponent(effectiveRef)}` : '/login';
 
   return (
