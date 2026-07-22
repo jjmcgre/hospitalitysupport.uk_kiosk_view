@@ -25,6 +25,7 @@ interface Enquiry {
   video_link: string;
   status: string;
   meeting_type: string;
+  deal_id: string | null;
 }
 
 const TIMES = [
@@ -98,7 +99,7 @@ export default function DiaryPage() {
         .order('slot_date').order('slot_time'),
       supabase
         .from('demo_bookings')
-        .select('*')
+        .select('*,deal_id')
         .order('created_at', { ascending: false }),
     ]);
 
@@ -137,7 +138,27 @@ export default function DiaryPage() {
 
   async function toggleBooked(slot: Slot) {
     const update: Record<string, unknown> = { booked: !slot.booked };
-    if (slot.booked) update.booked_by_booking_id = null;
+    if (slot.booked) {
+      update.booked_by_booking_id = null;
+      // Free all buffer slots linked to this booking
+      if (slot.booked_by_booking_id) {
+        await supabase
+          .from('demo_availability')
+          .update({ booked: false, booked_by_booking_id: null, notes: '' })
+          .eq('booked_by_booking_id', slot.booked_by_booking_id)
+          .like('notes', '%[blocked: on-site buffer]%');
+        // Revert deal stage from demo_booked → contacted
+        const enq = enquiryFor(slot.booked_by_booking_id);
+        if (enq?.deal_id) {
+          await supabase.from('deals').update({
+            stage: 'contacted',
+            next_action: 'Follow up call',
+            next_action_date: null,
+            updated_at: new Date().toISOString(),
+          }).eq('id', enq.deal_id).eq('stage', 'demo_booked');
+        }
+      }
+    }
     await supabase.from('demo_availability').update(update).eq('id', slot.id);
     setSelectedSlot(null);
     load();
@@ -181,7 +202,7 @@ export default function DiaryPage() {
         {/* Tab bar */}
         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-1.5 flex gap-1.5">
           {([
-            { id: 'meetings', label: `Meetings${allBookedSlots.length > 0 ? ` (${allBookedSlots.length})` : ''}`, icon: <CalendarCheck size={14} /> },
+            { id: 'meetings', label: `Meetings${allBookedSlots.filter(s => !s.notes?.includes('[blocked: on-site buffer]')).length > 0 ? ` (${allBookedSlots.filter(s => !s.notes?.includes('[blocked: on-site buffer]')).length})` : ''}`, icon: <CalendarCheck size={14} /> },
             { id: 'slots', label: 'Manage Slots', icon: <Calendar size={14} /> },
             { id: 'enquiries', label: `Enquiries${enquiries.length > 0 ? ` (${enquiries.length})` : ''}`, icon: <MessageSquare size={14} /> },
           ] as const).map(tab => (
@@ -225,7 +246,9 @@ export default function DiaryPage() {
 
             {!loading && allBookedSlots.length > 0 && (
               <div className="space-y-3">
-                {allBookedSlots.map(slot => {
+                {allBookedSlots
+                  .filter(slot => !slot.notes?.includes('[blocked: on-site buffer]'))
+                  .map(slot => {
                   const enq = enquiryFor(slot.booked_by_booking_id);
                   const isExpanded = expandedMeeting === slot.id;
                   return (

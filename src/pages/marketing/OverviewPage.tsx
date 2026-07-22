@@ -46,6 +46,7 @@ interface Slot {
   slot_date: string;
   slot_time: string;
   booked: boolean;
+  notes: string;
 }
 
 function KpiCard({
@@ -152,7 +153,7 @@ export default function OverviewPage() {
       supabase.from('deals')
         .select('id,stage,sourced_by_user_id,sourced_by_name,assigned_to_user_id,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,won_at,organisations(trading_name,city)')
         .order('next_action_date', { ascending: true, nullsFirst: false }),
-      supabase.from('demo_availability').select('id,slot_date,slot_time,booked').gte('slot_date', today),
+      supabase.from('demo_availability').select('id,slot_date,slot_time,booked,notes').gte('slot_date', today),
     ]);
     setDeals((dealsRes.data ?? []) as DealRow[]);
     setSlots(slotRes.data ?? []);
@@ -199,7 +200,7 @@ export default function OverviewPage() {
   const myWonArr = useMemo(() => myWonDeals.reduce((s, d) => s + calcARR(d.num_sites, d.arr_override), 0), [myWonDeals]);
   const myCommission = useMemo(() => myDeals.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myDeals]);
 
-  const bookedSlots = slots.filter(s => s.booked).length;
+  const bookedSlots = slots.filter(s => s.booked && !s.notes?.includes('[blocked: on-site buffer]')).length;
   const availableSlots = slots.filter(s => !s.booked).length;
   const nextSlot = slots
     .filter(s => !s.booked && s.slot_date >= today)
