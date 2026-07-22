@@ -44,7 +44,7 @@ export default function BenefitsSection() {
         </div>
 
         {/* Stat cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-16">
           {stats.map((s) => (
             <div key={s.label} className="bg-teal-500/8 border border-teal-500/20 rounded-3xl p-6 text-center">
               <div className="text-3xl sm:text-4xl font-black text-teal-400 mb-1 leading-none">{s.val}</div>
@@ -55,7 +55,7 @@ export default function BenefitsSection() {
         </div>
 
         {/* Role outcome cards */}
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {roles.map((r) => {
             const Icon = r.icon;
             return (

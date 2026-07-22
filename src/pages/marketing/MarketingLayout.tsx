@@ -298,18 +298,19 @@ export default function MarketingLayout() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-2.5 flex items-center gap-3">
-          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-slate-400 hover:text-white transition-colors p-1 flex-shrink-0">
+        <header className="print:hidden sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-3 py-2.5 sm:px-4 flex items-center gap-3">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-slate-400 hover:text-white transition-colors p-1.5 -ml-1 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <span className="text-white font-semibold text-sm lg:hidden">Pipeline Hub</span>
           <div className="flex-1" />
           <button
             onClick={() => setShowLog(true)}
-            className="flex items-center gap-1.5 bg-teal-500 hover:bg-teal-400 transition-colors text-white text-xs font-bold px-3 py-2 rounded-lg"
+            className="flex items-center gap-1.5 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 transition-all text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-[0.98]"
           >
-            <Plus size={13} />
-            Log a lead
+            <Plus size={16} className="flex-shrink-0" />
+            <span className="hidden sm:inline">Log a lead</span>
+            <span className="sm:hidden">Lead</span>
           </button>
         </header>
         <main className="flex-1 overflow-y-auto">

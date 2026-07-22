@@ -519,7 +519,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
                       {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
                       {' · '}{formatDateShort(date)}
                     </div>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                       {daySlots.map(slot => (
                         <button
                           key={slot.id}
@@ -584,7 +584,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-700 sticky top-0 bg-slate-900 z-10">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-slate-700 sticky top-0 bg-slate-900 z-10">
           <div>
             <h2 className="text-white font-bold text-base">Log a new lead</h2>
             <p className="text-slate-500 text-xs mt-0.5">
@@ -599,7 +599,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6">
           {/* Organisation */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -786,7 +786,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <button
               type="submit"
               disabled={saving}
@@ -797,7 +797,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="px-5 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 rounded-xl text-sm font-semibold transition-colors"
+              className="px-4 sm:px-5 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-600 rounded-xl text-sm font-semibold transition-colors"
             >
               Cancel
             </button>

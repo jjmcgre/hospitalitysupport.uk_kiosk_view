@@ -241,7 +241,7 @@ export default function OverviewPage() {
     <div className="min-h-full">
       <PageHeader title="Overview" subtitle="Company performance and your activity." hideHome />
 
-      <div className="px-4 py-5 sm:px-8 sm:py-6 space-y-8">
+      <div className="px-4 py-5 sm:px-8 sm:py-6 space-y-8 max-w-[1400px] mx-auto">
 
 
         {/* ── COMPANY PERFORMANCE ── */}

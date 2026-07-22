@@ -144,10 +144,10 @@ export default function PipelinePage() {
     <div className="min-h-full">
       <PageHeader title="Pipeline" subtitle="Every active deal in one place." badge="Live" />
 
-      <div className="px-4 py-6 sm:px-8 sm:py-6">
+      <div className="px-4 py-6 sm:px-8 sm:py-6 max-w-[1400px] mx-auto">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-3 mb-5">
-          <div className="relative flex-1 min-w-0 max-w-xs">
+        <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:items-center sm:flex-wrap">
+          <div className="relative flex-1 min-w-0 sm:max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
               type="text"
@@ -157,21 +157,24 @@ export default function PipelinePage() {
               className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors"
             />
           </div>
-          <button onClick={load} className="text-slate-500 hover:text-teal-400 transition-colors flex items-center gap-1.5 text-xs">
-            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
-          <button
-            onClick={() => setShowLog(true)}
-            className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 transition-colors text-white text-sm font-bold px-4 py-2.5 rounded-xl ml-auto"
-          >
-            <Plus size={14} />
-            Log a lead
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={load} className="text-slate-500 hover:text-teal-400 transition-colors flex items-center gap-1.5 text-xs px-2 py-2">
+              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+            <button
+              onClick={() => setShowLog(true)}
+              className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 transition-all text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-[0.98] ml-auto sm:ml-0"
+            >
+              <Plus size={16} className="flex-shrink-0" />
+              <span className="hidden sm:inline">Log a lead</span>
+              <span className="sm:hidden">Lead</span>
+            </button>
+          </div>
         </div>
 
         {/* Filter tabs */}
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="flex flex-wrap gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
           {tabs.map(tab => (
             <button
               key={tab.key}
@@ -226,9 +229,9 @@ export default function PipelinePage() {
                 <Link
                   key={deal.id}
                   to={`/deals/${deal.id}`}
-                  className="block bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-2xl px-5 py-4 transition-all hover:bg-slate-800/60 group"
+                  className="block bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 transition-all hover:bg-slate-800/60 group"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         <span className="text-white font-bold text-sm group-hover:text-teal-300 transition-colors">

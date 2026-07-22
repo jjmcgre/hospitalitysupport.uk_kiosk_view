@@ -409,7 +409,7 @@ export default function DiaryPage() {
             </div>
 
             {/* 7-column grid */}
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1.5 sm:gap-2 overflow-x-auto pb-2 -mx-1 px-1">
               {weekDays.map((day, i) => {
                 const ds = isoDate(day);
                 const daySlots = slots.filter(s => s.slot_date === ds);

@@ -218,7 +218,7 @@ export default function BookingModal() {
       <div className="relative w-full bg-slate-900 border border-white/10 rounded-3xl shadow-2xl flex flex-col max-w-lg max-h-[92vh] overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-7 py-5 border-b border-white/8 flex-shrink-0">
+        <div className="flex items-center justify-between px-5 sm:px-7 py-5 border-b border-white/8 flex-shrink-0">
           <div>
             {step === 'details' && <>
               <div className="text-white font-black text-lg leading-tight">Book your 30-minute demo</div>
@@ -243,7 +243,7 @@ export default function BookingModal() {
 
         {/* Step indicator */}
         {step !== 'confirmed' && (
-          <div className="flex px-7 pt-4 pb-0 gap-2 flex-shrink-0">
+          <div className="flex px-5 sm:px-7 pt-4 pb-0 gap-2 flex-shrink-0">
             {(['details', 'slot'] as Step[]).map((s, i) => (
               <div key={s} className="flex items-center gap-2">
                 <div className={`w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center border transition-colors ${
@@ -265,7 +265,7 @@ export default function BookingModal() {
         {/* ── Step 1: Details ── */}
         {step === 'details' && (
           <form onSubmit={handleDetails} className="overflow-y-auto flex-1 flex flex-col">
-            <div className="px-7 py-5 space-y-4 flex-1">
+            <div className="px-5 sm:px-7 py-5 space-y-4 flex-1">
               <div className="bg-teal-500/8 border border-teal-500/20 rounded-2xl p-4">
                 <div className="text-teal-300 text-xs font-bold uppercase tracking-widest mb-2">What happens in the demo</div>
                 <div className="space-y-1.5">
@@ -344,7 +344,7 @@ export default function BookingModal() {
               {error && <ErrorBox msg={error} />}
             </div>
 
-            <div className="px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0">
+            <div className="px-5 sm:px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0">
               <button type="submit" disabled={submitting}
                 className="w-full bg-teal-500 hover:bg-teal-400 disabled:opacity-60 transition-colors rounded-2xl py-4 flex items-center justify-center gap-2 font-black text-white text-base">
                 Next: choose a time <ArrowRight size={16} />
@@ -362,7 +362,7 @@ export default function BookingModal() {
         {/* ── Step 2: Slot picker ── */}
         {step === 'slot' && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-7 py-5 space-y-4">
+            <div className="flex-1 overflow-y-auto px-5 sm:px-7 py-5 space-y-4">
 
               {/* Week navigator */}
               <div className="flex items-center justify-between">
@@ -440,7 +440,7 @@ export default function BookingModal() {
               )}
             </div>
 
-            <div className="px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0 space-y-3">
+            <div className="px-5 sm:px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0 space-y-3">
               {error && <ErrorBox msg={error} />}
               <button
                 onClick={confirmSlot}
@@ -461,7 +461,7 @@ export default function BookingModal() {
 
         {/* ── Step 3: Confirmed ── */}
         {step === 'confirmed' && (
-          <div className="flex-1 flex flex-col px-7 py-8 text-center items-center justify-center gap-5 overflow-y-auto">
+          <div className="flex-1 flex flex-col px-5 sm:px-7 py-8 text-center items-center justify-center gap-5 overflow-y-auto">
             <div className="w-20 h-20 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center">
               <CheckCircle size={40} className="text-teal-400" />
             </div>
