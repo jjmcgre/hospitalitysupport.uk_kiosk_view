@@ -8,6 +8,7 @@ import { useBooking } from '../context/BookingContext';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { captureRef, getStoredRef } from '../lib/referral';
+import { computeOrgKey } from '../lib/commission';
 
 interface FormData {
   name: string;
@@ -116,7 +117,6 @@ export default function BookingModal() {
             if (data?.display_name) setRefUserName(data.display_name);
           });
       } else if (user && profile?.display_name) {
-        // Auto-attribute to logged-in team member when no ref param
         setRefUserId(user.id);
         setRefUserName(profile.display_name);
       } else {
@@ -124,7 +124,7 @@ export default function BookingModal() {
         setRefUserName(null);
       }
     }
-  }, [isOpen]);
+  }, [isOpen, user, profile]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -203,6 +203,50 @@ export default function BookingModal() {
       setError(`Booking error: ${msg} (slot: ${selectedSlot.id}, booking: ${bookingId})`);
       setSubmitting(false);
       return;
+    }
+
+    // Auto-create a deal in the pipeline linked to this booking
+    if (refUserId) {
+      try {
+        const sites = parseInt(form.num_sites, 10) || 1;
+        const orgKey = computeOrgKey(form.business_name.trim(), form.postcode.trim());
+        const { data: orgData } = await supabase.from('organisations')
+          .select('id').eq('org_key', orgKey).maybeSingle();
+
+        let orgId: string | null = orgData?.id ?? null;
+
+        if (!orgId) {
+          const { data: newOrg } = await supabase.from('organisations').insert({
+            trading_name: form.business_name.trim(),
+            city: form.city.trim() || null,
+            postcode: form.postcode.trim() || null,
+            org_type: 'pub',
+            num_sites: sites,
+            created_by_user_id: refUserId,
+          }).select('id').single();
+          orgId = newOrg?.id ?? null;
+        }
+
+        if (orgId) {
+          const { data: newDeal } = await supabase.from('deals').insert({
+            org_id: orgId,
+            stage: 'demo_booked',
+            source: 'landing_page',
+            confidence: 'warm',
+            sourced_by_user_id: refUserId,
+            sourced_by_name: refUserName,
+            assigned_to_user_id: refUserId,
+            assigned_to_name: refUserName,
+            commission_status: 'pending',
+            num_sites: sites,
+            created_by_user_id: refUserId,
+          }).select('id').single();
+
+          if (newDeal?.id) {
+            await supabase.from('demo_bookings').update({ deal_id: newDeal.id }).eq('id', bookingId);
+          }
+        }
+      } catch { /* non-fatal — booking still succeeded */ }
     }
 
     // Send confirmation emails + WhatsApp (fire-and-forget)

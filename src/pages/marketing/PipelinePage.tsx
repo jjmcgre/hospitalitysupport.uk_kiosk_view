@@ -96,7 +96,7 @@ export default function PipelinePage() {
     setLoading(true);
     const { data } = await supabase
       .from('deals')
-      .select('id,stage,source,confidence,sourced_by_user_id,sourced_by_name,assigned_to_user_id,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,organisations(trading_name,city,postcode,org_type)')
+      .select('id,org_id,stage,source,confidence,sourced_by_user_id,sourced_by_name,assigned_to_user_id,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,organisations(trading_name,city,postcode,org_type)')
       .order('next_action_date', { ascending: true, nullsFirst: false });
     setDeals((data ?? []) as DealRow[]);
     setLoading(false);
@@ -112,9 +112,10 @@ export default function PipelinePage() {
   async function reassignDeal(dealId: string, memberId: string) {
     setReassigning(true);
     const member = teamMembers.find(m => m.id === memberId);
+    const assignedName = member?.display_name ?? null;
     const { error } = await supabase.from('deals').update({
       assigned_to_user_id: memberId || null,
-      assigned_to_name: member?.display_name ?? null,
+      assigned_to_name: assignedName,
       updated_at: new Date().toISOString(),
     }).eq('id', dealId);
     if (error) {
@@ -122,6 +123,19 @@ export default function PipelinePage() {
       setReassigning(false);
       return;
     }
+    // Sync linked demo_booking attribution
+    await supabase.from('demo_bookings')
+      .update({ sourced_by_user_id: memberId || null, sourced_by_name: assignedName })
+      .eq('deal_id', dealId);
+    // Write activity log
+    const deal = deals.find(d => d.id === dealId);
+    await supabase.from('deal_activity').insert({
+      deal_id: dealId,
+      user_id: user?.id ?? null,
+      user_name: profile?.display_name ?? user?.email?.split('@')[0] ?? 'System',
+      action_type: 'assigned',
+      payload: { from: deal?.assigned_to_name ?? null, to: assignedName ?? 'Unassigned' },
+    });
     setReassignTarget(null);
     setReassigning(false);
     await load();
@@ -132,11 +146,12 @@ export default function PipelinePage() {
     try {
       await supabase.from('deal_activity').delete().eq('deal_id', deal.id);
       await supabase.from('deals').delete().eq('id', deal.id);
-      if (deal.organisations) {
-        const { data: orgDeals } = await supabase.from('deals').select('id').eq('org_id', deal.organisations).maybeSingle();
+      const orgId = (deal as { org_id?: string }).org_id;
+      if (orgId) {
+        const { data: orgDeals } = await supabase.from('deals').select('id').eq('org_id', orgId).maybeSingle();
         if (!orgDeals) {
-          await supabase.from('contacts').delete().eq('org_id', deal.organisations);
-          await supabase.from('organisations').delete().eq('id', deal.organisations);
+          await supabase.from('contacts').delete().eq('org_id', orgId);
+          await supabase.from('organisations').delete().eq('id', orgId);
         }
       }
       setDeleteTarget(null);

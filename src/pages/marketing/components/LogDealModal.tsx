@@ -99,6 +99,7 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
   const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);
   const [bookingSlot, setBookingSlot] = useState(false);
   const [bookingError, setBookingError] = useState('');
+  const [meetingType, setMeetingType] = useState<'virtual' | 'onsite'>('virtual');
 
   const today = isoDate(new Date());
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
@@ -324,16 +325,20 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
       }]);
       if (bErr) throw new Error(bErr.message);
 
-      const meetLink = 'https://meet.google.com/mav-hmei-vzi';
+      const meetLink = meetingType === 'virtual' ? 'https://meet.google.com/mav-hmei-vzi' : '';
       const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
         p_slot_id: selectedSlot.id,
         p_booking_id: bookingId,
         p_video_link: meetLink,
+        p_meeting_type: meetingType,
       });
 
       if (rpcError || !rpcResult?.ok) {
         throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
       }
+
+      // Link the booking to this deal
+      await supabase.from('demo_bookings').update({ deal_id: savedDealId }).eq('id', bookingId);
 
       // Advance the deal stage to demo_booked
       const demoAction = DEFAULT_NEXT_ACTIONS['demo_booked'];
@@ -548,6 +553,40 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
                   <div className="text-white text-sm font-bold">{formatDateLong(selectedSlot.slot_date)}</div>
                   <div className="text-teal-300 text-xs">{selectedSlot.slot_time} · {selectedSlot.duration_mins} minutes</div>
                 </div>
+              </div>
+            )}
+
+            {/* Meeting type selector */}
+            {selectedSlot && (
+              <div>
+                <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">Meeting type</label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMeetingType('virtual')}
+                    className={`flex-1 rounded-xl py-2.5 px-3 text-xs font-bold border transition-all ${
+                      meetingType === 'virtual'
+                        ? 'bg-teal-500 border-teal-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50'
+                    }`}
+                  >
+                    Virtual (Google Meet)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMeetingType('onsite')}
+                    className={`flex-1 rounded-xl py-2.5 px-3 text-xs font-bold border transition-all ${
+                      meetingType === 'onsite'
+                        ? 'bg-teal-500 border-teal-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50'
+                    }`}
+                  >
+                    On-site visit
+                  </button>
+                </div>
+                {meetingType === 'onsite' && (
+                  <p className="text-slate-500 text-[10px] mt-1.5">Adjacent slots will be blocked automatically for travel time.</p>
+                )}
               </div>
             )}
 

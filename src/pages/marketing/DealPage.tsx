@@ -207,6 +207,7 @@ export default function DealPage() {
   const [bdSelectedSlot, setBdSelectedSlot] = useState<AvailableSlot | null>(null);
   const [bdBooking, setBdBooking] = useState(false);
   const [bdError, setBdError] = useState('');
+  const [bdMeetingType, setBdMeetingType] = useState<'virtual' | 'onsite'>('virtual');
 
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
@@ -285,6 +286,7 @@ export default function DealPage() {
     setBdSelectedSlot(null);
     setBdError('');
     setBdSlots([]);
+    setBdMeetingType('virtual');
     setShowBookDemo(true);
     loadBdSlots(slotWeekStart(new Date()));
   }
@@ -311,15 +313,19 @@ export default function DealPage() {
       }]);
       if (bErr) throw new Error(bErr.message);
 
-      const meetLink = 'https://meet.google.com/mav-hmei-vzi';
+      const meetLink = bdMeetingType === 'virtual' ? 'https://meet.google.com/mav-hmei-vzi' : '';
       const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
         p_slot_id: bdSelectedSlot.id,
         p_booking_id: bookingId,
         p_video_link: meetLink,
+        p_meeting_type: bdMeetingType,
       });
       if (rpcError || !rpcResult?.ok) {
         throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
       }
+
+      // Link the booking to this deal
+      await supabase.from('demo_bookings').update({ deal_id: deal.id }).eq('id', bookingId);
 
       const demoAction = DEFAULT_NEXT_ACTIONS['demo_booked'];
       await supabase.from('deals').update({
@@ -534,6 +540,10 @@ export default function DealPage() {
       setReassigning(false);
       return;
     }
+    // Sync linked demo_booking attribution
+    await supabase.from('demo_bookings')
+      .update({ sourced_by_user_id: assignedId, sourced_by_name: assignedName })
+      .eq('deal_id', deal.id);
     await writeActivity('assigned', {
       from: deal.assigned_to_name,
       to: assignedName ?? 'Unassigned',
@@ -1363,6 +1373,40 @@ export default function DealPage() {
                       <div className="text-white text-sm font-bold">{slotFormatLong(bdSelectedSlot.slot_date)}</div>
                       <div className="text-teal-300 text-xs">{bdSelectedSlot.slot_time} · {bdSelectedSlot.duration_mins} minutes</div>
                     </div>
+                  </div>
+                )}
+
+                {/* Meeting type selector */}
+                {bdSelectedSlot && (
+                  <div>
+                    <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">Meeting type</label>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setBdMeetingType('virtual')}
+                        className={`flex-1 rounded-xl py-2.5 px-3 text-xs font-bold border transition-all ${
+                          bdMeetingType === 'virtual'
+                            ? 'bg-teal-500 border-teal-500 text-white'
+                            : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50'
+                        }`}
+                      >
+                        Virtual (Google Meet)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBdMeetingType('onsite')}
+                        className={`flex-1 rounded-xl py-2.5 px-3 text-xs font-bold border transition-all ${
+                          bdMeetingType === 'onsite'
+                            ? 'bg-teal-500 border-teal-500 text-white'
+                            : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50'
+                        }`}
+                      >
+                        On-site visit
+                      </button>
+                    </div>
+                    {bdMeetingType === 'onsite' && (
+                      <p className="text-slate-500 text-[10px] mt-1.5">Adjacent slots will be blocked automatically for travel time.</p>
+                    )}
                   </div>
                 )}
 
