@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck, Video } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck, Video, MapPin, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
 
@@ -24,6 +24,7 @@ interface Enquiry {
   created_at: string;
   video_link: string;
   status: string;
+  meeting_type: string;
 }
 
 const TIMES = [
@@ -71,6 +72,8 @@ export default function DiaryPage() {
   const [activeTab, setActiveTab] = useState<'meetings' | 'slots' | 'enquiries'>('meetings');
   const [expandedMeeting, setExpandedMeeting] = useState<string | null>(null);
   const [expandedEnquiry, setExpandedEnquiry] = useState<string | null>(null);
+  const [changingType, setChangingType] = useState<string | null>(null);
+  const [typeError, setTypeError] = useState('');
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
   const today = isoDate(new Date());
@@ -133,6 +136,20 @@ export default function DiaryPage() {
   async function deleteSlot(id: string) {
     await supabase.from('demo_availability').delete().eq('id', id);
     setSelectedSlot(null);
+    load();
+  }
+
+  async function changeMeetingType(bookingId: string, newType: 'virtual' | 'onsite') {
+    setChangingType(bookingId);
+    setTypeError('');
+    const { data, error } = await supabase.rpc('change_meeting_type', {
+      p_booking_id: bookingId,
+      p_new_type: newType,
+    });
+    if (error || !data?.ok) {
+      setTypeError(error?.message ?? data?.error ?? 'Failed to change meeting type');
+    }
+    setChangingType(null);
     load();
   }
 
@@ -226,6 +243,15 @@ export default function DiaryPage() {
                                 {sitesDisplay(enq.num_sites)}
                               </span>
                             )}
+                            {enq?.meeting_type === 'onsite' ? (
+                              <span className="text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25 rounded-full px-2 py-0.5 flex items-center gap-1">
+                                <MapPin size={9} />On-site
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold bg-sky-500/15 text-sky-300 border border-sky-500/25 rounded-full px-2 py-0.5 flex items-center gap-1">
+                                <Video size={9} />Virtual
+                              </span>
+                            )}
                           </div>
                           <div className="text-slate-500 text-xs mt-0.5 flex items-center gap-3">
                             <span className="flex items-center gap-1"><Clock size={9} />{slot.slot_time} · {slot.duration_mins} mins</span>
@@ -315,8 +341,49 @@ export default function DiaryPage() {
                             <div className="text-slate-600 text-sm italic">No enquiry details linked to this slot.</div>
                           )}
 
+                          {/* Meeting type switcher */}
+                          {enq && (
+                            <div className="bg-slate-900/60 border border-slate-700 rounded-xl p-4 space-y-3">
+                              <div className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Meeting type</div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  onClick={() => changeMeetingType(enq.id, 'virtual')}
+                                  disabled={changingType === enq.id || enq.meeting_type === 'virtual'}
+                                  className={`rounded-xl py-2.5 px-3 text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                                    enq.meeting_type === 'virtual'
+                                      ? 'bg-sky-500/20 border-sky-500/40 text-sky-300 cursor-default'
+                                      : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-sky-500/50 hover:text-white'
+                                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                >
+                                  {changingType === enq.id ? <RefreshCw size={12} className="animate-spin" /> : <Video size={12} />}
+                                  Virtual
+                                </button>
+                                <button
+                                  onClick={() => changeMeetingType(enq.id, 'onsite')}
+                                  disabled={changingType === enq.id || enq.meeting_type === 'onsite'}
+                                  className={`rounded-xl py-2.5 px-3 text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                                    enq.meeting_type === 'onsite'
+                                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 cursor-default'
+                                      : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-amber-500/50 hover:text-white'
+                                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                >
+                                  {changingType === enq.id ? <RefreshCw size={12} className="animate-spin" /> : <MapPin size={12} />}
+                                  On-site
+                                </button>
+                              </div>
+                              {typeError && (
+                                <div className="flex items-start gap-2 text-red-300 text-xs">
+                                  <AlertCircle size={12} className="mt-0.5 flex-shrink-0" />{typeError}
+                                </div>
+                              )}
+                              <p className="text-slate-600 text-[11px] leading-snug">
+                                Switching to on-site blocks adjacent slots for travel time. Switching back to virtual frees those slots.
+                              </p>
+                            </div>
+                          )}
+
                           {/* Video link */}
-                          {enq?.video_link && (
+                          {enq?.video_link && enq?.meeting_type === 'virtual' && (
                             <a
                               href={enq.video_link}
                               target="_blank"
