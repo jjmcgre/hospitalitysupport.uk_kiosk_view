@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Building2, MapPin, Globe, Hash, Phone, Mail, MessageSquare,
   Plus, ChevronRight, ChevronLeft, Check, X, AlertTriangle, Flame, Thermometer, Snowflake,
-  UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink, Pencil, CalendarDays,
+  UserCheck, Clock, RefreshCw, CheckCircle2, ExternalLink, Pencil, CalendarDays, Trash2,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -183,6 +183,8 @@ export default function DealPage() {
   const [advancingStage, setAdvancingStage] = useState(false);
 
   const [showAddContact, setShowAddContact] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [contactDraft, setContactDraft] = useState({ full_name: '', job_title: '', email: '', phone: '' });
   const [savingContact, setSavingContact] = useState(false);
 
@@ -513,6 +515,26 @@ export default function DealPage() {
     setEditConfidence(false);
   }
 
+  async function deleteDeal() {
+    if (!deal || !org) return;
+    setDeleting(true);
+    try {
+      const { error: actErr } = await supabase.from('deal_activity').delete().eq('deal_id', deal.id);
+      if (actErr) throw actErr;
+      const { error: dealErr } = await supabase.from('deals').delete().eq('id', deal.id);
+      if (dealErr) throw dealErr;
+      const { error: contactErr } = await supabase.from('contacts').delete().eq('org_id', org.id);
+      if (contactErr) throw contactErr;
+      const { error: orgErr } = await supabase.from('organisations').delete().eq('id', org.id);
+      if (orgErr) throw orgErr;
+      navigate('/pipeline');
+    } catch (err: unknown) {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+      alert(err instanceof Error ? err.message : 'Failed to delete deal.');
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-full flex items-center justify-center">
@@ -554,6 +576,16 @@ export default function DealPage() {
         <h1 className="text-white font-bold text-base truncate">{org.trading_name}</h1>
         <StageBadge stage={deal.stage} />
         <div className="ml-auto flex items-center gap-2">
+          {canEdit && (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-400 transition-colors px-2 py-1.5 rounded-lg hover:bg-red-500/10"
+              title="Delete deal"
+            >
+              <Trash2 size={14} />
+              <span className="hidden sm:inline">Delete</span>
+            </button>
+          )}
           <button
             onClick={() => setEditConfidence(!editConfidence)}
             className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-white transition-colors relative"
@@ -1289,6 +1321,40 @@ export default function DealPage() {
           </div>
         );
       })()}
+
+      {/* Delete confirmation modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center flex-shrink-0">
+                <Trash2 size={18} className="text-red-400" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-base">Delete this deal?</h2>
+                <p className="text-slate-500 text-xs mt-0.5">This cannot be undone.</p>
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm mb-5">
+              This will permanently delete <span className="text-white font-semibold">{org.trading_name}</span>, its contacts, all activity history, and any linked demo bookings.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={deleteDeal}
+                disabled={deleting}
+                className="flex-1 bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+              >
+                {deleting ? <RefreshCw size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                {deleting ? 'Deleting...' : 'Delete permanently'}
+              </button>
+              <button onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 text-slate-500 hover:text-white border border-slate-700 rounded-xl text-sm transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Lost modal */}
       {showLostModal && (

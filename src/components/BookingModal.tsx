@@ -67,6 +67,8 @@ export default function BookingModal() {
   const [step, setStep] = useState<Step>('details');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [refUserId, setRefUserId] = useState<string | null>(null);
+  const [refUserName, setRefUserName] = useState<string | null>(null);
 
   // Slot picker state
   const [weekBase, setWeekBase] = useState(() => {
@@ -94,6 +96,22 @@ export default function BookingModal() {
       const now = new Date();
       const aug1 = new Date('2026-08-01T00:00:00');
       setWeekBase(weekStart(now >= aug1 ? now : aug1));
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        setRefUserId(ref);
+        supabase
+          .from('team_members_public')
+          .select('display_name')
+          .eq('id', ref)
+          .maybeSingle()
+          .then(({ data }) => {
+            if (data?.display_name) setRefUserName(data.display_name);
+          });
+      } else {
+        setRefUserId(null);
+        setRefUserName(null);
+      }
     }
   }, [isOpen]);
 
@@ -145,6 +163,8 @@ export default function BookingModal() {
       postcode: form.postcode.trim() || null,
       num_sites: form.num_sites,
       message: form.message.trim(),
+      sourced_by_user_id: refUserId || null,
+      sourced_by_name: refUserName || null,
     }]);
     setBookingId(id);
     setSubmitting(false);

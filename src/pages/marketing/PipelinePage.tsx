@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Plus, RefreshCw, Search, MapPin, UserCheck, AlertCircle,
-  ChevronRight, Flame, Thermometer, Snowflake, AlertTriangle, GitBranch,
+  ChevronRight, Flame, Thermometer, Snowflake, AlertTriangle, GitBranch, Trash2,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -84,6 +84,8 @@ export default function PipelinePage() {
   const [filter, setFilter] = useState<FilterTab>('all');
   const [search, setSearch] = useState('');
   const [showLog, setShowLog] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<DealRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -96,6 +98,27 @@ export default function PipelinePage() {
   }
 
   useEffect(() => { load(); }, []);
+
+  async function deleteDeal(deal: DealRow) {
+    setDeleting(true);
+    try {
+      await supabase.from('deal_activity').delete().eq('deal_id', deal.id);
+      await supabase.from('deals').delete().eq('id', deal.id);
+      if (deal.organisations) {
+        const { data: orgDeals } = await supabase.from('deals').select('id').eq('org_id', deal.organisations).maybeSingle();
+        if (!orgDeals) {
+          await supabase.from('contacts').delete().eq('org_id', deal.organisations);
+          await supabase.from('organisations').delete().eq('id', deal.organisations);
+        }
+      }
+      setDeleteTarget(null);
+      await load();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Failed to delete.');
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -302,6 +325,13 @@ export default function PipelinePage() {
                     </div>
 
                     <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDeleteTarget(deal); }}
+                        className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                        title="Delete deal"
+                      >
+                        <Trash2 size={13} />
+                      </button>
                       <ConfIcon size={14} className={CONFIDENCE_COLOURS[deal.confidence] ?? 'text-slate-500'} />
                       <ChevronRight size={16} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
                     </div>
@@ -312,6 +342,39 @@ export default function PipelinePage() {
           </div>
         )}
       </div>
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center flex-shrink-0">
+                <Trash2 size={18} className="text-red-400" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-base">Delete this deal?</h2>
+                <p className="text-slate-500 text-xs mt-0.5">This cannot be undone.</p>
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm mb-5">
+              This will permanently delete <span className="text-white font-semibold">{deleteTarget.organisations?.trading_name ?? 'this deal'}</span>, its contacts, all activity history, and any linked demo bookings.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => deleteDeal(deleteTarget)}
+                disabled={deleting}
+                className="flex-1 bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+              >
+                {deleting ? <RefreshCw size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                {deleting ? 'Deleting...' : 'Delete permanently'}
+              </button>
+              <button onClick={() => setDeleteTarget(null)}
+                className="px-4 text-slate-500 hover:text-white border border-slate-700 rounded-xl text-sm transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showLog && user && (
         <LogDealModal
