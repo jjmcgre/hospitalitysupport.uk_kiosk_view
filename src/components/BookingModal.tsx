@@ -69,7 +69,11 @@ export default function BookingModal() {
   const [error, setError] = useState('');
 
   // Slot picker state
-  const [weekBase, setWeekBase] = useState(() => weekStart(new Date()));
+  const [weekBase, setWeekBase] = useState(() => {
+    const now = new Date();
+    const aug1 = new Date('2026-08-01T00:00:00');
+    return weekStart(now >= aug1 ? now : aug1);
+  });
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
@@ -87,7 +91,9 @@ export default function BookingModal() {
       setSelectedSlot(null);
       setBookingId(null);
       setVideoLink(null);
-      setWeekBase(weekStart(new Date()));
+      const now = new Date();
+      const aug1 = new Date('2026-08-01T00:00:00');
+      setWeekBase(weekStart(now >= aug1 ? now : aug1));
     }
   }, [isOpen]);
 

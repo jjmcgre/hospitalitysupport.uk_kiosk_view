@@ -55,7 +55,11 @@ function weekStart(d: Date) {
 const DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
 export default function DiaryPage() {
-  const [weekBase, setWeekBase] = useState(() => weekStart(new Date()));
+  const [weekBase, setWeekBase] = useState(() => {
+    const now = new Date();
+    const aug1 = new Date('2026-08-01T00:00:00');
+    return weekStart(now >= aug1 ? now : aug1);
+  });
   const [slots, setSlots] = useState<Slot[]>([]);
   const [allBookedSlots, setAllBookedSlots] = useState<Slot[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -377,7 +381,11 @@ export default function DiaryPage() {
                   {weekDays[6].toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
                 <button
-                  onClick={() => setWeekBase(weekStart(new Date()))}
+                  onClick={() => {
+                  const now = new Date();
+                  const aug1 = new Date('2026-08-01T00:00:00');
+                  setWeekBase(weekStart(now >= aug1 ? now : aug1));
+                }}
                   className="text-teal-400 text-xs hover:text-teal-300 transition-colors mt-0.5"
                 >
                   This week
