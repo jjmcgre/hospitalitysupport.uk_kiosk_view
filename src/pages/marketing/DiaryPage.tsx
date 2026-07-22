@@ -57,8 +57,8 @@ const DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 export default function DiaryPage() {
   const [weekBase, setWeekBase] = useState(() => {
     const now = new Date();
-    const aug1 = new Date('2026-08-01T00:00:00');
-    return weekStart(now >= aug1 ? now : aug1);
+    const jul30 = new Date('2026-07-30T00:00:00');
+    return weekStart(now >= jul30 ? now : jul30);
   });
   const [slots, setSlots] = useState<Slot[]>([]);
   const [allBookedSlots, setAllBookedSlots] = useState<Slot[]>([]);
