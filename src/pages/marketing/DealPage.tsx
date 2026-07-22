@@ -531,6 +531,8 @@ export default function DealPage() {
     const assignedId = memberId || null;
     const assignedName = member?.display_name ?? null;
     const { error } = await supabase.from('deals').update({
+      sourced_by_user_id: assignedId,
+      sourced_by_name: assignedName,
       assigned_to_user_id: assignedId,
       assigned_to_name: assignedName,
       updated_at: new Date().toISOString(),

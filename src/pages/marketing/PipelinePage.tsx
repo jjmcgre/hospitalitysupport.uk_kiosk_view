@@ -114,6 +114,8 @@ export default function PipelinePage() {
     const member = teamMembers.find(m => m.id === memberId);
     const assignedName = member?.display_name ?? null;
     const { error } = await supabase.from('deals').update({
+      sourced_by_user_id: memberId || null,
+      sourced_by_name: assignedName,
       assigned_to_user_id: memberId || null,
       assigned_to_name: assignedName,
       updated_at: new Date().toISOString(),

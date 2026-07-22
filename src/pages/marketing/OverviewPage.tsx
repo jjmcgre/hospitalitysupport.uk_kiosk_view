@@ -2,8 +2,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CalendarDays, Clock, Building2, ArrowRight, RefreshCw, AlertCircle,
-  CheckCircle2, CalendarCheck, Trophy, UserCheck, Plus, Copy, Check,
-  ExternalLink, Flame, ChevronRight, GitBranch, TrendingUp, PoundSterling,
+  CheckCircle2, CalendarCheck, Trophy, UserCheck,
+  Flame, ChevronRight, GitBranch, TrendingUp, PoundSterling,
   Target, BarChart3,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -144,7 +144,6 @@ export default function OverviewPage() {
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [showAddLead, setShowAddLead] = useState(false);
   const [leaderTab, setLeaderTab] = useState<'pipeline' | 'won'>('pipeline');
-  const [copied, setCopied] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -239,18 +238,6 @@ export default function OverviewPage() {
   }, [myDeals, today]);
 
   const userName = profile?.display_name || user?.email?.split('@')[0] || 'You';
-  const landingUrl = typeof window !== 'undefined' && user
-    ? `${window.location.origin}/demo?ref=${user.id}`
-    : '';
-
-  async function copyShareLink() {
-    if (!landingUrl) return;
-    try {
-      await navigator.clipboard.writeText(landingUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch { /* clipboard not available */ }
-  }
 
   return (
     <div className="min-h-full">
@@ -396,27 +383,6 @@ export default function OverviewPage() {
               <KpiCard icon={PoundSterling} label="My commission" value={myCommission > 0 ? fmtGbp(myCommission) : '—'} sub="pipeline est." tone="sky" to="/commission" />
             )}
           </div>
-
-          {/* Share link card */}
-          {landingUrl && (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl px-5 py-4 flex items-center gap-3">
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <ExternalLink size={14} className="text-teal-400" />
-                <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Your demo link</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-slate-300 text-xs truncate">{landingUrl}</p>
-                <p className="text-slate-600 text-[10px] mt-0.5">Share this — leads who book via this link are attributed to you.</p>
-              </div>
-              <button
-                onClick={copyShareLink}
-                className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-teal-500/40 text-slate-300 hover:text-white text-xs font-bold px-3 py-2 rounded-lg transition-all flex-shrink-0"
-              >
-                {copied ? <Check size={13} className="text-teal-400" /> : <Copy size={13} />}
-                {copied ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-          )}
 
           {(overdueActions.length > 0 || dueTodayActions.length > 0 || comingUpActions.length > 0) ? (
             <div className="space-y-2">
