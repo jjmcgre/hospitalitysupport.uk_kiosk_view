@@ -49,7 +49,7 @@ export default function TeamPage() {
     setLoading(true);
     const [membersRes, dealsRes] = await Promise.all([
       supabase.from('user_profiles').select('*').eq('is_active', true).order('display_name'),
-      supabase.from('deals').select('sourced_by_user_id, stage, num_sites, arr_override, commission_status'),
+      supabase.from('deals').select('sourced_by_user_id, assigned_to_user_id, stage, num_sites, arr_override, commission_status'),
     ]);
 
     const memberList = (membersRes.data ?? []) as TeamMember[];
@@ -57,15 +57,20 @@ export default function TeamPage() {
 
     const s: MemberStats = {};
     for (const deal of (dealsRes.data ?? [])) {
-      const uid = deal.sourced_by_user_id;
-      if (!uid) continue;
-      if (!s[uid]) s[uid] = { active: 0, won: 0, pipelineArr: 0, wonArr: 0, commission: 0 };
       const arr = calcARR(deal.num_sites, deal.arr_override);
       if (deal.stage === 'won') {
+        // Won/commission always attributed to sourcer
+        const uid = deal.sourced_by_user_id;
+        if (!uid) continue;
+        if (!s[uid]) s[uid] = { active: 0, won: 0, pipelineArr: 0, wonArr: 0, commission: 0 };
         s[uid].won++;
         s[uid].wonArr += arr;
         if (deal.commission_status === 'approved') s[uid].commission += calcL1Commission(deal.num_sites, deal.arr_override);
       } else if (deal.stage !== 'lost') {
+        // Active pipeline attributed to whoever is assigned (fallback: sourcer)
+        const uid = deal.assigned_to_user_id ?? deal.sourced_by_user_id;
+        if (!uid) continue;
+        if (!s[uid]) s[uid] = { active: 0, won: 0, pipelineArr: 0, wonArr: 0, commission: 0 };
         s[uid].active++;
         s[uid].pipelineArr += arr;
       }

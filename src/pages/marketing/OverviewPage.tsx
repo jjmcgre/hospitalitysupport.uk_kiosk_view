@@ -29,14 +29,16 @@ interface DealRow {
   stage: Stage;
   sourced_by_user_id: string | null;
   sourced_by_name: string | null;
-  commission_status: string;
-  next_action: string | null;
-  next_action_date: string | null;
+  assigned_to_user_id: string | null;
+  assigned_to_name: string | null;
   num_sites: number;
+  next_action_date: string | null;
+  commission_status: string;
   arr_override: number | null;
   created_at: string;
   won_at: string | null;
   organisations: { trading_name: string; city: string | null } | null;
+  next_action: string | null;
 }
 
 interface Slot {
@@ -149,7 +151,7 @@ export default function OverviewPage() {
     const today = isoDate(new Date());
     const [dealsRes, slotRes] = await Promise.all([
       supabase.from('deals')
-        .select('id,stage,sourced_by_user_id,sourced_by_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,won_at,organisations(trading_name,city)')
+        .select('id,stage,sourced_by_user_id,sourced_by_name,assigned_to_user_id,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,won_at,organisations(trading_name,city)')
         .order('next_action_date', { ascending: true, nullsFirst: false }),
       supabase.from('demo_availability').select('id,slot_date,slot_time,booked').gte('slot_date', today),
     ]);
@@ -168,7 +170,7 @@ export default function OverviewPage() {
   const wonDeals = useMemo(() => deals.filter(d => d.stage === 'won'), [deals]);
   const lostDeals = useMemo(() => deals.filter(d => d.stage === 'lost'), [deals]);
 
-  const myDeals = useMemo(() => activeDeals.filter(d => d.sourced_by_user_id === user?.id), [activeDeals, user]);
+  const myDeals = useMemo(() => activeDeals.filter(d => d.sourced_by_user_id === user?.id || d.assigned_to_user_id === user?.id), [activeDeals, user]);
   const myWonDeals = useMemo(() => wonDeals.filter(d => d.sourced_by_user_id === user?.id), [wonDeals, user]);
   const newThisWeek = useMemo(() => deals.filter(d => d.created_at.slice(0, 10) >= sevenAgo).length, [deals, sevenAgo]);
 
@@ -196,12 +198,14 @@ export default function OverviewPage() {
   const pipelineLeaderboard = useMemo(() => {
     const map = new Map<string, { userId: string; name: string; arr: number; commission: number; count: number }>();
     for (const d of activeDeals) {
-      if (!d.sourced_by_user_id || !d.sourced_by_name) continue;
+      const uid = d.assigned_to_user_id ?? d.sourced_by_user_id;
+      const name = d.assigned_to_name ?? d.sourced_by_name;
+      if (!uid || !name) continue;
       const arr = calcARR(d.num_sites, d.arr_override);
       const comm = calcL1Commission(d.num_sites, d.arr_override);
-      const ex = map.get(d.sourced_by_user_id);
+      const ex = map.get(uid);
       if (ex) { ex.arr += arr; ex.commission += comm; ex.count++; }
-      else map.set(d.sourced_by_user_id, { userId: d.sourced_by_user_id, name: d.sourced_by_name, arr, commission: comm, count: 1 });
+      else map.set(uid, { userId: uid, name, arr, commission: comm, count: 1 });
     }
     return Array.from(map.values()).sort((a, b) => b.arr - a.arr);
   }, [activeDeals]);
