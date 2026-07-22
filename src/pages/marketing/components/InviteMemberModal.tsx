@@ -21,7 +21,6 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
   const [introducedBy, setIntroducedBy] = useState('');
   const [isFounder, setIsFounder] = useState(false);
   const [loginCode, setLoginCode] = useState('');
-  const [password, setPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -57,7 +56,6 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
           introduced_by_user_id: introducedBy || null,
           is_founder: isFounder,
           login_code: code,
-          password: password.trim() || undefined,
           email: email.trim() || undefined,
         }),
       });
@@ -179,7 +177,7 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
                 />
               </div>
               <p className="text-slate-600 text-[11px] mt-1.5">
-                They'll use this code to sign in instead of an email.
+                They'll use this code to sign in — no password needed.
               </p>
             </div>
 
@@ -253,23 +251,6 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
               </div>
             </div>
 
-            {mode === 'manual' && (
-              <div>
-                <label className={labelCls}>Temporary password (optional)</label>
-                <input
-                  type="text"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="Auto-generated if left blank"
-                  className={inputCls}
-                />
-                <p className="text-slate-600 text-[11px] mt-1.5">
-                  Share this with the team member so they can sign in.
-                </p>
-              </div>
-            )}
-
-            {/* Founder toggle — manual mode only */}
             {mode === 'manual' && (
               <label className="flex items-start gap-3 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 cursor-pointer hover:border-slate-600 transition-colors">
                 <div className="relative flex-shrink-0 mt-0.5">

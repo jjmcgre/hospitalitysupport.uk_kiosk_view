@@ -51,9 +51,10 @@ export default function LoginPage() {
       return;
     }
 
+    // The login code IS the password
     const { error: err } = await supabase.auth.signInWithPassword({
       email: authEmail,
-      password,
+      password: code,
     });
 
     if (err) {
@@ -174,31 +175,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPw ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    minLength={6}
-                    autoComplete="current-password"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 pr-12 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw(!showPw)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors p-1"
-                  >
-                    {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
-              </div>
-
               {error && (
                 <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-red-300 text-sm">
                   {error}
@@ -214,7 +190,7 @@ export default function LoginPage() {
               </button>
 
               <p className="text-slate-600 text-[11px] text-center leading-relaxed">
-                Don't have a login code? Ask your admin to assign one.
+                Just enter your code — that's it.
               </p>
             </form>
           ) : (

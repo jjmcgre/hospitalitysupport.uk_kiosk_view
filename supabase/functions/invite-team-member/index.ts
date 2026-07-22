@@ -104,7 +104,7 @@ Deno.serve(async (req: Request) => {
     let userId: string;
 
     if (hasRealEmail && !password) {
-      // Invite mode: send email invite
+      // Invite mode: send email invite (code set as password after they accept)
       const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(
         authEmail,
       );
@@ -116,11 +116,10 @@ Deno.serve(async (req: Request) => {
       }
       userId = inviteData.user.id;
     } else {
-      // Manual mode (no email, or email + password): create user directly
-      const tempPassword = password?.trim() || generateTempPassword();
+      // Manual mode: create user with login code as the password
       const { data: userData, error: userError } = await adminClient.auth.admin.createUser({
         email: authEmail,
-        password: tempPassword,
+        password: code,
         email_confirm: true,
       });
       if (userError) {
@@ -164,12 +163,3 @@ Deno.serve(async (req: Request) => {
     });
   }
 });
-
-function generateTempPassword(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  let pw = "";
-  for (let i = 0; i < 12; i++) {
-    pw += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return pw;
-}
