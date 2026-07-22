@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Phone, Mail, Plus, Check, X, RefreshCw, UserCheck, Shield, Star, Trash2 } from 'lucide-react';
+import { Phone, Mail, Plus, Check, X, RefreshCw, UserCheck, Shield, Star, Trash2, KeyRound } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from './components/PageHeader';
@@ -12,6 +12,8 @@ interface TeamMember {
   role: string;
   phone: string | null;
   email: string | null;
+  login_code: string | null;
+  login_email: string | null;
   introduced_by_user_id: string | null;
   is_active: boolean;
   is_founder: boolean;
@@ -118,6 +120,7 @@ export default function TeamPage() {
       display_name: (draft.display_name ?? '').trim(),
       phone: draft.phone?.trim() || null,
       email: draft.email?.trim() || null,
+      login_code: draft.login_code?.trim().toUpperCase() || null,
       role: draft.role ?? 'salesperson',
       introduced_by_user_id: draft.introduced_by_user_id || null,
       is_founder: draft.is_founder ?? false,
@@ -185,6 +188,11 @@ export default function TeamPage() {
                         {m.is_founder && (
                           <span className="text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full px-2 py-px flex items-center gap-1">
                             <Star size={8} />founder
+                          </span>
+                        )}
+                        {m.login_code && (
+                          <span className="text-[10px] font-bold bg-slate-700 text-slate-300 border border-slate-600 rounded-full px-2 py-px flex items-center gap-1">
+                            <KeyRound size={8} />{m.login_code}
                           </span>
                         )}
                         {isMe && (
@@ -276,9 +284,15 @@ export default function TeamPage() {
                           <input type="tel" value={draft.phone ?? ''} onChange={e => setDraft(p => ({ ...p, phone: e.target.value }))} placeholder="07700 900000" className={inputCls} />
                         </div>
                       </div>
-                      <div>
-                        <label className={labelCls}>Email</label>
-                        <input type="email" value={draft.email ?? ''} onChange={e => setDraft(p => ({ ...p, email: e.target.value }))} placeholder="name@example.com" className={inputCls} />
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className={labelCls}>Email</label>
+                          <input type="email" value={draft.email ?? ''} onChange={e => setDraft(p => ({ ...p, email: e.target.value }))} placeholder="name@example.com" className={inputCls} />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Login code</label>
+                          <input type="text" value={draft.login_code ?? ''} onChange={e => setDraft(p => ({ ...p, login_code: e.target.value.toUpperCase() }))} placeholder="e.g. JM01" className={inputCls + ' uppercase'} />
+                        </div>
                       </div>
                       {isAdmin && (
                         <div className="grid sm:grid-cols-2 gap-3">

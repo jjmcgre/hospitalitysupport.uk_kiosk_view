@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, UserPlus, Check, AlertCircle, Mail, User } from 'lucide-react';
+import { X, UserPlus, Check, AlertCircle, Mail, User, KeyRound } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
 interface Props {
@@ -20,6 +20,8 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
   const [phone, setPhone] = useState('');
   const [introducedBy, setIntroducedBy] = useState('');
   const [isFounder, setIsFounder] = useState(false);
+  const [loginCode, setLoginCode] = useState('');
+  const [password, setPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -29,20 +31,50 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
     setError(null);
     setSaving(true);
 
-    if (mode === 'manual') {
-      const { error: err } = await supabase.from('user_profiles').insert({
-        display_name: displayName.trim(),
-        role,
-        phone: phone.trim() || null,
-        introduced_by_user_id: introducedBy || null,
-        is_founder: isFounder,
-        is_active: true,
-      });
+    const code = loginCode.trim().toUpperCase();
+    if (!code) {
+      setError('Login code is required');
       setSaving(false);
-      if (err) { setError(err.message); return; }
+      return;
+    }
+
+    if (mode === 'manual') {
+      // Manual mode: create profile + auth account via edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setError('Not authenticated'); setSaving(false); return; }
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/invite-team-member`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          display_name: displayName.trim(),
+          role,
+          phone: phone.trim() || null,
+          introduced_by_user_id: introducedBy || null,
+          is_founder: isFounder,
+          login_code: code,
+          password: password.trim() || undefined,
+          email: email.trim() || undefined,
+        }),
+      });
+
+      const json = await res.json();
+      setSaving(false);
+      if (!res.ok) { setError(json.error ?? 'Something went wrong'); return; }
       setDone(true);
       setTimeout(() => { onSuccess(); onClose(); }, 1500);
     } else {
+      // Invite mode: send email invite + store login code
+      if (!email.trim()) {
+        setError('Email is required for invite mode');
+        setSaving(false);
+        return;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { setError('Not authenticated'); setSaving(false); return; }
 
@@ -59,6 +91,7 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
           role,
           phone: phone.trim() || null,
           introduced_by_user_id: introducedBy || null,
+          login_code: code,
         }),
       });
 
@@ -96,8 +129,8 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
             </p>
             <p className="text-slate-500 text-sm">
               {mode === 'manual'
-                ? `${displayName} has been added to the team.`
-                : `${email} will receive an email to set their password.`}
+                ? `${displayName} has been added with login code ${loginCode.trim().toUpperCase()}.`
+                : `${email} will receive an email to set their password. Login code: ${loginCode.trim().toUpperCase()}.`}
             </p>
           </div>
         ) : (
@@ -131,6 +164,25 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
               </button>
             </div>
 
+            {/* Login code — always required */}
+            <div>
+              <label className={labelCls}>Login code</label>
+              <div className="relative">
+                <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
+                <input
+                  type="text"
+                  required
+                  value={loginCode}
+                  onChange={e => setLoginCode(e.target.value.toUpperCase())}
+                  placeholder="e.g. JM01"
+                  className={inputCls + ' pl-10 uppercase'}
+                />
+              </div>
+              <p className="text-slate-600 text-[11px] mt-1.5">
+                They'll use this code to sign in instead of an email.
+              </p>
+            </div>
+
             {mode === 'invite' && (
               <div>
                 <label className={labelCls}>Email address</label>
@@ -142,6 +194,22 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
                   placeholder="name@example.com"
                   className={inputCls}
                 />
+              </div>
+            )}
+
+            {mode === 'manual' && (
+              <div>
+                <label className={labelCls}>Email (optional)</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="Leave blank if they don't have one"
+                  className={inputCls}
+                />
+                <p className="text-slate-600 text-[11px] mt-1.5">
+                  If left blank, a synthetic email is auto-generated for their account.
+                </p>
               </div>
             )}
 
@@ -184,6 +252,22 @@ export default function InviteMemberModal({ members, onClose, onSuccess }: Props
                 </select>
               </div>
             </div>
+
+            {mode === 'manual' && (
+              <div>
+                <label className={labelCls}>Temporary password (optional)</label>
+                <input
+                  type="text"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Auto-generated if left blank"
+                  className={inputCls}
+                />
+                <p className="text-slate-600 text-[11px] mt-1.5">
+                  Share this with the team member so they can sign in.
+                </p>
+              </div>
+            )}
 
             {/* Founder toggle — manual mode only */}
             {mode === 'manual' && (
