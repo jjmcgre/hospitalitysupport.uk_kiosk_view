@@ -193,9 +193,18 @@ export default function BookingModal() {
       return;
     }
 
-    // Send confirmation emails (fire-and-forget)
+    // Send confirmation emails + WhatsApp (fire-and-forget)
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+    const bookingPayload = {
+      name: form.name.trim(),
+      businessName: form.business_name.trim(),
+      date: selectedSlot.slot_date,
+      time: selectedSlot.slot_time,
+      duration: selectedSlot.duration_mins,
+      videoLink: meetLink,
+    };
+
     fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
       method: 'POST',
       headers: {
@@ -203,16 +212,25 @@ export default function BookingModal() {
         'Authorization': `Bearer ${supabaseAnonKey}`,
       },
       body: JSON.stringify({
+        ...bookingPayload,
         to: form.email.trim(),
-        name: form.name.trim(),
-        businessName: form.business_name.trim(),
-        date: selectedSlot.slot_date,
-        time: selectedSlot.slot_time,
-        duration: selectedSlot.duration_mins,
-        videoLink: meetLink,
         adminEmail: 'james@servicesupportgroup.uk',
       }),
     }).catch(() => {});
+
+    if (form.phone.trim()) {
+      fetch(`${supabaseUrl}/functions/v1/send-booking-whatsapp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({
+          ...bookingPayload,
+          phone: form.phone.trim(),
+        }),
+      }).catch(() => {});
+    }
 
     setVideoLink(meetLink);
     setSubmitting(false);
