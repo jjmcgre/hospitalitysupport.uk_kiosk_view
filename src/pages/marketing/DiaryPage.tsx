@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck, Video, MapPin, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck, Video, MapPin, AlertCircle, CalendarClock, CheckCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
 
@@ -75,6 +75,18 @@ export default function DiaryPage() {
   const [expandedEnquiry, setExpandedEnquiry] = useState<string | null>(null);
   const [changingType, setChangingType] = useState<string | null>(null);
   const [typeError, setTypeError] = useState('');
+  const [rescheduling, setRescheduling] = useState<Enquiry | null>(null);
+  const [resWeekBase, setResWeekBase] = useState(() => {
+    const now = new Date();
+    const jul30 = new Date('2026-07-30T00:00:00');
+    return weekStart(now >= jul30 ? now : jul30);
+  });
+  const [resSlots, setResSlots] = useState<Slot[]>([]);
+  const [resSlotsLoading, setResSlotsLoading] = useState(false);
+  const [resSelectedSlot, setResSelectedSlot] = useState<Slot | null>(null);
+  const [resMeetingType, setResMeetingType] = useState<'virtual' | 'onsite'>('virtual');
+  const [resSaving, setResSaving] = useState(false);
+  const [resError, setResError] = useState('');
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekBase, i));
   const today = isoDate(new Date());
@@ -167,6 +179,91 @@ export default function DiaryPage() {
   async function deleteSlot(id: string) {
     await supabase.from('demo_availability').delete().eq('id', id);
     setSelectedSlot(null);
+    load();
+  }
+
+  async function loadRescheduleSlots(base: Date) {
+    setResSlotsLoading(true);
+    const from = isoDate(base);
+    const to = isoDate(addDays(base, 6));
+    const { data } = await supabase
+      .from('demo_availability')
+      .select('id, slot_date, slot_time, duration_mins, booked, booked_by_booking_id, notes')
+      .eq('booked', false)
+      .gte('slot_date', from)
+      .lte('slot_date', to)
+      .gte('slot_date', today)
+      .order('slot_date')
+      .order('slot_time');
+    setResSlots(data ?? []);
+    setResSlotsLoading(false);
+  }
+
+  function openReschedule(enq: Enquiry) {
+    setRescheduling(enq);
+    setResError('');
+    setResSelectedSlot(null);
+    setResMeetingType(enq.meeting_type as 'virtual' | 'onsite');
+    const now = new Date();
+    const jul30 = new Date('2026-07-30T00:00:00');
+    const base = weekStart(now >= jul30 ? now : jul30);
+    setResWeekBase(base);
+    loadRescheduleSlots(base);
+  }
+
+  function changeResWeek(dir: number) {
+    const next = addDays(resWeekBase, dir * 7);
+    setResWeekBase(next);
+    loadRescheduleSlots(next);
+    setResSelectedSlot(null);
+  }
+
+  async function confirmReschedule() {
+    if (!rescheduling || !resSelectedSlot) return;
+    setResSaving(true);
+    setResError('');
+
+    const { data, error } = await supabase.rpc('reschedule_meeting', {
+      p_booking_id: rescheduling.id,
+      p_new_slot_id: resSelectedSlot.id,
+      p_meeting_type: resMeetingType,
+    });
+
+    if (error || !data?.ok) {
+      setResError(error?.message ?? data?.error ?? 'Failed to reschedule. Please try again.');
+      setResSaving(false);
+      return;
+    }
+
+    // Send reschedule email (fire-and-forget)
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+    const videoLink = data.video_link || null;
+
+    fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+      },
+      body: JSON.stringify({
+        to: rescheduling.email,
+        name: rescheduling.name,
+        businessName: rescheduling.business_name,
+        date: data.new_date,
+        time: data.new_time,
+        duration: data.new_duration,
+        videoLink: videoLink,
+        adminEmail: 'james@servicesupportgroup.uk',
+        isReschedule: true,
+        oldDate: data.old_date,
+        oldTime: data.old_time,
+      }),
+    }).catch(() => {});
+
+    setResSaving(false);
+    setRescheduling(null);
+    setExpandedMeeting(null);
     load();
   }
 
@@ -454,6 +551,12 @@ export default function DiaryPage() {
                               </a>
                             )}
                             <button
+                              onClick={() => openReschedule(enq)}
+                              className="flex-1 text-center bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 transition-colors text-sky-300 text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"
+                            >
+                              <CalendarClock size={12} /> Reschedule
+                            </button>
+                            <button
                               onClick={() => toggleBooked(slot)}
                               className="flex-1 text-center bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300 text-xs font-bold py-2.5 rounded-xl"
                             >
@@ -704,6 +807,169 @@ export default function DiaryPage() {
         )}
 
       </div>
+
+      {/* Reschedule modal */}
+      {rescheduling && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setRescheduling(null)} />
+          <div className="relative bg-slate-900 border border-white/10 rounded-3xl shadow-2xl flex flex-col w-full max-w-lg max-h-[88vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 sm:px-7 py-5 border-b border-white/8 flex-shrink-0">
+              <div>
+                <div className="text-white font-black text-lg leading-tight">Reschedule demo</div>
+                <div className="text-slate-500 text-xs mt-0.5">{rescheduling.name} · {rescheduling.business_name}</div>
+              </div>
+              <button onClick={() => setRescheduling(null)} className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 flex items-center justify-center transition-colors flex-shrink-0 ml-4">
+                <X size={15} className="text-slate-400" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-5 sm:px-7 py-5 space-y-4">
+              {/* Current booking info */}
+              <div className="bg-sky-500/8 border border-sky-500/20 rounded-xl p-3 flex items-center gap-3">
+                <CalendarClock size={16} className="text-sky-400 flex-shrink-0" />
+                <div className="text-xs">
+                  <span className="text-slate-500">Current: </span>
+                  <span className="text-sky-300 font-semibold">{rescheduling.meeting_type === 'onsite' ? 'On-site visit' : 'Virtual call'}</span>
+                </div>
+              </div>
+
+              {/* Week navigator */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => changeResWeek(-1)}
+                  disabled={isoDate(resWeekBase) <= today}
+                  className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-30 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                >
+                  <ChevronLeft size={14} />
+                </button>
+                <div className="text-white font-bold text-sm">
+                  {Array.from({ length: 7 }, (_, i) => addDays(resWeekBase, i))[0].toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  {' — '}
+                  {Array.from({ length: 7 }, (_, i) => addDays(resWeekBase, i))[6].toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+                <button
+                  onClick={() => changeResWeek(1)}
+                  className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+
+              {/* Slot picker */}
+              {resSlotsLoading ? (
+                <div className="text-center py-12 text-slate-500 text-sm">Loading available slots…</div>
+              ) : (() => {
+                const resWeekDays = Array.from({ length: 7 }, (_, i) => addDays(resWeekBase, i));
+                const slotsByDay = resWeekDays.map(day => ({
+                  date: isoDate(day),
+                  daySlots: resSlots.filter(s => s.slot_date === isoDate(day)),
+                }));
+                const hasSlots = slotsByDay.some(d => d.daySlots.length > 0);
+                if (!hasSlots) return (
+                  <div className="text-center py-12 space-y-2">
+                    <Calendar size={28} className="text-slate-600 mx-auto" />
+                    <p className="text-slate-400 text-sm font-semibold">No slots available this week</p>
+                    <p className="text-slate-600 text-xs">Try the next week using the arrow above.</p>
+                  </div>
+                );
+                return (
+                  <div className="space-y-3">
+                    {slotsByDay.filter(d => d.daySlots.length > 0).map(({ date, daySlots }) => (
+                      <div key={date}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Calendar size={12} className="text-teal-400" />
+                          <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
+                            {' · '}{new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {daySlots.map(s => (
+                            <button
+                              key={s.id}
+                              onClick={() => setResSelectedSlot(s)}
+                              className={`rounded-xl py-2.5 px-3 text-sm font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                                resSelectedSlot?.id === s.id
+                                  ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
+                                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                              }`}
+                            >
+                              <Clock size={11} />{s.slot_time}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              {/* Selected slot summary */}
+              {resSelectedSlot && (
+                <div className="bg-teal-500/10 border border-teal-500/30 rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <CheckCircle size={16} className="text-teal-400 flex-shrink-0" />
+                  <div>
+                    <div className="text-white text-sm font-bold">{formatDateLong(resSelectedSlot.slot_date)}</div>
+                    <div className="text-teal-300 text-xs">{resSelectedSlot.slot_time} · {resSelectedSlot.duration_mins} minutes</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Meeting type selector */}
+              <div>
+                <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Meeting type</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setResMeetingType('virtual')}
+                    className={`rounded-xl py-3 px-4 text-sm font-bold border transition-all flex items-center justify-center gap-2 ${
+                      resMeetingType === 'virtual'
+                        ? 'bg-teal-500 border-teal-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                    }`}
+                  >
+                    <Video size={14} /> Virtual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setResMeetingType('onsite')}
+                    className={`rounded-xl py-3 px-4 text-sm font-bold border transition-all flex items-center justify-center gap-2 ${
+                      resMeetingType === 'onsite'
+                        ? 'bg-teal-500 border-teal-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                    }`}
+                  >
+                    <MapPin size={14} /> On-site
+                  </button>
+                </div>
+              </div>
+
+              {resError && (
+                <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-red-300 text-sm flex items-start gap-2">
+                  <AlertCircle size={15} className="mt-0.5 flex-shrink-0" />{resError}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-5 sm:px-7 pb-7 pt-4 border-t border-white/5 flex-shrink-0 space-y-3">
+              <button
+                onClick={confirmReschedule}
+                disabled={!resSelectedSlot || resSaving}
+                className="w-full bg-teal-500 hover:bg-teal-400 disabled:opacity-40 transition-colors rounded-2xl py-4 flex items-center justify-center gap-2 font-black text-white text-base"
+              >
+                {resSaving ? <RefreshCw size={16} className="animate-spin" /> : <CalendarClock size={16} />}
+                {resSaving ? 'Rescheduling…' : 'Confirm new time'}
+              </button>
+              <p className="text-slate-600 text-[11px] text-center leading-snug">
+                The prospect will automatically receive an email with the updated date and time.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add slot modal */}
       {adding && (
