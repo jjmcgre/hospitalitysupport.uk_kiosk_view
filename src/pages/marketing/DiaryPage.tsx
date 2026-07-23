@@ -112,12 +112,16 @@ export default function DiaryPage() {
       supabase
         .from('demo_bookings')
         .select('*,deal_id')
+        .neq('status', 'cancelled')
         .order('created_at', { ascending: false }),
     ]);
 
+    const activeEnquiries = enqRes.data ?? [];
+    const activeBookingIds = new Set(activeEnquiries.map(e => e.id));
+
     setSlots(slotsRes.data ?? []);
-    setAllBookedSlots(allBookedRes.data ?? []);
-    setEnquiries(enqRes.data ?? []);
+    setAllBookedSlots((allBookedRes.data ?? []).filter(s => !s.booked_by_booking_id || activeBookingIds.has(s.booked_by_booking_id)));
+    setEnquiries(activeEnquiries);
     setLoading(false);
   }
 
