@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Check, Trash2, RefreshCw, Calendar, Mail, Phone, Building2, Users, MessageSquare, CalendarCheck, Video, MapPin, AlertCircle, CalendarClock, CheckCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import PageHeader from './components/PageHeader';
@@ -128,16 +128,26 @@ export default function DiaryPage() {
     setLoading(false);
   }
 
+  const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const debouncedReload = () => {
+    if (reloadTimer.current) clearTimeout(reloadTimer.current);
+    reloadTimer.current = setTimeout(() => load(), 400);
+  };
+
   useEffect(() => {
     load();
 
     const channel = supabase
       .channel('diary-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_availability' }, () => load())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_availability' }, debouncedReload)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demo_bookings' }, debouncedReload)
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      if (reloadTimer.current) clearTimeout(reloadTimer.current);
+      supabase.removeChannel(channel);
+    };
   }, [weekBase]);
 
   async function addSlot() {
