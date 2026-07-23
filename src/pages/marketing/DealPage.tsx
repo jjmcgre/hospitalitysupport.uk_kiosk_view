@@ -331,13 +331,11 @@ export default function DealPage() {
         p_booking_id: bookingId,
         p_video_link: meetLink,
         p_meeting_type: bdMeetingType,
+        p_deal_id: deal.id,
       });
       if (rpcError || !rpcResult?.ok) {
         throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
       }
-
-      // Link the booking to this deal
-      await supabase.from('demo_bookings').update({ deal_id: deal.id }).eq('id', bookingId);
 
       const demoAction = DEFAULT_NEXT_ACTIONS['demo_booked'];
       await supabase.from('deals').update({

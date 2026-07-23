@@ -331,14 +331,12 @@ export default function LogDealModal({ userId, userName, onClose }: Props) {
         p_booking_id: bookingId,
         p_video_link: meetLink,
         p_meeting_type: meetingType,
+        p_deal_id: savedDealId,
       });
 
       if (rpcError || !rpcResult?.ok) {
         throw new Error(rpcError?.message ?? rpcResult?.error ?? 'Failed to claim slot.');
       }
-
-      // Link the booking to this deal
-      await supabase.from('demo_bookings').update({ deal_id: savedDealId }).eq('id', bookingId);
 
       // Advance the deal stage to demo_booked
       const demoAction = DEFAULT_NEXT_ACTIONS['demo_booked'];
