@@ -104,7 +104,7 @@ export default function CommissionStructurePage() {
           <p className="text-slate-400 leading-relaxed">
             It's live in under 5 minutes. A dish goes from concept to full spec — recipe, allergens, HACCP,
             costing, training notes — in under 3 minutes. When a supplier changes a price, every linked dish
-            recoasts in under a second.
+            recosts in under a second.
           </p>
           <p className="text-slate-400 leading-relaxed">
             Most hospitality operators are running on gut feel and spreadsheets. The demo makes the value
@@ -253,24 +253,19 @@ export default function CommissionStructurePage() {
         {/* Rules */}
         <div className="space-y-4">
           <h2 className="text-white font-bold text-xl">The rules</h2>
-          <div className="space-y-3 text-sm text-slate-400 leading-relaxed">
-            <p className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold flex-shrink-0">—</span>
-              Commission applies to <strong className="text-slate-300">new business only</strong>, based on the first year's contract value. Renewals are not included.
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold flex-shrink-0">—</span>
-              If two partners claim the same venue, our team reviews the pipeline history. The partner with the earliest, clearest record of the introduction is the right call.
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold flex-shrink-0">—</span>
-              Commission is confirmed once an account is live. You'll see the status in your pipeline view.
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold flex-shrink-0">—</span>
-              The introducer bonus applies to year-one accounts only.
-            </p>
-          </div>
+          <ul className="space-y-3 text-sm text-slate-400 leading-relaxed list-none">
+            {[
+              <>Commission applies to <strong className="text-slate-300">new business only</strong>, based on the first year's contract value. Renewals are not included.</>,
+              <>If two partners claim the same venue, our team reviews the pipeline history. The partner with the earliest, clearest record of the introduction is the right call.</>,
+              <>Commission is confirmed once an account is live. You'll see the status in your pipeline view.</>,
+              <>The introducer bonus applies to year-one accounts only.</>,
+            ].map((item, i) => (
+              <li key={i} className="flex items-baseline gap-3">
+                <span className="text-teal-400 font-bold flex-shrink-0 leading-relaxed">—</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Footer CTA */}
