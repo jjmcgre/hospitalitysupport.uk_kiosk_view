@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { LogIn, UserPlus, Eye, EyeOff, KeyRound } from 'lucide-react';
+import { LogIn, UserPlus, Eye, EyeOff, KeyRound, Mail } from 'lucide-react';
 import { getStoredRef } from '../lib/referral';
 
 type Tab = 'signin' | 'signup';
@@ -14,6 +14,7 @@ export default function LoginPage() {
   refRef.current = ref;
 
   const [tab, setTab] = useState<Tab>('signin');
+  const [loginMode, setLoginMode] = useState<'code' | 'email'>('code');
   const [loginCode, setLoginCode] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,39 +29,56 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    const code = loginCode.trim();
-    if (!code) {
-      setError('Please enter your login code');
-      setLoading(false);
-      return;
-    }
+    if (loginMode === 'code') {
+      const code = loginCode.trim();
+      if (!code) {
+        setError('Please enter your login code');
+        setLoading(false);
+        return;
+      }
 
-    // Resolve login code to the auth email
-    const { data: authEmail, error: rpcErr } = await supabase
-      .rpc('get_login_email_by_code', { p_code: code });
+      const { data: authEmail, error: rpcErr } = await supabase
+        .rpc('get_login_email_by_code', { p_code: code });
 
-    if (rpcErr) {
-      setError(rpcErr.message);
-      setLoading(false);
-      return;
-    }
+      if (rpcErr) {
+        setError(rpcErr.message);
+        setLoading(false);
+        return;
+      }
 
-    if (!authEmail) {
-      setError('Login code not found. Check with your admin.');
-      setLoading(false);
-      return;
-    }
+      if (!authEmail) {
+        setError('Login code not found. Check with your admin.');
+        setLoading(false);
+        return;
+      }
 
-    // The login code IS the password
-    const { error: err } = await supabase.auth.signInWithPassword({
-      email: authEmail,
-      password: code,
-    });
+      const { error: err } = await supabase.auth.signInWithPassword({
+        email: authEmail,
+        password: code,
+      });
 
-    if (err) {
-      setError(err.message);
-      setLoading(false);
-      return;
+      if (err) {
+        setError(err.message);
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (!email.trim() || !password) {
+        setError('Please enter your email and password');
+        setLoading(false);
+        return;
+      }
+
+      const { error: err } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (err) {
+        setError(err.message);
+        setLoading(false);
+        return;
+      }
     }
 
     navigate('/');
@@ -157,23 +175,85 @@ export default function LoginPage() {
 
           {tab === 'signin' ? (
             <form onSubmit={handleSignIn} className="space-y-4">
-              <div>
-                <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
-                  Login code
-                </label>
-                <div className="relative">
-                  <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
-                  <input
-                    type="text"
-                    required
-                    value={loginCode}
-                    onChange={e => setLoginCode(e.target.value)}
-                    placeholder="e.g. JM01"
-                    autoComplete="username"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors uppercase"
-                  />
-                </div>
+              <div className="flex gap-1 bg-slate-800/60 p-1 rounded-xl mb-4">
+                {(['code', 'email'] as const).map(m => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => { setLoginMode(m); setError(''); }}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+                      loginMode === m ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {m === 'code' ? <KeyRound size={12} /> : <Mail size={12} />}
+                    {m === 'code' ? 'Login Code' : 'Email & Password'}
+                  </button>
+                ))}
               </div>
+
+              {loginMode === 'code' ? (
+                <div>
+                  <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
+                    Login code
+                  </label>
+                  <div className="relative">
+                    <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
+                    <input
+                      type="text"
+                      required
+                      value={loginCode}
+                      onChange={e => setLoginCode(e.target.value)}
+                      placeholder="e.g. AMC123"
+                      autoComplete="username"
+                      className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors uppercase"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
+                      Email address
+                    </label>
+                    <div className="relative">
+                      <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        autoComplete="username"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-slate-400 text-[11px] font-bold uppercase tracking-widest block mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPw ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        minLength={6}
+                        autoComplete="current-password"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 pr-12 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPw(!showPw)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors p-1"
+                      >
+                        {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
 
               {error && (
                 <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-red-300 text-sm">
@@ -190,7 +270,10 @@ export default function LoginPage() {
               </button>
 
               <p className="text-slate-600 text-[11px] text-center leading-relaxed">
-                Just enter your code — that's it.
+                {loginMode === 'code'
+                  ? "Just enter your code — that's it."
+                  : 'Use the email and password you signed up with.'
+                }
               </p>
             </form>
           ) : (
