@@ -60,16 +60,17 @@ Deno.serve(async (req: Request) => {
       authEmail = `${profile.id}@login.servicesupportgroup.uk`;
     }
 
-    const password = profile.login_code; // exact stored casing
+    // Use a fixed internal password so short login codes don't fail Supabase's 6-char minimum
+    const password = "SSG-L0gin!" + profile.id.slice(0, 8);
 
     if (profile.auth_user_id) {
-      // Auth account exists — ensure password matches the login code
+      // Auth account exists — ensure password matches
       const { error: pwErr } = await admin.auth.admin.updateUserById(
         profile.auth_user_id,
         { password },
       );
       if (pwErr) {
-        return json({ error: "Could not update credentials" }, 500);
+        return json({ error: `Could not update credentials: ${pwErr.message}` }, 500);
       }
     } else {
       // No auth account — create one
@@ -90,7 +91,7 @@ Deno.serve(async (req: Request) => {
             await admin.from("user_profiles")
               .update({ auth_user_id: existing.id, login_email: authEmail })
               .eq("id", profile.id);
-            return json({ email: authEmail }, 200);
+            return json({ email: authEmail, password }, 200);
           }
         }
         return json({ error: "Could not create account" }, 500);
@@ -106,7 +107,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    return json({ email: authEmail }, 200);
+    return json({ email: authEmail, password }, 200);
   } catch (err) {
     return json({ error: "Unexpected error" }, 500);
   }
