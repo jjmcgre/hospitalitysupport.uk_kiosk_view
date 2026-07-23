@@ -153,7 +153,7 @@ export default function OverviewPage() {
       supabase.from('deals')
         .select('id,stage,sourced_by_user_id,sourced_by_name,assigned_to_user_id,assigned_to_name,commission_status,next_action,next_action_date,num_sites,arr_override,created_at,won_at,organisations(trading_name,city)')
         .order('next_action_date', { ascending: true, nullsFirst: false }),
-      supabase.from('demo_availability').select('id,slot_date,slot_time,booked,notes').gte('slot_date', today),
+      supabase.from('demo_availability').select('id,slot_date,slot_time,booked,booked_by_booking_id,notes').gte('slot_date', today),
     ]);
     setDeals((dealsRes.data ?? []) as DealRow[]);
     setSlots(slotRes.data ?? []);
