@@ -50,11 +50,13 @@ export default function TeamPage() {
   async function load() {
     setLoading(true);
     const [membersRes, dealsRes] = await Promise.all([
-      supabase.from('user_profiles').select('*').eq('is_active', true).order('display_name'),
+      supabase.rpc('get_team_profiles'),
       supabase.from('deals').select('sourced_by_user_id, assigned_to_user_id, stage, num_sites, arr_override, commission_status'),
     ]);
 
-    const memberList = (membersRes.data ?? []) as TeamMember[];
+    const memberList = ((membersRes.data ?? []) as unknown as TeamMember[]).sort((a, b) =>
+      (a.display_name ?? '').localeCompare(b.display_name ?? '')
+    );
     setMembers(memberList);
 
     const s: MemberStats = {};
@@ -190,7 +192,7 @@ export default function TeamPage() {
                             <Star size={8} />founder
                           </span>
                         )}
-                        {m.login_code && (
+                        {m.login_code && (isFounder || isMe) && (
                           <span className="text-[10px] font-bold bg-slate-700 text-slate-300 border border-slate-600 rounded-full px-2 py-px flex items-center gap-1">
                             <KeyRound size={8} />{m.login_code}
                           </span>
@@ -289,10 +291,12 @@ export default function TeamPage() {
                           <label className={labelCls}>Email</label>
                           <input type="email" value={draft.email ?? ''} onChange={e => setDraft(p => ({ ...p, email: e.target.value }))} placeholder="name@example.com" className={inputCls} />
                         </div>
-                        <div>
-                          <label className={labelCls}>Login code</label>
-                          <input type="text" value={draft.login_code ?? ''} onChange={e => setDraft(p => ({ ...p, login_code: e.target.value.toUpperCase() }))} placeholder="e.g. JM01" className={inputCls + ' uppercase'} />
-                        </div>
+                        {isFounder && (
+                          <div>
+                            <label className={labelCls}>Login code</label>
+                            <input type="text" value={draft.login_code ?? ''} onChange={e => setDraft(p => ({ ...p, login_code: e.target.value.toUpperCase() }))} placeholder="e.g. JM01" className={inputCls + ' uppercase'} />
+                          </div>
+                        )}
                       </div>
                       {isAdmin && (
                         <div className="grid sm:grid-cols-2 gap-3">
