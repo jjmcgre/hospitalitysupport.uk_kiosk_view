@@ -37,7 +37,7 @@ export default function CommissionPage() {
     setLoading(true);
     const [dealsRes, profilesRes] = await Promise.all([
       supabase.from('deals').select('id,stage,num_sites,arr_override,commission_status,commission_paid_at,sourced_by_user_id,sourced_by_name,created_at,organisations(trading_name,city)'),
-      supabase.from('user_profiles').select('id,display_name,role,is_founder,introduced_by_user_id,phone'),
+      supabase.from('user_profiles').select('auth_user_id,id,display_name,role,is_founder,introduced_by_user_id,phone'),
     ]);
     setDeals((dealsRes.data ?? []) as DealRow[]);
     setProfiles((profilesRes.data ?? []) as UserProfile[]);
@@ -59,7 +59,7 @@ export default function CommissionPage() {
   const isAdmin = profile?.role === 'admin';
 
   async function approveCommission(dealId: string) {
-    if (!profile) return;
+    if (!user) return;
     setApproving(dealId);
     const myName = profile?.display_name ?? user.email ?? 'Admin';
     await supabase.from('deals').update({
@@ -69,7 +69,7 @@ export default function CommissionPage() {
     }).eq('id', dealId);
     await supabase.from('deal_activity').insert({
       deal_id: dealId,
-      user_id: profile.id,
+      user_id: user.id,
       user_name: myName,
       action_type: 'commission_approved',
       payload: {},
@@ -79,7 +79,7 @@ export default function CommissionPage() {
   }
 
   async function declineCommission(dealId: string) {
-    if (!profile) return;
+    if (!user) return;
     setApproving(dealId);
     const myName = profile?.display_name ?? user.email ?? 'Admin';
     await supabase.from('deals').update({
@@ -88,7 +88,7 @@ export default function CommissionPage() {
     }).eq('id', dealId);
     await supabase.from('deal_activity').insert({
       deal_id: dealId,
-      user_id: profile.id,
+      user_id: user.id,
       user_name: myName,
       action_type: 'commission_declined',
       payload: {},
@@ -98,18 +98,18 @@ export default function CommissionPage() {
   }
 
   async function markPaid(dealId: string) {
-    if (!profile) return;
+    if (!user) return;
     setApproving(dealId);
     await supabase.from('deals').update({
       commission_paid_at: new Date().toISOString(),
-      commission_paid_by_user_id: profile.id,
+      commission_paid_by_user_id: user.id,
       updated_at: new Date().toISOString(),
     }).eq('id', dealId);
     setApproving(null);
     load();
   }
 
-  const myDeals = useMemo(() => deals.filter(d => d.sourced_by_user_id === profile?.id), [deals, profile]);
+  const myDeals = useMemo(() => deals.filter(d => d.sourced_by_user_id === user?.id), [deals, user]);
   const myApproved = useMemo(() => myDeals.filter(d => d.commission_status === 'approved'), [myDeals]);
   const myPending = useMemo(() => myDeals.filter(d => d.commission_status === 'pending'), [myDeals]);
   const myFlagged = useMemo(() => myDeals.filter(d => d.commission_status === 'flagged'), [myDeals]);
@@ -118,7 +118,7 @@ export default function CommissionPage() {
   const myPaidTotal = useMemo(() => myApproved.filter(d => d.commission_paid_at).reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myApproved]);
   const myPipelineTotal = useMemo(() => myPending.reduce((s, d) => s + calcL1Commission(d.num_sites, d.arr_override), 0), [myPending]);
 
-  const profileMap = useMemo(() => Object.fromEntries(profiles.map(p => [p.id, p])), [profiles]);
+  const profileMap = useMemo(() => Object.fromEntries(profiles.map(p => [p.auth_user_id, p])), [profiles]);
 
   const l2Earnings = useMemo(() => {
     if (!profile?.introduced_by_user_id) return 0;

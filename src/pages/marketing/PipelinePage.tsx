@@ -115,8 +115,8 @@ export default function PipelinePage() {
   }, []);
 
   useEffect(() => {
-    supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
-      .then(({ data }) => setTeamMembers(data ?? []));
+    supabase.from('user_profiles').select('auth_user_id, display_name').eq('is_active', true)
+      .then(({ data }) => setTeamMembers((data ?? []).map((m: { auth_user_id: string; display_name: string }) => ({ id: m.auth_user_id, display_name: m.display_name }))));
   }, []);
 
   async function reassignDeal(dealId: string, memberId: string) {
@@ -141,7 +141,7 @@ export default function PipelinePage() {
     const deal = deals.find(d => d.id === dealId);
     await supabase.from('deal_activity').insert({
       deal_id: dealId,
-      user_id: profile?.id ?? null,
+      user_id: user?.id ?? null,
       user_name: profile?.display_name ?? user?.email?.split('@')[0] ?? 'System',
       action_type: 'assigned',
       payload: { from: deal?.assigned_to_name ?? null, to: assignedName ?? 'Unassigned' },
@@ -177,7 +177,7 @@ export default function PipelinePage() {
 
   const filtered = useMemo(() => {
     let list = deals;
-    if (filter === 'mine') list = list.filter(d => d.sourced_by_user_id === profile?.id || d.assigned_to_user_id === profile?.id);
+    if (filter === 'mine') list = list.filter(d => d.sourced_by_user_id === user?.id || d.assigned_to_user_id === user?.id);
     else if (filter === 'overdue') list = list.filter(d => d.next_action_date && d.next_action_date < today && d.stage !== 'won' && d.stage !== 'lost');
     else if (filter === 'flagged') list = list.filter(d => d.commission_status === 'flagged');
     else if (filter === 'won') list = list.filter(d => d.stage === 'won');
@@ -194,16 +194,16 @@ export default function PipelinePage() {
       );
     }
     return list;
-  }, [deals, filter, search, profile, today]);
+  }, [deals, filter, search, user, today]);
 
   const counts = useMemo(() => ({
     all: deals.filter(d => d.stage !== 'won' && d.stage !== 'lost').length,
-    mine: deals.filter(d => (d.sourced_by_user_id === profile?.id || d.assigned_to_user_id === profile?.id) && d.stage !== 'won' && d.stage !== 'lost').length,
+    mine: deals.filter(d => (d.sourced_by_user_id === user?.id || d.assigned_to_user_id === user?.id) && d.stage !== 'won' && d.stage !== 'lost').length,
     overdue: deals.filter(d => d.next_action_date && d.next_action_date < today && d.stage !== 'won' && d.stage !== 'lost').length,
     flagged: deals.filter(d => d.commission_status === 'flagged').length,
     won: deals.filter(d => d.stage === 'won').length,
     lost: deals.filter(d => d.stage === 'lost').length,
-  }), [deals, profile, today]);
+  }), [deals, user, today]);
 
   const userName = profile?.display_name || user?.email?.split('@')[0] || 'You';
 
@@ -298,7 +298,7 @@ export default function PipelinePage() {
               const ConfIcon = CONFIDENCE_ICONS[deal.confidence] ?? Thermometer;
               const arr = calcARR(deal.num_sites, deal.arr_override);
               const comm = calcL1Commission(deal.num_sites, deal.arr_override);
-              const isMyDeal = deal.sourced_by_user_id === profile?.id;
+              const isMyDeal = deal.sourced_by_user_id === user?.id;
               const dateLabel = formatNextDate(deal.next_action_date);
 
               return (
@@ -348,10 +348,10 @@ export default function PipelinePage() {
                         )}
                         {deal.assigned_to_name && deal.assigned_to_user_id !== deal.sourced_by_user_id && (
                           <span className={`text-[10px] font-bold rounded-full px-2 py-px flex items-center gap-1 ${
-                            deal.assigned_to_user_id === profile?.id ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-slate-800 text-slate-500 border border-slate-700'
+                            deal.assigned_to_user_id === user?.id ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-slate-800 text-slate-500 border border-slate-700'
                           }`}>
                             <UserCog size={9} />
-                            {deal.assigned_to_user_id === profile?.id ? 'Assigned to me' : deal.assigned_to_name}
+                            {deal.assigned_to_user_id === user?.id ? 'Assigned to me' : deal.assigned_to_name}
                           </span>
                         )}
 
@@ -468,9 +468,9 @@ export default function PipelinePage() {
         </div>
       )}
 
-      {showLog && profile && (
+      {showLog && user && (
         <LogDealModal
-          userId={profile.id}
+          userId={user.id}
           userName={userName}
           onClose={() => setShowLog(false)}
         />

@@ -343,10 +343,10 @@ export default function MarketingLayout() {
           <Outlet />
         </main>
       </div>
-      {showLog && profile && (
+      {showLog && user && (
         <LogDealModal
-          userId={profile.id}
-          userName={profile.display_name || user?.email?.split('@')[0] || 'You'}
+          userId={user.id}
+          userName={profile?.display_name || user?.email?.split('@')[0] || 'You'}
           onClose={() => setShowLog(false)}
         />
       )}

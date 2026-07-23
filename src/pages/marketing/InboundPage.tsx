@@ -57,8 +57,8 @@ export default function InboundPage() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
-      .then(({ data }) => setTeamMembers(data ?? []));
+    supabase.from('user_profiles').select('auth_user_id, display_name').eq('is_active', true)
+      .then(({ data }) => setTeamMembers((data ?? []).map((m: { auth_user_id: string; display_name: string }) => ({ id: m.auth_user_id, display_name: m.display_name }))));
   }, [user]);
 
   async function load() {
@@ -88,13 +88,13 @@ export default function InboundPage() {
     setOrgPostcode(lead.postcode ?? '');
     setOrgType('pub');
     setOrgNotes('');
-    setAssignToId(profile?.id ?? '');
+    setAssignToId(user?.id ?? '');
     setAssignToName(profile?.display_name ?? '');
     setConvertError('');
   }
 
   async function handleConvert() {
-    if (!converting || !profile) return;
+    if (!converting || !user) return;
     const { lead } = converting;
     setSaving(true);
     setConvertError('');
@@ -109,7 +109,7 @@ export default function InboundPage() {
         org_type: orgType,
         num_sites: sites,
         notes: orgNotes.trim() || null,
-        created_by_user_id: profile.id,
+        created_by_user_id: user.id,
       }).select('id').single();
       if (orgErr) throw new Error(orgErr.message);
 
@@ -119,7 +119,7 @@ export default function InboundPage() {
         email: lead.email?.trim() || null,
         phone: lead.phone?.trim() || null,
         is_primary: true,
-        created_by_user_id: profile.id,
+        created_by_user_id: user.id,
       }).select('id').single();
       if (contactErr) throw new Error(contactErr.message);
 
@@ -141,14 +141,14 @@ export default function InboundPage() {
         next_action_date: new Date().toISOString().slice(0, 10),
         num_sites: sites,
         inbound_lead_id: lead.id,
-        created_by_user_id: profile.id,
+        created_by_user_id: user.id,
       }).select('id').single();
       if (dealErr) throw new Error(dealErr.message);
 
       await supabase.from('deal_activity').insert({
         deal_id: newDeal.id,
-        user_id: profile.id,
-        user_name: profile?.display_name ?? 'Admin',
+        user_id: user.id,
+        user_name: profile?.display_name ?? user.email ?? 'Admin',
         action_type: 'created',
         payload: {
           source: 'inbound',

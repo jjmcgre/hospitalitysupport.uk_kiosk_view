@@ -166,8 +166,8 @@ export default function TeamPage() {
         ) : (
           <div className="space-y-3">
             {members.map(m => {
-              const s = stats[m.id] ?? { active: 0, won: 0, pipelineArr: 0, wonArr: 0, commission: 0 };
-              const isMe = m.id === profile?.id;
+              const s = stats[m.auth_user_id ?? m.id] ?? { active: 0, won: 0, pipelineArr: 0, wonArr: 0, commission: 0 };
+              const isMe = m.auth_user_id === profile?.auth_user_id || m.id === profile?.id;
               const isEditing = editing === m.id;
 
               return (

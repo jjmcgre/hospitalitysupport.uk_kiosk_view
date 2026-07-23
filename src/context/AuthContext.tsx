@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 
 export interface UserProfile {
   id: string;
+  auth_user_id: string | null;
   display_name: string;
   role: string;
   is_founder: boolean;
@@ -35,16 +36,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchFounderIds = useCallback(async () => {
     const { data } = await supabase
       .from('user_profiles')
-      .select('id')
+      .select('auth_user_id')
       .eq('is_founder', true);
-    setFounderIds(new Set((data ?? []).map((p: { id: string }) => p.id)));
+    setFounderIds(new Set((data ?? []).map((p: { auth_user_id: string }) => p.auth_user_id)));
   }, []);
 
   const fetchProfile = useCallback(async (userId: string) => {
     setProfileLoading(true);
     const { data } = await supabase
       .from('user_profiles')
-      .select('id, display_name, role, is_founder, introduced_by_user_id, phone')
+      .select('id, auth_user_id, display_name, role, is_founder, introduced_by_user_id, phone')
       .eq('auth_user_id', userId)
       .maybeSingle();
     setProfile(data as UserProfile | null);

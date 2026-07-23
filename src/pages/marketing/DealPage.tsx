@@ -250,24 +250,24 @@ export default function DealPage() {
   }, [id]);
 
   useEffect(() => {
-    supabase.from('user_profiles').select('id, display_name').eq('is_active', true)
-      .then(({ data }) => setTeamMembers(data ?? []));
+    supabase.from('user_profiles').select('auth_user_id, display_name').eq('is_active', true)
+      .then(({ data }) => setTeamMembers((data ?? []).map((m: { auth_user_id: string; display_name: string }) => ({ id: m.auth_user_id, display_name: m.display_name }))));
   }, []);
 
   const userName = profile?.display_name || user?.email?.split('@')[0] || 'Unknown';
   const isAdmin = profile?.role === 'admin';
   const canEdit = deal
-    ? (deal.sourced_by_user_id === profile?.id ||
-       deal.assigned_to_user_id === profile?.id ||
-       deal.created_by_user_id === profile?.id ||
+    ? (deal.sourced_by_user_id === user?.id ||
+       deal.assigned_to_user_id === user?.id ||
+       deal.created_by_user_id === user?.id ||
        isAdmin)
     : false;
 
   async function writeActivity(type: string, payload: Record<string, unknown>) {
-    if (!id || !profile) return;
+    if (!id || !user) return;
     await supabase.from('deal_activity').insert({
       deal_id: id,
-      user_id: profile.id,
+      user_id: user.id,
       user_name: userName,
       action_type: type,
       payload,
@@ -303,7 +303,7 @@ export default function DealPage() {
   }
 
   async function confirmDemoBooking() {
-    if (!bdSelectedSlot || !deal || !profile) return;
+    if (!bdSelectedSlot || !deal || !user) return;
     const contact = primaryContact ?? contacts[0] ?? null;
     setBdBooking(true);
     setBdError('');
@@ -403,7 +403,7 @@ export default function DealPage() {
   }
 
   async function saveArr() {
-    if (!deal || !profile) return;
+    if (!deal || !user) return;
     setSavingArr(true);
     const val = arrDraft.trim() === '' ? null : parseInt(arrDraft.replace(/[^0-9]/g, ''), 10) || null;
     await supabase.from('deals').update({ arr_override: val, updated_at: new Date().toISOString() }).eq('id', deal.id);
@@ -524,7 +524,7 @@ export default function DealPage() {
       email: contactDraft.email.trim() || null,
       phone: contactDraft.phone.trim() || null,
       is_primary: false,
-      created_by_user_id: profile!.id,
+      created_by_user_id: user!.id,
     }).select('*').single();
     if (!error && data) {
       setContacts(prev => [...prev, data as ContactData]);
@@ -536,7 +536,7 @@ export default function DealPage() {
   }
 
   async function reassignDeal(memberId: string) {
-    if (!deal || !profile) return;
+    if (!deal || !user) return;
     setReassigning(true);
     const member = teamMembers.find(m => m.id === memberId);
     const assignedId = memberId || null;

@@ -181,8 +181,8 @@ export default function OverviewPage() {
   const wonDeals = useMemo(() => deals.filter(d => d.stage === 'won'), [deals]);
   const lostDeals = useMemo(() => deals.filter(d => d.stage === 'lost'), [deals]);
 
-  const myDeals = useMemo(() => activeDeals.filter(d => d.sourced_by_user_id === profile?.id || d.assigned_to_user_id === profile?.id), [activeDeals, profile]);
-  const myWonDeals = useMemo(() => wonDeals.filter(d => d.sourced_by_user_id === profile?.id), [wonDeals, profile]);
+  const myDeals = useMemo(() => activeDeals.filter(d => d.sourced_by_user_id === user?.id || d.assigned_to_user_id === user?.id), [activeDeals, user]);
+  const myWonDeals = useMemo(() => wonDeals.filter(d => d.sourced_by_user_id === user?.id), [wonDeals, user]);
   const newThisWeek = useMemo(() => deals.filter(d => d.created_at.slice(0, 10) >= sevenAgo).length, [deals, sevenAgo]);
 
   const totalPipelineArr = useMemo(() => activeDeals.reduce((s, d) => s + calcARR(d.num_sites, d.arr_override), 0), [activeDeals]);
@@ -482,9 +482,9 @@ export default function OverviewPage() {
 
       </div>
 
-      {showAddLead && profile && (
+      {showAddLead && user && (
         <LogDealModal
-          userId={profile.id}
+          userId={user.id}
           userName={userName}
           onClose={() => setShowAddLead(false)}
         />
