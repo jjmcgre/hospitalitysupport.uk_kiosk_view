@@ -84,7 +84,7 @@ export default function ChatPage() {
   const threadMessages = useMemo(() => {
     if (!user) return [];
     if (activeThread === 'all') {
-      return messages.filter(m => m.recipient_id === null);
+      return messages;
     }
     return messages.filter(m =>
       (m.sender_id === user.id && m.recipient_id === activeThread) ||
@@ -181,7 +181,7 @@ export default function ChatPage() {
             <MessageCircle size={14} className="text-teal-400" />
             <span className="text-sm font-semibold text-white">{activeLabel}</span>
             {activeThread === 'all' && (
-              <span className="text-[10px] text-slate-600 ml-auto">Visible to entire team</span>
+              <span className="text-[10px] text-slate-600 ml-auto">Full stream — all sent & received messages</span>
             )}
           </div>
 
@@ -202,12 +202,20 @@ export default function ChatPage() {
                 const prevMsg = threadMessages[i - 1];
                 const sameGroup = prevMsg?.sender_id === msg.sender_id &&
                   (new Date(msg.created_at).getTime() - new Date(prevMsg.created_at).getTime()) < 300000;
+                const isAllView = activeThread === 'all';
+                const recipientLabel = msg.recipient_id === null
+                  ? 'All Team'
+                  : (members.find(m => m.id === msg.recipient_id)?.display_name ?? 'Direct');
+                const senderLabel = isMe ? 'You' : msg.sender_name;
+                const directionLabel = isAllView
+                  ? `${senderLabel} → ${recipientLabel}`
+                  : senderLabel;
                 return (
                   <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} ${sameGroup ? 'mt-0.5' : 'mt-3'}`}>
                     <div className={`max-w-[70%] ${isMe ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
                       {!sameGroup && (
                         <span className={`text-[10px] text-slate-600 px-1 ${isMe ? 'text-right' : 'text-left'}`}>
-                          {isMe ? 'You' : msg.sender_name} · {fmtTime(msg.created_at)}
+                          {directionLabel} · {fmtTime(msg.created_at)}
                         </span>
                       )}
                       <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
@@ -234,7 +242,7 @@ export default function ChatPage() {
                 onKeyDown={e => {
                   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
                 }}
-                placeholder={activeThread === 'all' ? 'Message all team…' : `Message ${activeLabel}…`}
+                placeholder={activeThread === 'all' ? 'Broadcast to all team…' : `Message ${activeLabel}…`}
                 rows={1}
                 className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-teal-500 transition-colors resize-none leading-relaxed"
                 style={{ maxHeight: '120px', overflowY: 'auto' }}
