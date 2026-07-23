@@ -233,8 +233,6 @@ export default function DiaryPage() {
         name: 'Manual booking',
         business_name: 'Manual',
         meeting_type: 'virtual',
-        slot_date: slot.slot_date,
-        slot_time: slot.slot_time,
       }).select('id').single();
 
       if (!newBooking) {
