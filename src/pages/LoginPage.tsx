@@ -30,30 +30,31 @@ export default function LoginPage() {
     setLoading(true);
 
     if (loginMode === 'code') {
-      const code = loginCode.trim().toUpperCase();
+      const code = loginCode.trim();
       if (!code) {
         setError('Please enter your login code');
         setLoading(false);
         return;
       }
 
-      const { data: authEmail, error: rpcErr } = await supabase
-        .rpc('get_login_email_by_code', { p_code: code });
+      // Call edge function: auto-provisions auth account if needed, returns the email to sign in with
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const fnRes = await fetch(`${supabaseUrl}/functions/v1/login-with-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': anonKey },
+        body: JSON.stringify({ code }),
+      });
+      const fnData = await fnRes.json();
 
-      if (rpcErr) {
-        setError(rpcErr.message);
-        setLoading(false);
-        return;
-      }
-
-      if (!authEmail) {
-        setError('Login code not found. Check with your admin.');
+      if (!fnRes.ok) {
+        setError(fnData.error || 'Login failed');
         setLoading(false);
         return;
       }
 
       const { error: err } = await supabase.auth.signInWithPassword({
-        email: authEmail,
+        email: fnData.email,
         password: code,
       });
 
