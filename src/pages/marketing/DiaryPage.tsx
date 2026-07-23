@@ -28,10 +28,13 @@ interface Enquiry {
   deal_id: string | null;
 }
 
-const TIMES = [
-  '07:00','08:00','09:00','10:00','11:00','12:00',
-  '13:00','14:00','15:00','16:00','17:00','18:00',
-];
+const TIMES: string[] = (() => {
+  const t: string[] = [];
+  for (let h = 8; h < 18; h++)
+    for (let m = 0; m < 60; m += 15)
+      t.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+  return t;
+})();
 
 function sitesDisplay(n: string) {
   const count = parseInt(n, 10);
@@ -162,7 +165,7 @@ export default function DiaryPage() {
           .from('demo_availability')
           .update({ booked: false, booked_by_booking_id: null, notes: '' })
           .eq('booked_by_booking_id', slot.booked_by_booking_id)
-          .like('notes', '%[blocked: on-site buffer]%');
+          .or('notes.like.%[blocked: on-site buffer]%,notes.like.%[blocked: buffer]%');
         // Mark booking as cancelled
         await supabase.from('demo_bookings')
           .update({ status: 'cancelled' })
@@ -636,10 +639,10 @@ export default function DiaryPage() {
                 </div>
                 <button
                   onClick={() => {
-                  const now = new Date();
-                  const aug1 = new Date('2026-08-01T00:00:00');
-                  setWeekBase(weekStart(now >= aug1 ? now : aug1));
-                }}
+                    const now = new Date();
+                    const jul24 = new Date('2026-07-24T00:00:00');
+                    setWeekBase(weekStart(now >= jul24 ? now : jul24));
+                  }}
                   className="text-teal-400 text-xs hover:text-teal-300 transition-colors mt-0.5"
                 >
                   This week
@@ -653,65 +656,115 @@ export default function DiaryPage() {
               </button>
             </div>
 
-            {/* Legend */}
+            {/* Legend + refresh */}
             <div className="flex items-center gap-4 text-xs">
-              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-3 h-3 rounded bg-teal-500/25 border border-teal-500/40 inline-block" />Available</span>
-              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-3 h-3 rounded bg-sky-500/25 border border-sky-500/40 inline-block" />Booked</span>
+              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-2.5 h-2.5 rounded bg-teal-500/30 border border-teal-500/50 inline-block" />Available</span>
+              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-2.5 h-2.5 rounded bg-sky-500/25 border border-sky-500/40 inline-block" />Booked</span>
+              <span className="flex items-center gap-1.5 text-slate-400"><span className="w-2.5 h-2.5 rounded bg-slate-700 border border-slate-600 inline-block" />Blocked</span>
               <button onClick={load} className="ml-auto flex items-center gap-1.5 text-slate-500 hover:text-teal-400 transition-colors">
                 <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />Refresh
               </button>
             </div>
 
-            {/* 7-column grid */}
-            <div className="grid grid-cols-7 gap-1.5 sm:gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-              {weekDays.map((day, i) => {
-                const ds = isoDate(day);
-                const daySlots = slots.filter(s => s.slot_date === ds);
-                const isToday = ds === today;
-                const isPast = ds < today;
-                return (
-                  <div
-                    key={ds}
-                    className={`rounded-2xl border min-h-[120px] flex flex-col ${
-                      isToday ? 'border-teal-500/50 bg-teal-500/5'
-                      : isPast ? 'border-white/5 bg-slate-900/30 opacity-60'
-                      : 'border-slate-700 bg-slate-800'
-                    }`}
-                  >
-                    <div className={`px-2 py-2 border-b text-center ${isToday ? 'border-teal-500/30' : 'border-slate-700'}`}>
-                      <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">{DAY_LABELS[i]}</div>
-                      <div className={`text-base font-black leading-none mt-0.5 ${isToday ? 'text-teal-400' : isPast ? 'text-slate-600' : 'text-white'}`}>
-                        {day.getDate()}
+            {loading && (
+              <div className="text-center py-12 text-slate-500 text-sm">
+                <RefreshCw size={18} className="animate-spin mx-auto mb-2" />Loading…
+              </div>
+            )}
+
+            {/* Day-by-day list, slots grouped by hour */}
+            {!loading && (
+              <div className="space-y-3">
+                {weekDays.map((day, i) => {
+                  const ds = isoDate(day);
+                  const daySlots = slots.filter(s => s.slot_date === ds);
+                  const isToday = ds === today;
+                  const isPast = ds < today;
+                  // Group slots by hour
+                  const hourGroups: Record<string, Slot[]> = {};
+                  for (const s of daySlots) {
+                    const hr = s.slot_time.slice(0, 2);
+                    (hourGroups[hr] ??= []).push(s);
+                  }
+                  return (
+                    <div
+                      key={ds}
+                      className={`rounded-2xl border overflow-hidden ${
+                        isToday ? 'border-teal-500/40 bg-teal-500/5'
+                        : isPast ? 'border-white/5 bg-slate-900/20 opacity-50'
+                        : 'border-slate-700 bg-slate-800'
+                      }`}
+                    >
+                      {/* Day header */}
+                      <div className={`flex items-center justify-between px-4 py-2.5 border-b ${
+                        isToday ? 'border-teal-500/25' : 'border-slate-700'
+                      }`}>
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-8 h-8 rounded-lg flex flex-col items-center justify-center text-center ${
+                            isToday ? 'bg-teal-500 text-white' : 'bg-slate-700 text-slate-300'
+                          }`}>
+                            <div className="text-[9px] font-bold uppercase leading-none">{DAY_LABELS[i]}</div>
+                            <div className="text-sm font-black leading-none">{day.getDate()}</div>
+                          </div>
+                          <div>
+                            <div className={`text-sm font-bold ${ isToday ? 'text-teal-300' : 'text-white' }`}>
+                              {day.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
+                            </div>
+                            <div className="text-slate-500 text-[10px]">
+                              {daySlots.filter(s => !s.booked).length} available
+                              {daySlots.filter(s => s.booked && !s.notes?.includes('[blocked')).length > 0 &&
+                                ` · ${daySlots.filter(s => s.booked && !s.notes?.includes('[blocked')).length} booked`}
+                            </div>
+                          </div>
+                        </div>
+                        {!isPast && (
+                          <button
+                            onClick={() => { setAdding({ date: ds, time: '09:00' }); setNewNotes(''); }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-dashed border-slate-600 hover:border-teal-500/50 hover:text-teal-400 text-slate-500 text-xs transition-colors"
+                          >
+                            <Plus size={11} />Add slot
+                          </button>
+                        )}
                       </div>
+
+                      {/* Hour groups */}
+                      {daySlots.length === 0 ? (
+                        <div className="px-4 py-3 text-slate-600 text-xs italic">No slots this day.</div>
+                      ) : (
+                        <div className="px-4 py-3 space-y-2">
+                          {Object.entries(hourGroups).map(([hr, hrSlots]) => (
+                            <div key={hr} className="flex items-start gap-3">
+                              <div className="text-slate-600 text-[10px] font-bold w-8 pt-1.5 tabular-nums flex-shrink-0">{hr}:00</div>
+                              <div className="grid grid-cols-4 gap-1.5 flex-1">
+                                {hrSlots.map(slot => {
+                                  const isBuffer = slot.booked && (slot.notes?.includes('[blocked:') ?? false);
+                                  const isActualBooking = slot.booked && !isBuffer;
+                                  return (
+                                    <button
+                                      key={slot.id}
+                                      onClick={() => !isBuffer && setSelectedSlot(slot)}
+                                      className={`rounded-lg py-1.5 px-1 text-[10px] font-bold border transition-colors flex items-center justify-center tabular-nums ${
+                                        isActualBooking
+                                          ? 'bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30 cursor-pointer'
+                                          : isBuffer
+                                          ? 'bg-slate-700/60 border-slate-600/40 text-slate-600 cursor-default'
+                                          : 'bg-teal-500/15 border-teal-500/30 text-teal-300 hover:bg-teal-500/25 cursor-pointer'
+                                      }`}
+                                    >
+                                      {slot.slot_time}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex-1 p-1.5 space-y-1 overflow-y-auto max-h-48">
-                      {daySlots.map(slot => (
-                        <button
-                          key={slot.id}
-                          onClick={() => setSelectedSlot(slot)}
-                          className={`w-full text-left rounded-lg px-2 py-1.5 text-[10px] font-bold border transition-colors ${
-                            slot.booked
-                              ? 'bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30'
-                              : 'bg-teal-500/15 border-teal-500/30 text-teal-300 hover:bg-teal-500/25'
-                          }`}
-                        >
-                          <div className="flex items-center gap-1"><Clock size={8} />{slot.slot_time}</div>
-                          {slot.booked && <div className="text-[9px] text-sky-400/70 mt-0.5">Booked</div>}
-                        </button>
-                      ))}
-                    </div>
-                    {!isPast && (
-                      <button
-                        onClick={() => { setAdding({ date: ds, time: '10:00' }); setNewNotes(''); }}
-                        className="m-1.5 py-1 rounded-lg border border-dashed border-slate-600 hover:border-teal-500/50 hover:text-teal-400 text-slate-600 text-[10px] flex items-center justify-center gap-1 transition-colors"
-                      >
-                        <Plus size={10} />Add
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -919,33 +972,47 @@ export default function DiaryPage() {
                   </div>
                 );
                 return (
-                  <div className="space-y-3">
-                    {slotsByDay.filter(d => d.daySlots.length > 0).map(({ date, daySlots }) => (
-                      <div key={date}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Calendar size={12} className="text-teal-400" />
-                          <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
-                            {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
-                            {' · '}{new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                          </span>
+                  <div className="space-y-4">
+                    {slotsByDay.filter(d => d.daySlots.length > 0).map(({ date, daySlots }) => {
+                      const hourGroups: Record<string, typeof daySlots> = {};
+                      for (const s of daySlots) {
+                        const hr = s.slot_time.slice(0, 2);
+                        (hourGroups[hr] ??= []).push(s);
+                      }
+                      return (
+                        <div key={date}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Calendar size={12} className="text-teal-400" />
+                            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+                              {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
+                              {' · '}{new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                            </span>
+                          </div>
+                          <div className="space-y-1.5">
+                            {Object.entries(hourGroups).map(([hr, hrSlots]) => (
+                              <div key={hr} className="flex items-start gap-2">
+                                <div className="text-slate-600 text-[10px] font-bold w-8 pt-1.5 tabular-nums flex-shrink-0">{hr}:00</div>
+                                <div className="grid grid-cols-4 gap-1.5 flex-1">
+                                  {hrSlots.map(s => (
+                                    <button
+                                      key={s.id}
+                                      onClick={() => setResSelectedSlot(s)}
+                                      className={`rounded-lg py-1.5 px-1 text-xs font-bold border transition-all flex items-center justify-center tabular-nums ${
+                                        resSelectedSlot?.id === s.id
+                                          ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
+                                          : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                                      }`}
+                                    >
+                                      {s.slot_time}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {daySlots.map(s => (
-                            <button
-                              key={s.id}
-                              onClick={() => setResSelectedSlot(s)}
-                              className={`rounded-xl py-2.5 px-3 text-sm font-bold border transition-all flex items-center justify-center gap-1.5 ${
-                                resSelectedSlot?.id === s.id
-                                  ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
-                                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
-                              }`}
-                            >
-                              <Clock size={11} />{s.slot_time}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 );
               })()}
