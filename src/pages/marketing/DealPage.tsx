@@ -101,6 +101,7 @@ function slotFormatLong(dateStr: string) {
 const ACTION_LABELS: Record<string, string> = {
   created: 'Deal created',
   stage_changed: 'Stage updated',
+  meeting_cancelled: 'Meeting cancelled',
   note_added: 'Note',
   contact_added: 'Contact added',
   assigned: 'Assigned',

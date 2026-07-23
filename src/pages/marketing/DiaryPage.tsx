@@ -163,7 +163,11 @@ export default function DiaryPage() {
           .update({ booked: false, booked_by_booking_id: null, notes: '' })
           .eq('booked_by_booking_id', slot.booked_by_booking_id)
           .like('notes', '%[blocked: on-site buffer]%');
-        // Revert deal stage from demo_booked → contacted
+        // Mark booking as cancelled
+        await supabase.from('demo_bookings')
+          .update({ status: 'cancelled' })
+          .eq('id', slot.booked_by_booking_id);
+        // Revert deal stage from demo_booked → contacted and log activity
         const enq = enquiryFor(slot.booked_by_booking_id);
         if (enq?.deal_id) {
           await supabase.from('deals').update({
@@ -172,6 +176,19 @@ export default function DiaryPage() {
             next_action_date: null,
             updated_at: new Date().toISOString(),
           }).eq('id', enq.deal_id).eq('stage', 'demo_booked');
+          await supabase.from('deal_activity').insert({
+            deal_id: enq.deal_id,
+            user_id: user?.id ?? null,
+            user_name: user?.email?.split('@')[0] ?? 'System',
+            action_type: 'meeting_cancelled',
+            payload: {
+              booking_id: slot.booked_by_booking_id,
+              name: enq.name,
+              business_name: enq.business_name,
+              date: slot.slot_date,
+              time: slot.slot_time,
+            },
+          });
         }
       }
     }
