@@ -16,6 +16,7 @@ interface BookingEmailPayload {
   videoLink: string;
   adminEmail: string;
   isReschedule?: boolean;
+  isCancellation?: boolean;
   oldDate?: string;
   oldTime?: string;
 }
@@ -30,6 +31,60 @@ function formatDate(dateStr: string): string {
 }
 
 function prospectHtml(p: BookingEmailPayload): string {
+  if (p.isCancellation) {
+    return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+        <div style="background:#ef4444;color:#ffffff;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 36px;text-align:center;border-radius:12px 12px 0 0;">Your demo has been cancelled</div>
+        <tr><td style="background:#7f1d1d;border-radius:0 0 16px 16px;padding:32px 36px 28px;">
+          <div style="color:#fca5a5;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Demo Cancelled</div>
+          <div style="color:#ffffff;font-size:26px;font-weight:900;line-height:1.2;">Hi ${p.name.split(" ")[0]}, your demo has been cancelled</div>
+          <div style="color:#fecaca;font-size:14px;margin-top:8px;">The demo scheduled for ${formatDate(p.date)} at ${p.time} has been cancelled.</div>
+        </td></tr>
+        <tr><td style="background:#1e293b;padding:28px 36px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:20px 24px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding-bottom:16px;">
+                      <div style="color:#64748b;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Cancelled Date</div>
+                      <div style="color:#ffffff;font-size:15px;font-weight:700;text-decoration:line-through;">${formatDate(p.date)}</div>
+                    </td>
+                    <td style="padding-bottom:16px;text-align:right;">
+                      <div style="color:#64748b;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Cancelled Time</div>
+                      <div style="color:#ffffff;font-size:15px;font-weight:700;text-decoration:line-through;">${p.time} · ${p.duration} mins</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" style="border-top:1px solid #334155;padding-top:16px;">
+                      <div style="color:#64748b;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Business</div>
+                      <div style="color:#ffffff;font-size:15px;font-weight:700;">${p.businessName}</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <div style="margin-top:24px;">
+            <div style="color:#fca5a5;font-size:13px;line-height:1.6;">If you'd like to rebook at a different time, just reply to this email and we'll get you booked back in.</div>
+          </div>
+        </td></tr>
+        <tr><td style="background:#0f172a;border-radius:0 0 16px 16px;padding:20px 36px;border-top:1px solid #1e293b;">
+          <div style="color:#475569;font-size:12px;text-align:center;">
+            Questions? Reply to this email or contact <a href="mailto:${p.adminEmail}" style="color:#14b8a6;">${p.adminEmail}</a>
+          </div>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+  }
   const rescheduleBanner = p.isReschedule
     ? `<div style="background:#fbbf24;color:#1e293b;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 36px;text-align:center;border-radius:12px 12px 0 0;">Your demo has been rescheduled</div>`
     : "";
@@ -120,6 +175,34 @@ function prospectHtml(p: BookingEmailPayload): string {
 }
 
 function adminHtml(p: BookingEmailPayload): string {
+  if (p.isCancellation) {
+    return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;">
+        <tr><td style="background:#1e293b;border:1px solid #ef4444;border-radius:16px;padding:28px 32px;">
+          <div style="color:#f87171;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Demo Cancelled</div>
+          <div style="color:#ffffff;font-size:22px;font-weight:900;margin-bottom:20px;">${p.name} — ${p.businessName}</div>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+            <tr><td style="padding-bottom:10px;">
+              <div style="color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Cancelled Date &amp; Time</div>
+              <div style="color:#ffffff;font-size:14px;font-weight:700;text-decoration:line-through;">${formatDate(p.date)} at ${p.time} (${p.duration} mins)</div>
+            </td></tr>
+            <tr><td style="border-top:1px solid #1e293b;padding-top:10px;padding-bottom:10px;">
+              <div style="color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Contact</div>
+              <div style="color:#ffffff;font-size:14px;">${p.to}</div>
+            </td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+  }
   const label = p.isReschedule ? "Demo Rescheduled" : "New Demo Booked";
   const oldInfo = p.isReschedule && p.oldDate
     ? `<tr><td style="border-top:1px solid #1e293b;padding-top:10px;padding-bottom:10px;">
@@ -182,11 +265,15 @@ Deno.serve(async (req: Request) => {
 
     const fromAddress = "ServiceSupport.UK <demos@servicesupportgroup.uk>";
 
-    const prospectSubject = payload.isReschedule
+    const prospectSubject = payload.isCancellation
+      ? `Your demo on ${formatDate(payload.date)} has been cancelled`
+      : payload.isReschedule
       ? `Your demo has been rescheduled — ${formatDate(payload.date)} at ${payload.time}`
       : `Your demo is confirmed — ${formatDate(payload.date)} at ${payload.time}`;
 
-    const adminSubject = payload.isReschedule
+    const adminSubject = payload.isCancellation
+      ? `Demo cancelled: ${payload.name} (${payload.businessName}) — ${formatDate(payload.date)} at ${payload.time}`
+      : payload.isReschedule
       ? `Demo rescheduled: ${payload.name} (${payload.businessName}) — ${formatDate(payload.date)} at ${payload.time}`
       : `New demo: ${payload.name} (${payload.businessName}) — ${formatDate(payload.date)} at ${payload.time}`;
 

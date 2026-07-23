@@ -190,6 +190,29 @@ export default function DiaryPage() {
             },
           });
         }
+        // Send cancellation email to prospect + admin (fire-and-forget)
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+        if (enq?.email) {
+          fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+            },
+            body: JSON.stringify({
+              to: enq.email,
+              name: enq.name,
+              businessName: enq.business_name,
+              date: slot.slot_date,
+              time: slot.slot_time,
+              duration: slot.duration_mins,
+              videoLink: null,
+              adminEmail: 'james@servicesupportgroup.uk',
+              isCancellation: true,
+            }),
+          }).catch(() => {});
+        }
       }
     }
     await supabase.from('demo_availability').update(update).eq('id', slot.id);
