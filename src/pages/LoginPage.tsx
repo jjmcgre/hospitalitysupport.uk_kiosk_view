@@ -30,7 +30,7 @@ export default function LoginPage() {
     setLoading(true);
 
     if (loginMode === 'code') {
-      const code = loginCode.trim();
+      const code = loginCode.trim().toUpperCase();
       if (!code) {
         setError('Please enter your login code');
         setLoading(false);
