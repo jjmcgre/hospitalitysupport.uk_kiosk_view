@@ -78,29 +78,29 @@ export default function EnquiriesPage() {
   }, []);
 
   async function claimLead(id: string) {
-    if (!user) return;
+    if (!profile) return;
     const name = profile?.display_name || user.email?.split('@')[0] || 'Unknown';
     setClaiming(prev => new Set(prev).add(id));
 
     const enquiry = enquiries.find(e => e.id === id);
     const { data: booking } = await supabase
       .from('demo_bookings')
-      .update({ sourced_by_user_id: user.id, sourced_by_name: name })
+      .update({ sourced_by_user_id: profile.id, sourced_by_name: name })
       .eq('id', id)
       .select('deal_id')
       .single();
 
     if (booking?.deal_id) {
       await supabase.from('deals').update({
-        sourced_by_user_id: user.id,
+        sourced_by_user_id: profile.id,
         sourced_by_name: name,
-        assigned_to_user_id: user.id,
+        assigned_to_user_id: profile.id,
         assigned_to_name: name,
         updated_at: new Date().toISOString(),
       }).eq('id', booking.deal_id);
       await supabase.from('deal_activity').insert({
         deal_id: booking.deal_id,
-        user_id: user.id,
+        user_id: profile.id,
         user_name: name,
         action_type: 'assigned',
         payload: { from: null, to: name },
@@ -120,7 +120,7 @@ export default function EnquiriesPage() {
           postcode: enquiry.postcode,
           org_type: 'pub',
           num_sites: sites,
-          created_by_user_id: user.id,
+          created_by_user_id: profile.id,
         }).select('id').single();
         orgId = newOrg?.id ?? null;
       }
@@ -131,20 +131,20 @@ export default function EnquiriesPage() {
           stage: 'new',
           source: 'inbound',
           confidence: 'warm',
-          sourced_by_user_id: user.id,
+          sourced_by_user_id: profile.id,
           sourced_by_name: name,
-          assigned_to_user_id: user.id,
+          assigned_to_user_id: profile.id,
           assigned_to_name: name,
           commission_status: 'pending',
           num_sites: sites,
-          created_by_user_id: user.id,
+          created_by_user_id: profile.id,
         }).select('id').single();
 
         if (newDeal?.id) {
           await supabase.from('demo_bookings').update({ deal_id: newDeal.id }).eq('id', id);
           await supabase.from('deal_activity').insert({
             deal_id: newDeal.id,
-            user_id: user.id,
+            user_id: profile.id,
             user_name: name,
             action_type: 'assigned',
             payload: { from: null, to: name },
@@ -189,7 +189,7 @@ export default function EnquiriesPage() {
     return Array.from(counts.values()).sort((a, b) => b.count - a.count);
   }, [enquiries]);
 
-  const myLeadsCount = user ? enquiries.filter(e => e.sourced_by_user_id === user.id).length : 0;
+  const myLeadsCount = profile ? enquiries.filter(e => e.sourced_by_user_id === profile.id).length : 0;
 
   function sitesDisplay(n: string) {
     const count = parseInt(n, 10);
@@ -198,7 +198,7 @@ export default function EnquiriesPage() {
   }
 
   const displayed = filterMine
-    ? enquiries.filter(e => e.sourced_by_user_id === user?.id)
+    ? enquiries.filter(e => e.sourced_by_user_id === profile?.id)
     : enquiries;
 
   const sourcedByName = profile?.display_name || user?.email?.split('@')[0] || 'Unknown';
@@ -333,7 +333,7 @@ export default function EnquiriesPage() {
         {!loading && displayed.length > 0 && (
           <div className="space-y-3">
             {displayed.map(eq => {
-              const isMyLead = eq.sourced_by_user_id === user?.id;
+              const isMyLead = eq.sourced_by_user_id === profile?.id;
               const isClaiming = claiming.has(eq.id);
 
               return (
@@ -507,7 +507,7 @@ export default function EnquiriesPage() {
 
       {showAddLead && user && (
         <AddLeadModal
-          userId={user.id}
+          userId={profile!.id}
           sourcedByName={sourcedByName}
           onClose={() => setShowAddLead(false)}
           onSaved={() => { setShowAddLead(false); load(); }}

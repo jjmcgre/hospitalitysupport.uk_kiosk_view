@@ -96,7 +96,7 @@ export default function DocsPage() {
 
     for (const file of Array.from(files)) {
       const ext = file.name.split('.').pop() ?? '';
-      const path = `${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const path = `${profile?.id ?? user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
       const { error: upErr } = await supabase.storage.from('documents').upload(path, file);
       if (upErr) { setUploadError(upErr.message); setUploading(false); return; }
       const { error: dbErr } = await supabase.from('documents').insert({
@@ -105,7 +105,7 @@ export default function DocsPage() {
         storage_path: path,
         file_size: file.size,
         mime_type: file.type || 'application/octet-stream',
-        uploaded_by_user_id: user.id,
+        uploaded_by_user_id: profile?.id ?? user.id,
         uploaded_by_name: displayName,
       });
       if (dbErr) { setUploadError(dbErr.message); setUploading(false); return; }
@@ -132,13 +132,13 @@ export default function DocsPage() {
   }
 
   async function createFolder() {
-    if (!newFolderName.trim() || !user) return;
+    if (!newFolderName.trim() || !profile) return;
     setSavingFolder(true);
     await supabase.from('document_folders').insert({
       name: newFolderName.trim(),
       parent_id: null,
       is_admin_only: newFolderAdmin,
-      created_by_user_id: user.id,
+      created_by_user_id: profile.id,
     });
     setNewFolderName('');
     setNewFolderAdmin(false);

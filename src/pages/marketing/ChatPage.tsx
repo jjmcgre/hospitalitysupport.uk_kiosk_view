@@ -62,8 +62,8 @@ export default function ChatPage() {
         // Only add if we can see it
         const canSee =
           msg.recipient_id === null ||
-          msg.recipient_id === user?.id ||
-          msg.sender_id === user?.id ||
+          msg.recipient_id === profile?.id ||
+          msg.sender_id === profile?.id ||
           isAdmin;
         if (canSee) {
           setMessages(prev => [...prev, msg]);
@@ -71,7 +71,7 @@ export default function ChatPage() {
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [user?.id, isAdmin]);
+  }, [profile?.id, isAdmin]);
 
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -82,15 +82,15 @@ export default function ChatPage() {
 
   // Thread messages
   const threadMessages = useMemo(() => {
-    if (!user) return [];
+    if (!profile) return [];
     if (activeThread === 'all') {
       return messages.filter(m => m.recipient_id === null);
     }
     return messages.filter(m =>
-      (m.sender_id === user.id && m.recipient_id === activeThread) ||
-      (m.sender_id === activeThread && m.recipient_id === user.id)
+      (m.sender_id === profile.id && m.recipient_id === activeThread) ||
+      (m.sender_id === activeThread && m.recipient_id === profile.id)
     );
-  }, [messages, activeThread, user]);
+  }, [messages, activeThread, profile]);
 
   // Unread counts (messages since last localStorage timestamp)
   function getLastSeen(threadId: string): number {
@@ -102,10 +102,10 @@ export default function ChatPage() {
   function unreadCount(threadId: string): number {
     const lastSeen = getLastSeen(threadId);
     if (threadId === 'all') {
-      return messages.filter(m => m.recipient_id === null && new Date(m.created_at).getTime() > lastSeen && m.sender_id !== user?.id).length;
+      return messages.filter(m => m.recipient_id === null && new Date(m.created_at).getTime() > lastSeen && m.sender_id !== profile?.id).length;
     }
     return messages.filter(m =>
-      ((m.sender_id === threadId && m.recipient_id === user?.id)) &&
+      ((m.sender_id === threadId && m.recipient_id === profile?.id)) &&
       new Date(m.created_at).getTime() > lastSeen
     ).length;
   }
@@ -117,10 +117,10 @@ export default function ChatPage() {
 
   async function sendMessage() {
     const text = input.trim();
-    if (!text || !user) return;
+    if (!text || !profile) return;
     setSending(true);
     await supabase.from('chat_messages').insert({
-      sender_id: user.id,
+      sender_id: profile.id,
       sender_name: displayName,
       content: text,
       recipient_id: activeThread === 'all' ? null : activeThread,
@@ -130,7 +130,7 @@ export default function ChatPage() {
     markSeen(activeThread);
   }
 
-  const otherMembers = members.filter(m => m.id !== user?.id);
+  const otherMembers = members.filter(m => m.id !== profile?.id);
 
   const activeLabel = activeThread === 'all'
     ? 'All Team'
@@ -165,8 +165,8 @@ export default function ChatPage() {
                 active={activeThread === member.id}
                 unread={unreadCount(member.id)}
                 lastMsg={messages.filter(m =>
-                  (m.sender_id === user?.id && m.recipient_id === member.id) ||
-                  (m.sender_id === member.id && m.recipient_id === user?.id)
+                  (m.sender_id === profile?.id && m.recipient_id === member.id) ||
+                  (m.sender_id === member.id && m.recipient_id === profile?.id)
                 ).slice(-1)[0]?.content}
                 onClick={() => handleSelectThread(member.id)}
               />
@@ -198,7 +198,7 @@ export default function ChatPage() {
               </div>
             ) : (
               threadMessages.map((msg, i) => {
-                const isMe = msg.sender_id === user?.id;
+                const isMe = msg.sender_id === profile?.id;
                 const prevMsg = threadMessages[i - 1];
                 const sameGroup = prevMsg?.sender_id === msg.sender_id &&
                   (new Date(msg.created_at).getTime() - new Date(prevMsg.created_at).getTime()) < 300000;

@@ -59,7 +59,7 @@ export default function CommissionPage() {
   const isAdmin = profile?.role === 'admin';
 
   async function approveCommission(dealId: string) {
-    if (!user) return;
+    if (!profile) return;
     setApproving(dealId);
     const myName = profile?.display_name ?? user.email ?? 'Admin';
     await supabase.from('deals').update({
@@ -69,7 +69,7 @@ export default function CommissionPage() {
     }).eq('id', dealId);
     await supabase.from('deal_activity').insert({
       deal_id: dealId,
-      user_id: user.id,
+      user_id: profile.id,
       user_name: myName,
       action_type: 'commission_approved',
       payload: {},
@@ -79,7 +79,7 @@ export default function CommissionPage() {
   }
 
   async function declineCommission(dealId: string) {
-    if (!user) return;
+    if (!profile) return;
     setApproving(dealId);
     const myName = profile?.display_name ?? user.email ?? 'Admin';
     await supabase.from('deals').update({
@@ -88,7 +88,7 @@ export default function CommissionPage() {
     }).eq('id', dealId);
     await supabase.from('deal_activity').insert({
       deal_id: dealId,
-      user_id: user.id,
+      user_id: profile.id,
       user_name: myName,
       action_type: 'commission_declined',
       payload: {},
@@ -98,11 +98,11 @@ export default function CommissionPage() {
   }
 
   async function markPaid(dealId: string) {
-    if (!user) return;
+    if (!profile) return;
     setApproving(dealId);
     await supabase.from('deals').update({
       commission_paid_at: new Date().toISOString(),
-      commission_paid_by_user_id: user.id,
+      commission_paid_by_user_id: profile.id,
       updated_at: new Date().toISOString(),
     }).eq('id', dealId);
     setApproving(null);

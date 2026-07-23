@@ -88,13 +88,13 @@ export default function InboundPage() {
     setOrgPostcode(lead.postcode ?? '');
     setOrgType('pub');
     setOrgNotes('');
-    setAssignToId(user?.id ?? '');
+    setAssignToId(profile?.id ?? '');
     setAssignToName(profile?.display_name ?? '');
     setConvertError('');
   }
 
   async function handleConvert() {
-    if (!converting || !user) return;
+    if (!converting || !profile) return;
     const { lead } = converting;
     setSaving(true);
     setConvertError('');
@@ -109,7 +109,7 @@ export default function InboundPage() {
         org_type: orgType,
         num_sites: sites,
         notes: orgNotes.trim() || null,
-        created_by_user_id: user.id,
+        created_by_user_id: profile.id,
       }).select('id').single();
       if (orgErr) throw new Error(orgErr.message);
 
@@ -119,7 +119,7 @@ export default function InboundPage() {
         email: lead.email?.trim() || null,
         phone: lead.phone?.trim() || null,
         is_primary: true,
-        created_by_user_id: user.id,
+        created_by_user_id: profile.id,
       }).select('id').single();
       if (contactErr) throw new Error(contactErr.message);
 
@@ -141,14 +141,14 @@ export default function InboundPage() {
         next_action_date: new Date().toISOString().slice(0, 10),
         num_sites: sites,
         inbound_lead_id: lead.id,
-        created_by_user_id: user.id,
+        created_by_user_id: profile.id,
       }).select('id').single();
       if (dealErr) throw new Error(dealErr.message);
 
       await supabase.from('deal_activity').insert({
         deal_id: newDeal.id,
-        user_id: user.id,
-        user_name: profile?.display_name ?? user.email ?? 'Admin',
+        user_id: profile.id,
+        user_name: profile?.display_name ?? 'Admin',
         action_type: 'created',
         payload: {
           source: 'inbound',

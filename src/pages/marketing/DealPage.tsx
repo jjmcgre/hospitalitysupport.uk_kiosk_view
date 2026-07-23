@@ -257,17 +257,17 @@ export default function DealPage() {
   const userName = profile?.display_name || user?.email?.split('@')[0] || 'Unknown';
   const isAdmin = profile?.role === 'admin';
   const canEdit = deal
-    ? (deal.sourced_by_user_id === user?.id ||
-       deal.assigned_to_user_id === user?.id ||
-       deal.created_by_user_id === user?.id ||
+    ? (deal.sourced_by_user_id === profile?.id ||
+       deal.assigned_to_user_id === profile?.id ||
+       deal.created_by_user_id === profile?.id ||
        isAdmin)
     : false;
 
   async function writeActivity(type: string, payload: Record<string, unknown>) {
-    if (!id || !user) return;
+    if (!id || !profile) return;
     await supabase.from('deal_activity').insert({
       deal_id: id,
-      user_id: user.id,
+      user_id: profile.id,
       user_name: userName,
       action_type: type,
       payload,
@@ -303,7 +303,7 @@ export default function DealPage() {
   }
 
   async function confirmDemoBooking() {
-    if (!bdSelectedSlot || !deal || !user) return;
+    if (!bdSelectedSlot || !deal || !profile) return;
     const contact = primaryContact ?? contacts[0] ?? null;
     setBdBooking(true);
     setBdError('');
@@ -403,7 +403,7 @@ export default function DealPage() {
   }
 
   async function saveArr() {
-    if (!deal || !user) return;
+    if (!deal || !profile) return;
     setSavingArr(true);
     const val = arrDraft.trim() === '' ? null : parseInt(arrDraft.replace(/[^0-9]/g, ''), 10) || null;
     await supabase.from('deals').update({ arr_override: val, updated_at: new Date().toISOString() }).eq('id', deal.id);
@@ -524,7 +524,7 @@ export default function DealPage() {
       email: contactDraft.email.trim() || null,
       phone: contactDraft.phone.trim() || null,
       is_primary: false,
-      created_by_user_id: user!.id,
+      created_by_user_id: profile!.id,
     }).select('*').single();
     if (!error && data) {
       setContacts(prev => [...prev, data as ContactData]);
@@ -536,7 +536,7 @@ export default function DealPage() {
   }
 
   async function reassignDeal(memberId: string) {
-    if (!deal || !user) return;
+    if (!deal || !profile) return;
     setReassigning(true);
     const member = teamMembers.find(m => m.id === memberId);
     const assignedId = memberId || null;
