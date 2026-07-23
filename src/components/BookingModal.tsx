@@ -447,34 +447,47 @@ export default function BookingModal() {
                   <p className="text-slate-600 text-xs">Try the next week using the arrow above.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {slotsThisWeek.filter(d => d.slots.length > 0).map(({ date, slots: daySlots }, i) => (
-                    <div key={date}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Calendar size={12} className="text-teal-400" />
-                        <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
-                          {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
-                          {' · '}{formatDateShort(date)}
-                        </span>
+                <div className="space-y-4">
+                  {slotsThisWeek.filter(d => d.slots.length > 0).map(({ date, slots: daySlots }) => {
+                    const hourGroups: Record<string, Slot[]> = {};
+                    for (const s of daySlots) {
+                      const hr = s.slot_time.slice(0, 2);
+                      (hourGroups[hr] ??= []).push(s);
+                    }
+                    return (
+                      <div key={date}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Calendar size={12} className="text-teal-400" />
+                          <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            {DAY_LABELS[new Date(date + 'T00:00:00').getDay() === 0 ? 6 : new Date(date + 'T00:00:00').getDay() - 1]}
+                            {' · '}{formatDateShort(date)}
+                          </span>
+                        </div>
+                        <div className="space-y-1.5">
+                          {Object.entries(hourGroups).map(([hr, hrSlots]) => (
+                            <div key={hr} className="flex items-start gap-2">
+                              <div className="text-slate-600 text-[10px] font-bold w-8 pt-1.5 tabular-nums">{hr}:00</div>
+                              <div className="grid grid-cols-4 gap-1.5 flex-1">
+                                {hrSlots.map(slot => (
+                                  <button
+                                    key={slot.id}
+                                    onClick={() => setSelectedSlot(slot)}
+                                    className={`rounded-lg py-1.5 px-1 text-xs font-bold border transition-all flex items-center justify-center gap-1 tabular-nums ${
+                                      selectedSlot?.id === slot.id
+                                        ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
+                                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
+                                    }`}
+                                  >
+                                    {slot.slot_time}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        {daySlots.map(slot => (
-                          <button
-                            key={slot.id}
-                            onClick={() => setSelectedSlot(slot)}
-                            className={`rounded-xl py-2.5 px-3 text-sm font-bold border transition-all flex items-center justify-center gap-1.5 ${
-                              selectedSlot?.id === slot.id
-                                ? 'bg-teal-500 border-teal-500 text-white shadow-lg shadow-teal-500/20'
-                                : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-teal-500/50 hover:text-white'
-                            }`}
-                          >
-                            <Clock size={11} />
-                            {slot.slot_time}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
