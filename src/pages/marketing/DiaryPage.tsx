@@ -166,21 +166,17 @@ export default function DiaryPage() {
   }
 
   async function toggleBooked(slot: Slot) {
-    const update: Record<string, unknown> = { booked: !slot.booked };
     if (slot.booked) {
-      update.booked_by_booking_id = null;
-      // Free all buffer slots linked to this booking
+      // ── Unbooking: free the slot + its buffers ──
       if (slot.booked_by_booking_id) {
         await supabase
           .from('demo_availability')
           .update({ booked: false, booked_by_booking_id: null, notes: '' })
           .eq('booked_by_booking_id', slot.booked_by_booking_id)
           .or('notes.like.%[blocked: on-site buffer]%,notes.like.%[blocked: buffer]%');
-        // Mark booking as cancelled
         await supabase.from('demo_bookings')
           .update({ status: 'cancelled' })
           .eq('id', slot.booked_by_booking_id);
-        // Revert deal stage from demo_booked → contacted and log activity
         const enq = enquiryFor(slot.booked_by_booking_id);
         if (enq?.deal_id) {
           await supabase.from('deals').update({
@@ -203,7 +199,6 @@ export default function DiaryPage() {
             },
           });
         }
-        // Send cancellation email to prospect + admin (fire-and-forget)
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
         const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
         if (enq?.email) {
@@ -226,9 +221,44 @@ export default function DiaryPage() {
             }),
           }).catch(() => {});
         }
+      } else {
+        // No linked booking — just free the single slot
+        await supabase.from('demo_availability')
+          .update({ booked: false, booked_by_booking_id: null, notes: '' })
+          .eq('id', slot.id);
+      }
+    } else {
+      // ── Booking: create a placeholder booking then claim_slot (applies buffer) ──
+      const { data: newBooking } = await supabase.from('demo_bookings').insert({
+        name: 'Manual booking',
+        business_name: 'Manual',
+        meeting_type: 'virtual',
+        slot_date: slot.slot_date,
+        slot_time: slot.slot_time,
+      }).select('id').single();
+
+      if (!newBooking) {
+        alert('Failed to create booking record.');
+        return;
+      }
+
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('claim_slot', {
+        p_slot_id: slot.id,
+        p_booking_id: newBooking.id,
+        p_video_link: '',
+        p_meeting_type: 'virtual',
+      });
+
+      if (rpcError || !rpcResult?.ok) {
+        const msg = rpcError?.message ?? rpcResult?.error ?? 'Failed to book slot.';
+        alert(msg);
+        // Clean up the placeholder booking if claim failed
+        await supabase.from('demo_bookings').delete().eq('id', newBooking.id);
+        setSelectedSlot(null);
+        load();
+        return;
       }
     }
-    await supabase.from('demo_availability').update(update).eq('id', slot.id);
     setSelectedSlot(null);
     load();
   }
