@@ -30,6 +30,87 @@ function formatDate(dateStr: string): string {
   });
 }
 
+// Build a UTC datetime string like "20260803T130000Z" from "2026-08-03" + "13:00"
+function toIcsDateTime(dateStr: string, timeStr: string): string {
+  const [h, m] = timeStr.split(":").map(Number);
+  const d = new Date(`${dateStr}T${timeStr}:00`);
+  // Treat the slot time as UK local (BST = UTC+1 in summer, UTC in winter).
+  // We use a simple offset approach: parse as local, then format as UTC.
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const y = d.getUTCFullYear();
+  const mo = pad(d.getUTCMonth() + 1);
+  const dy = pad(d.getUTCDate());
+  const hr = pad(d.getUTCHours());
+  const mi = pad(d.getUTCMinutes());
+  return `${y}${mo}${dy}T${hr}${mi}00Z`;
+}
+
+function googleCalendarUrl(p: BookingEmailPayload): string {
+  const start = toIcsDateTime(p.date, p.time);
+  const [h, m] = p.time.split(":").map(Number);
+  const endDate = new Date(`${p.date}T${p.time}:00`);
+  endDate.setMinutes(endDate.getMinutes() + (p.duration || 60));
+  const endStr = `${endDate.getUTCFullYear()}${String(endDate.getUTCMonth()+1).padStart(2,"0")}${String(endDate.getUTCDate()).padStart(2,"0")}T${String(endDate.getUTCHours()).padStart(2,"0")}${String(endDate.getUTCMinutes()).padStart(2,"0")}00Z`;
+  const title = encodeURIComponent(`ServiceSupport.UK Demo — ${p.businessName}`);
+  const details = encodeURIComponent(p.videoLink ? `Join here: ${p.videoLink}` : "ServiceSupport.UK platform demo");
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${endStr}&details=${details}`;
+}
+
+function icsContent(p: BookingEmailPayload): string {
+  const start = toIcsDateTime(p.date, p.time);
+  const endDate = new Date(`${p.date}T${p.time}:00`);
+  endDate.setMinutes(endDate.getMinutes() + (p.duration || 60));
+  const endStr = `${endDate.getUTCFullYear()}${String(endDate.getUTCMonth()+1).padStart(2,"0")}${String(endDate.getUTCDate()).padStart(2,"0")}T${String(endDate.getUTCHours()).padStart(2,"0")}${String(endDate.getUTCMinutes()).padStart(2,"0")}00Z`;
+  const now = new Date();
+  const stamp = `${now.getUTCFullYear()}${String(now.getUTCMonth()+1).padStart(2,"0")}${String(now.getUTCDate()).padStart(2,"0")}T${String(now.getUTCHours()).padStart(2,"0")}${String(now.getUTCMinutes()).padStart(2,"0")}${String(now.getUTCSeconds()).padStart(2,"0")}Z`;
+  const location = p.videoLink || "";
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//ServiceSupport.UK//Demo//EN",
+    "BEGIN:VEVENT",
+    `DTSTART:${start}`,
+    `DTEND:${endStr}`,
+    `DTSTAMP:${stamp}`,
+    `SUMMARY:ServiceSupport.UK Demo — ${p.businessName}`,
+    `DESCRIPTION:${p.videoLink ? "Join here: " + p.videoLink : "ServiceSupport.UK platform demo"}`,
+    location ? `LOCATION:${location}` : "",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].filter(Boolean).join("\r\n");
+}
+
+// Encode ICS as a data URI for email clients that support it (Apple Mail, Outlook)
+function icsDataUri(p: BookingEmailPayload): string {
+  const content = icsContent(p);
+  // Base64 encode
+  const b64 = btoa(unescape(encodeURIComponent(content)));
+  return `data:text/calendar;charset=utf-8;base64,${b64}`;
+}
+
+function calendarButtons(p: BookingEmailPayload): string {
+  const google = googleCalendarUrl(p);
+  const ics = icsDataUri(p);
+  return `
+<div style="margin-top:24px;text-align:center;">
+  <div style="color:#64748b;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Add to your calendar</div>
+  <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+    <tr>
+      <td style="padding-right:8px;">
+        <a href="${google}" target="_blank" style="display:inline-block;background:#1e293b;border:1px solid #334155;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;border-radius:10px;padding:10px 20px;">
+          Google Calendar
+        </a>
+      </td>
+      <td>
+        <a href="${ics}" download="demo-servicesupport.ics" style="display:inline-block;background:#1e293b;border:1px solid #334155;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;border-radius:10px;padding:10px 20px;">
+          Apple / Outlook (.ics)
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>`;
+}
+
 function prospectHtml(p: BookingEmailPayload): string {
   if (p.isCancellation) {
     return `<!DOCTYPE html>
@@ -149,6 +230,8 @@ function prospectHtml(p: BookingEmailPayload): string {
             </a>
             <div style="color:#64748b;font-size:11px;margin-top:10px;">Powered by Google Meet — opens in your browser, no download needed</div>
           </div>` : ""}
+
+          ${calendarButtons(p)}
         </td></tr>
 
         <tr><td style="background:#1e293b;padding:0 36px 28px;">
