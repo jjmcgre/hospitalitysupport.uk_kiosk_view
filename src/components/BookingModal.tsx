@@ -271,7 +271,7 @@ export default function BookingModal() {
         <div className="flex items-center justify-between px-5 sm:px-7 py-5 border-b border-white/8 flex-shrink-0">
           <div>
             {step === 'details' && <>
-              <div className="text-white font-black text-lg leading-tight">Book your 30-minute demo</div>
+              <div className="text-white font-black text-lg leading-tight">Book your demo</div>
               <div className="text-slate-500 text-xs mt-0.5">Live platform walkthrough. No slides, no sales pitch.</div>
             </>}
             {step === 'slot' && <>
