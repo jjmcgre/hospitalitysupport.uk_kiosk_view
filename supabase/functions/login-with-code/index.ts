@@ -55,6 +55,17 @@ Deno.serve(async (req: Request) => {
 
     // Determine the email to use for auth
     let authEmail = profile.login_email || profile.email;
+    if (!authEmail && profile.auth_user_id) {
+      // Look up the existing auth user's actual email
+      const { data: authUser } = await admin.auth.admin.getUserById(profile.auth_user_id);
+      if (authUser?.user?.email) {
+        authEmail = authUser.user.email;
+        // Persist it so future logins skip the lookup
+        await admin.from("user_profiles")
+          .update({ login_email: authEmail })
+          .eq("id", profile.id);
+      }
+    }
     if (!authEmail) {
       // Generate a stable internal email from the profile id
       authEmail = `${profile.id}@login.servicesupportgroup.uk`;
