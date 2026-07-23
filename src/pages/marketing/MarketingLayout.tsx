@@ -4,11 +4,12 @@ import {
   Menu, X, LayoutDashboard, Mail, MessageSquare, Palette,
   CalendarDays, Copy, Check, ExternalLink, Share2, LogOut, User, Pencil,
   GitBranch, Users, PoundSterling, Inbox, Phone, FolderOpen, MessageCircle,
-  Plus, PanelLeftClose, PanelLeftOpen, Trash2,
+  Plus, PanelLeftClose, PanelLeftOpen, Trash2, Send,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import LogDealModal from './components/LogDealModal';
+import SendLinkModal from './components/SendLinkModal';
 
 const shareLinks = [
   { name: 'ServiceSupport.UK — Product Overview', path: '/demo', description: 'Full product landing page' },
@@ -36,8 +37,9 @@ function CopyBtn({ text, title, children }: { text: string; title: string; child
   );
 }
 
-function SharePanel({ userId }: { userId: string | null }) {
+function SharePanel({ userId, senderName }: { userId: string | null; senderName: string }) {
   const [open, setOpen] = useState(false);
+  const [sendLink, setSendLink] = useState<{ name: string; url: string } | null>(null);
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   return (
     <div className="mt-1">
@@ -64,6 +66,13 @@ function SharePanel({ userId }: { userId: string | null }) {
                   <CopyBtn text={`${link.name}\n${fullUrl}`} title="Copy name + link">
                     <Copy size={12} />
                   </CopyBtn>
+                  <button
+                    onClick={() => setSendLink({ name: link.name, url: fullUrl })}
+                    title="Send via email or SMS"
+                    className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+                  >
+                    <Send size={12} />
+                  </button>
                   <span className="text-slate-600 text-[10px] flex-1 font-mono truncate">{window.location.host}{link.path}</span>
                   <a href={link.path} target="_blank" rel="noopener noreferrer" title="Open"
                     className="p-2.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center">
@@ -74,6 +83,14 @@ function SharePanel({ userId }: { userId: string | null }) {
             );
           })}
         </div>
+      )}
+      {sendLink && (
+        <SendLinkModal
+          linkName={sendLink.name}
+          linkUrl={sendLink.url}
+          senderName={senderName}
+          onClose={() => setSendLink(null)}
+        />
       )}
     </div>
   );
@@ -189,7 +206,7 @@ export default function MarketingLayout() {
 
         <div className="border-t border-slate-800 pt-3">
           {!sidebarCollapsed && <p className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-4 mb-1.5">Materials</p>}
-          {!sidebarCollapsed && <SharePanel userId={user?.id ?? null} />}
+          {!sidebarCollapsed && <SharePanel userId={user?.id ?? null} senderName={displayName} />}
           <NavItem to="/docs" label="Documents" icon={FolderOpen} collapsed={sidebarCollapsed} />
           <NavItem to="/email" label="Email Campaign" icon={Mail} collapsed={sidebarCollapsed} />
           <NavItem to="/sales" label="Scripts & Talking Points" icon={MessageSquare} collapsed={sidebarCollapsed} />
